@@ -1,5 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:video_player/video_player.dart';
+import 'dart:ui';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -87,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-        // Navigate to the corresponding video in the PageView
+    // Navigate to the corresponding video in the PageView
     _pageController.jumpToPage(index);
   }
 
@@ -98,14 +102,15 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Color(0xFF121111),
         automaticallyImplyLeading: false,
-        title:
-         Row(
+        title: Row(
           children: [
             Image.asset(
               'assets/images/gala.png',
               height: 50,
             ),
-            SizedBox(width: 10,),
+            SizedBox(
+              width: 10,
+            ),
           ],
         ),
         actions: [
@@ -136,43 +141,44 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 0,
             right: 0,
             child: Container(
-              decoration: ShapeDecoration(
-                shape: BeveledRectangleBorder(
-                    borderRadius: BorderRadius.circular(1)),
-                color: Colors.black,
+               padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 0),
+              decoration: BoxDecoration(
+                color: Color(0xffD9D9D9).withOpacity(0.2),
+                borderRadius: BorderRadius.all(Radius.circular(30)),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 20),
-                child: BottomNavigationBar(
-                  backgroundColor: Colors.transparent,
-                  type: BottomNavigationBarType.fixed,
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: Image.asset('assets/images/food.png', height: 30),
-                      label: 'Food',
+              child: BottomNavigationBar(
+                backgroundColor: Colors.transparent,
+                type: BottomNavigationBarType.fixed,
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Image.asset('assets/images/food.png', height: 30),
+                    label: 'Food',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Image.asset('assets/images/drink.png', height: 30),
+                    label: 'Drinks',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Image.asset('assets/images/flowers.png', height: 30),
+                    label: 'Flowers',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Image.asset('assets/images/dance.png', height: 30),
+                    label: 'Dance',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Image.asset(
+                      'assets/images/drum.png',
+                      height: 30,
+                      color: Colors.white,
                     ),
-                    BottomNavigationBarItem(
-                      icon: Image.asset('assets/images/drink.png', height: 30),
-                      label: 'Drinks',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Image.asset('assets/images/flowers.png', height: 30),
-                      label: 'Flowers',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Image.asset('assets/images/dance.png', height: 30),
-                      label: 'Dance',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Image.asset('assets/images/drum.png', height: 30,color: Colors.white,),
-                      label: 'Music',
-                    ),
-                  ],
-                  currentIndex: _selectedIndex,
-                  selectedItemColor: Colors.purple,
-                  unselectedItemColor: Colors.white70,
-                  onTap: _onItemTapped,
-                ),
+                    label: 'Music',
+                  ),
+                ],
+                currentIndex: _selectedIndex,
+                selectedItemColor: Colors.purple,
+                unselectedItemColor: Colors.white70,
+                onTap: _onItemTapped,
               ),
             ),
           ),
