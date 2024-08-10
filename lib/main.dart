@@ -3,6 +3,7 @@ import 'package:gala_gatherings/screens/home_screen.dart';
 import 'package:gala_gatherings/screens/splash_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(GalaGatheringsApp());
 }
 
