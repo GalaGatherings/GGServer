@@ -137,51 +137,57 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-               padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 0),
-              decoration: BoxDecoration(
-                color: Color(0xffD9D9D9).withOpacity(0.2),
-                borderRadius: BorderRadius.all(Radius.circular(30)),
-              ),
-              child: BottomNavigationBar(
-                backgroundColor: Colors.transparent,
-                type: BottomNavigationBarType.fixed,
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Image.asset('assets/images/food.png', height: 30),
-                    label: 'Food',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Image.asset('assets/images/drink.png', height: 30),
-                    label: 'Drinks',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Image.asset('assets/images/flowers.png', height: 30),
-                    label: 'Flowers',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Image.asset('assets/images/dance.png', height: 30),
-                    label: 'Dance',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Image.asset(
-                      'assets/images/drum.png',
-                      height: 30,
-                      color: Colors.white,
-                    ),
-                    label: 'Music',
-                  ),
-                ],
-                currentIndex: _selectedIndex,
-                selectedItemColor: Colors.purple,
-                unselectedItemColor: Colors.white70,
-                onTap: _onItemTapped,
-              ),
+  bottom: 0,
+  left: 0,
+  right: 0,
+  child: ClipRRect(
+    borderRadius: BorderRadius.all(Radius.circular(30)), // Same border radius as the container
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0), // Apply blur effect
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+        decoration: BoxDecoration(
+          color: Color(0xffD9D9D9).withOpacity(0.1),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.transparent,
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: Image.asset('assets/images/food.png', height: 30),
+              label: 'Food',
             ),
-          ),
+            BottomNavigationBarItem(
+              icon: Image.asset('assets/images/drink.png', height: 30),
+              label: 'Drinks',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset('assets/images/flowers.png', height: 30),
+              label: 'Flowers',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset('assets/images/dance.png', height: 30),
+              label: 'Dance',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                'assets/images/drum.png',
+                height: 30,
+                color: Colors.white,
+              ),
+              label: 'Music',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.purple,
+          unselectedItemColor: Colors.white70,
+          onTap: _onItemTapped,
+        ),
+      ),
+    ),
+  ),
+),
         ],
       ),
     );
