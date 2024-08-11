@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gala_gatherings/screens/login_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
   @override
@@ -12,7 +13,7 @@ class SignUpScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: 80,
+              height: 70,
             ),
             Container(
               child: Center(
@@ -22,15 +23,16 @@ class SignUpScreen extends StatelessWidget {
                       fontStyle: FontStyle.normal,
                       fontSize: 28,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black,
+                      letterSpacing: 1,
+                      color: Color(0xff093030),
                       fontFamily: "Poppins"),
                 ),
               ),
             ),
             SizedBox(
-              height: 30,
+              height: 25,
             ),
-            Container(
+             Container(
               height: MediaQuery.of(context).size.height - 100,
               decoration: BoxDecoration(
                 color: Colors.black,
@@ -42,10 +44,11 @@ class SignUpScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Align labels to the start
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 15),
+                    
+                    // Full Name Field
                     Padding(
                       padding: const EdgeInsets.only(left: 25.0),
                       child: Text(
@@ -60,6 +63,7 @@ class SignUpScreen extends StatelessWidget {
                     SizedBox(height: 2),
                     TextField(
                       decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Color(0xff0E3E3E)),
                         filled: true,
                         fillColor: Colors.white,
                         hintText: 'example',
@@ -70,141 +74,223 @@ class SignUpScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 15),
-                    Text(
-                      "Email",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+
+                    // Email Field
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25.0),
+                      child: Text(
+                        "Email",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                     SizedBox(height: 2),
                     TextField(
                       decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Color(0xff0E3E3E)),
+                        
                         filled: true,
                         fillColor: Colors.white,
                         hintText: 'example@example.com',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 15.0),
+                        contentPadding: EdgeInsets.only(left: 40.0),
                       ),
                     ),
                     SizedBox(height: 15),
-                    Text(
-                      "Mobile Number",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+
+                    // Mobile Number Field
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25.0),
+                      child: Text(
+                        "Mobile Number",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                     SizedBox(height: 2),
                     TextField(
                       decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Color(0xff0E3E3E)),
                         filled: true,
                         fillColor: Colors.white,
                         hintText: '+123 456 789',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 15.0),
+                        contentPadding: EdgeInsets.only(left: 40.0),
                       ),
                     ),
                     SizedBox(height: 15),
-                    Text(
-                      "Date Of Birth",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+
+                    // Date Of Birth Field
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25.0),
+                      child: Text(
+                        "Date Of Birth",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                     SizedBox(height: 2),
                     TextField(
                       decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Color(0xff0E3E3E)),
                         filled: true,
                         fillColor: Colors.white,
                         hintText: 'DD / MM / YYYY',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 15.0),
+                        contentPadding: EdgeInsets.only(left: 40.0),
                       ),
                     ),
                     SizedBox(height: 15),
-                    Text(
-                      "Password",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    TextField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: '●●●●●●●',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 15.0),
-                      ),
-                    ),
-                    SizedBox(height: 15),
-                    Text(
-                      "Confirm Password",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    TextField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: '●●●●●●●',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 15.0),
-                      ),
-                    ),
-                    SizedBox(height: 15),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                      ),
-                      child: Text('Sign Up'),
-                    ),
-                    SizedBox(height: 10),
+
+                    // Password Field
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.only(left: 25.0),
                       child: Text(
-                        'By continuing, you agree to Terms of Use and Privacy Policy.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 12),
+                        "Password",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
-                    SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {},
+                    SizedBox(height: 2),
+                    TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Color(0xff0E3E3E)),
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: '●●●●●●●',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        contentPadding: EdgeInsets.only(left: 40.0),
+                      ),
+                    ),
+                    SizedBox(height: 15),
+
+                    // Confirm Password Field
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25.0),
                       child: Text(
-                        'Already have an account? Log In',
-                        style: TextStyle(color: Colors.white),
+                        "Confirm Password",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Color(0xff0E3E3E)),
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: '●●●●●●●',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        contentPadding: EdgeInsets.only(left: 40.0),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+
+                    // Sign Up Button
+                    
+                    // Terms and Conditions
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              'By continuing, you agree to',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 14),
+                            ),
+                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                               children: [
+                                 Text(
+                                  'Terms of Use ',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white, fontSize: 14,fontWeight: FontWeight.bold),
+                                                             ),
+                                                              Text(
+                                  'and   ',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white, fontSize: 14),
+                                                             ),
+                                                              Text(
+                                  'Privacy Policy.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white, fontSize: 14,fontWeight:FontWeight.bold),
+                                                             ),
+                               ],
+                             ),
+                          ],
+                        ),
+                      ),
+                    ),
+                     SizedBox(height: 5),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 60, vertical: 10),
+                        ),
+                        child: Text('Sign Up',style: TextStyle(fontSize: 16,fontFamily: "Poppins",fontWeight: FontWeight.w600,color: Color(0xff0E3E3E))),
+                      ),
+                    ),
+                   
+
+                    // SizedBox(height: 10),
+
+                    // Already have an account
+                    Center(
+                      child: TextButton(
+                        onPressed: () { Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );},
+                        child: 
+                        Row(
+                          mainAxisAlignment:MainAxisAlignment.center ,
+                          children: [
+                            Text(
+                              'Already have an account? ',
+                              style: TextStyle(color: Colors.white,fontSize: 13),
+                            ),
+                            Text(
+                              'Log In',
+                              style: TextStyle(color: Color(0xffD9D0E3),fontSize: 14),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
