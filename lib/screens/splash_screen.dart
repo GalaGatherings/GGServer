@@ -14,12 +14,16 @@ class _SplashScreenState extends State<SplashScreen> {
     openHomeScreen();
     // _checkLoginStatus();
   }
-void openHomeScreen () async{
-   await Future.delayed(Duration(seconds: 3));
+
+  void openHomeScreen() async {
+    await Future.delayed(Duration(seconds: 3));
+    // Navigator.of(context).pushReplacement(
+    //     MaterialPageRoute(builder: (context) => HomeScreen()),
+    //   );
     Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-}
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
   // void _checkLoginStatus() async {
   //   // Simulate a delay to mimic checking login status
   //   await Future.delayed(Duration(seconds: 3));
@@ -40,13 +44,14 @@ void openHomeScreen () async{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF121111),
-      body: Center(
-        child: Container(child: Image.asset(
+        backgroundColor: Color(0xFF121111),
+        body: Center(
+          child: Container(
+            child: Image.asset(
               'assets/images/gala.png',
               fit: BoxFit.cover,
-            ),),
-      )
-    );
+            ),
+          ),
+        ));
   }
 }
