@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gala_gatherings/screens/signup_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -98,7 +99,9 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () { Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => SignUpScreen()),
+    );},
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.black,
                 backgroundColor: Colors.white,
