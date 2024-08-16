@@ -1,9 +1,13 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:video_player/video_player.dart';
 import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:gala_gatherings/auth_notifier.dart';
+import 'package:gala_gatherings/screens/custom_calendar.dart';
+import 'package:gala_gatherings/screens/signup_screen.dart';
+
+import 'package:provider/provider.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:video_player/video_player.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -59,23 +63,9 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = index;
     });
 
-    // Play the next video and handle video end
+    // Play the next video
     _videoControllers[_selectedIndex].play();
     _videoControllers[_selectedIndex].setLooping(false);
-    _videoControllers[_selectedIndex].addListener(() {
-      if (_videoControllers[_selectedIndex].value.position ==
-          _videoControllers[_selectedIndex].value.duration) {
-        // Automatically go to the next video if it exists
-        if (_selectedIndex < _videoControllers.length - 1) {
-          _pageController.nextPage(
-              duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
-        } else {
-          // Loop back to the first video
-          _pageController.jumpToPage(0);
-          _playVideoAtIndex(0);
-        }
-      }
-    });
   }
 
   @override
@@ -118,6 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: CircularIconWithImage(),
             onPressed: () {
               // Calendar action
+              _onCalendarPressed(context);
             },
           ),
         ],
@@ -137,60 +128,80 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           Positioned(
-  bottom: 0,
-  left: 0,
-  right: 0,
-  child: ClipRRect(
-    borderRadius: BorderRadius.all(Radius.circular(30)), // Same border radius as the container
-    child: BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0), // Apply blur effect
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-        decoration: BoxDecoration(
-          color: Color(0xffD9D9D9).withOpacity(0.1),
-          borderRadius: BorderRadius.all(Radius.circular(30)),
-        ),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: Image.asset('assets/images/food.png', height: 30),
-              label: 'Food',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset('assets/images/drink.png', height: 30),
-              label: 'Drinks',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset('assets/images/flowers.png', height: 30),
-              label: 'Flowers',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset('assets/images/dance.png', height: 30),
-              label: 'Dance',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(
-                'assets/images/drum.png',
-                height: 30,
-                color: Colors.white,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                  decoration: BoxDecoration(
+                    color: Color(0xffD9D9D9).withOpacity(0.1),
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                  ),
+                  child: BottomNavigationBar(
+                    backgroundColor: Colors.transparent,
+                    type: BottomNavigationBarType.fixed,
+                    items: [
+                      BottomNavigationBarItem(
+                        icon: Image.asset('assets/images/food.png', height: 30),
+                        label: 'Food',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Image.asset('assets/images/drink.png', height: 30),
+                        label: 'Drinks',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Image.asset('assets/images/flowers.png', height: 30),
+                        label: 'Flowers',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Image.asset('assets/images/dance.png', height: 30),
+                        label: 'Dance',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Image.asset(
+                          'assets/images/drum.png',
+                          height: 30,
+                          color: Colors.white,
+                        ),
+                        label: 'Music',
+                      ),
+                    ],
+                    currentIndex: _selectedIndex,
+                    selectedItemColor: Colors.purple,
+                    unselectedItemColor: Colors.white70,
+                    onTap: _onItemTapped,
+                  ),
+                ),
               ),
-              label: 'Music',
             ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.purple,
-          unselectedItemColor: Colors.white70,
-          onTap: _onItemTapped,
-        ),
-      ),
-    ),
-  ),
-),
+          ),
         ],
       ),
     );
+  }
+
+  // Handle the calendar icon press
+  void _onCalendarPressed(BuildContext context) {
+    // Get the auth notifier to check the login status
+    final isLoggedIn = Provider.of<AuthNotifier>(context, listen: false).isAuthenticated;
+
+    if (isLoggedIn) {
+      // If logged in, open the Syncfusion calendar
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CustomCalendarScreen()),
+      );
+    } else {
+      // If not logged in, navigate to the sign-up screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SignUpScreen()),
+      );
+    }
   }
 }
 
@@ -208,6 +219,23 @@ class CircularIconWithImage extends StatelessWidget {
         width: 20,
         color: Colors.black,
         fit: BoxFit.contain,
+      ),
+    );
+  }
+}
+
+class TaskManagementCalendar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: TableCalendar(
+        focusedDay: DateTime.now(),
+        firstDay: DateTime(2020),
+        lastDay: DateTime(2030),
+        calendarFormat: CalendarFormat.month,
+        onDaySelected: (selectedDay, focusedDay) {
+          // Handle date selection
+        },
       ),
     );
   }
