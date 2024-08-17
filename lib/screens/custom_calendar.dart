@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
 import 'package:provider/provider.dart';
@@ -122,40 +123,62 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TableCalendar(
-                pageAnimationEnabled: true,
-                focusedDay: DateTime.now(),
-                firstDay: DateTime(2024),
-                lastDay: DateTime(2030),
-                selectedDayPredicate: (day) => selectedDates.contains(day),
-                onDaySelected: _onDaySelected,
-                calendarStyle: CalendarStyle(
-                  defaultTextStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                  todayDecoration: BoxDecoration(
-                    color: Colors.orange,
-                    shape: BoxShape.circle,
-                  ),
-                  selectedDecoration: BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                  ),
-                  weekendTextStyle: TextStyle(color: Colors.grey),
-                  outsideDaysVisible: false,
+              Container(
+                decoration: BoxDecoration(
+                  color: Color(0xffFBCFCC),
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
                 ),
-                headerStyle: HeaderStyle(
-                  formatButtonVisible: false,
-                  titleTextStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                // color: Color(0xffFBCFCC),
+                child: TableCalendar(
+                  pageAnimationEnabled: true,
+                  focusedDay: DateTime.now(),
+                  firstDay: DateTime(2024),
+                  lastDay: DateTime(2030),
+                  selectedDayPredicate: (day) => selectedDates.contains(day),
+                  onDaySelected: _onDaySelected,
+                  calendarStyle: CalendarStyle(
+                    defaultTextStyle: TextStyle(
+                      color: Color(0xff212525),
+                      fontSize: 20,
+                    ),
+                    selectedTextStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold),
+                    todayDecoration: BoxDecoration(
+                      color: Colors.orange,
+                      shape: BoxShape.circle,
+                    ),
+                    selectedDecoration: BoxDecoration(
+                      color: Color(0xffAFFD9C),
+                      shape: BoxShape.circle,
+                    ),
+                    weekendTextStyle: TextStyle(
+                      color: Color(0xff212525),
+                      fontSize: 20,
+                    ),
+                    outsideDaysVisible: false,
                   ),
-                  leftChevronIcon:
-                      Icon(Icons.chevron_left, color: Colors.black),
-                  rightChevronIcon:
-                      Icon(Icons.chevron_right, color: Colors.black),
+                  headerStyle: HeaderStyle(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      
+                    ),
+                    titleCentered:true,
+                    headerMargin: EdgeInsets.only(bottom: 15),
+                    formatButtonVisible: false,
+                    titleTextStyle: TextStyle(
+                      color: Color(0xffFB6641),
+                      fontSize: 22,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w900,
+                    ),
+                    leftChevronIcon:
+                        Icon(Icons.chevron_left, color: Colors.black),
+                    rightChevronIcon:
+                        Icon(Icons.chevron_right, color: Colors.black),
+                  ),
                 ),
               ),
               SizedBox(height: 20),
@@ -363,7 +386,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
         GestureDetector(
           onTap: submitFunction,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               decoration: BoxDecoration(
                 color: Color(0xffD9D9D9),
                 borderRadius: BorderRadius.all(Radius.circular(13)),
@@ -371,7 +394,8 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
               child: Text(
                 "Submit",
                 style: TextStyle(
-                  color: Colors.black,fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
               )),
         )
