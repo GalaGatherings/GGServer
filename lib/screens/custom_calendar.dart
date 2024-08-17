@@ -186,13 +186,14 @@ Widget _buildTimeSelector(BuildContext context) {
         children: [
           // Start Time and AM/PM together in a Row
           Expanded(
+            flex: 1,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Start Time Picker
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 6, // Fixed width for time
-                  height: 150, // Fixed height for the ListWheelScrollView
+                  height: 120, // Fixed height for the ListWheelScrollView
                   child: ListWheelScrollView.useDelegate(
                     itemExtent: 50,
                     diameterRatio: 1.5,
@@ -220,7 +221,7 @@ Widget _buildTimeSelector(BuildContext context) {
                 // Start Period Picker (AM/PM)
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 6, // Fixed width for AM/PM
-                  height: 150, // Fixed height for the ListWheelScrollView
+                  height: 120, // Fixed height for the ListWheelScrollView
                   child: ListWheelScrollView.useDelegate(
                     itemExtent: 50,
                     diameterRatio: 1.5,
