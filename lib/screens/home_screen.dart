@@ -91,6 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoggedIn = context.watch<AuthNotifier>().isAuthenticated;
+    final user_id = context.watch<AuthNotifier>().userId;
+    print("user_id   $user_id");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

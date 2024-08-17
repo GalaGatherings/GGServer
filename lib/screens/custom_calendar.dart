@@ -26,7 +26,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
 
   // Controls the visibility of the time picker panel
   bool _isGalaPanelOpen = false;
-
+bool _isTaskPanelOpen = false;
   // Variables for storing selected time
   int selectedStartHour = 1;
   int selectedEndHour = 1;
@@ -47,8 +47,10 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
         "end_time": "$selectedEndHour $selectedEndPeriod"
       });
     });
+    var gala = {"gala":galaEvents};
+    print("Gala Events Submitted: $gala");
 
-    print("Gala Events Submitted: $galaEvents");
+     Provider.of<AuthNotifier>(context, listen: false).user_update(gala);
 
     // API call logic can be added here
   }
@@ -103,23 +105,28 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
               onTap: () => Navigator.of(context).pop(),
               child: Container(
                 padding: EdgeInsets.all(8),
-                child: Icon(
-                  Icons.close,
-                  color: Colors.white,
+                child: Row(
+                  children: [
+                    // Icon(
+                    //   Icons.close,
+                    //   color: Colors.white,
+                    // ),
+                    Text('CLOSE',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),)
+                  ],
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: () =>
-                  Provider.of<AuthNotifier>(context, listen: false).logout(),
-              child: Container(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
+            // GestureDetector(
+            //   onTap: () =>
+            //       Provider.of<AuthNotifier>(context, listen: false).logout(),
+            //   child: Container(
+            //     padding: EdgeInsets.all(8),
+            //     child: Text(
+            //       'Logout',
+            //       style: TextStyle(color: Colors.white),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -226,16 +233,33 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        IconButton(
-          icon: Icon(
-            _isGalaPanelOpen ? Icons.remove : Icons.add, // Toggle icon
-            color: Colors.redAccent,
+        Container(
+         constraints: BoxConstraints(maxHeight: 40,maxWidth: 40),
+        //  padding: EdgeInsets.all(30),
+        width: 35,
+        height: 35,
+          
+          decoration: BoxDecoration(color: Color(0xffFB6641),borderRadius: BorderRadius.all(Radius.circular(50)) ),
+          child:
+           Center(
+            child: IconButton(
+              icon: Icon(
+                _isGalaPanelOpen ? Icons.remove : Icons.add, // Toggle icon
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () {
+                setState(() {
+                  if(text == 'GALA')
+                  _isGalaPanelOpen = !_isGalaPanelOpen; 
+                  // Toggle panel visibility
+                  else if(text == 'TASK MANAGEMENT' )
+                  _isGalaPanelOpen = !_isGalaPanelOpen; 
+
+                });
+              },
+            ),
           ),
-          onPressed: () {
-            setState(() {
-              _isGalaPanelOpen = !_isGalaPanelOpen; // Toggle panel visibility
-            });
-          },
         ),
         // ElevatedButton(
         //   onPressed: submitFunction,

@@ -4,26 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class AuthNotifier extends ChangeNotifier {
-   static const String authBox = 'authBox';
+  static const String authBox = 'authBox';
   static const String baseUrl = 'https://galagatherings.com';
 
   bool _isAuthenticated = false;
-  String user_type = 'customer' ;
+  String user_type = 'customer';
   String? _userId;
 
   bool get isAuthenticated => _isAuthenticated;
   String? get userId => _userId;
 
-
-  
   // Public method to load authentication state from SharedPreferences
- 
 
   // Save authentication state to SharedPreferences
-  
- AuthNotifier() {
+
+  AuthNotifier() {
     initializeAuth();
   }
 
@@ -71,7 +67,6 @@ class AuthNotifier extends ChangeNotifier {
         await _saveAuthState();
 
         // Save auth state
-       
 
         notifyListeners();
       } else {
@@ -85,7 +80,8 @@ class AuthNotifier extends ChangeNotifier {
   }
 
   // Sign up method
-  Future<void> signUp(String email, String name, String password, String userType, String mobileNo, String dob) async {
+  Future<void> signUp(String email, String name, String password,
+      String userType, String mobileNo, String dob) async {
     final url = Uri.parse('$baseUrl/sign-up');
     try {
       final response = await http.post(
@@ -105,10 +101,10 @@ class AuthNotifier extends ChangeNotifier {
         final responseData = jsonDecode(response.body);
         if (responseData['code'] == 200) {
           _isAuthenticated = true;
-      _userId = responseData['data']['user_id']; // Simulating user ID from API
-      await _saveAuthState();
+          _userId =
+              responseData['data']['user_id']; // Simulating user ID from API
+          await _saveAuthState();
           // Save auth state
-         
 
           notifyListeners();
         } else {
@@ -124,6 +120,31 @@ class AuthNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> user_update(userData) async {
+    final url = Uri.parse('$baseUrl/update-user');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': userId, ...userData}),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print("responseDataUpdate  $responseData");
+        if (responseData['code'] == 200) {
+          return responseData['message'];
+        } else {
+          throw Exception('Failed to sign up');
+        }
+      } else {
+        throw Exception('Failed to sign up');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Logout method
   Future<void> logout() async {
     print("Loging out");
@@ -134,6 +155,5 @@ class AuthNotifier extends ChangeNotifier {
     await _clearAuthState();
 
     notifyListeners();
-    
   }
 }
