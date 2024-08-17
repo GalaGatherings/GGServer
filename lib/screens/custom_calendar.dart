@@ -1,23 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
-
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart'; // For formatting dates
 
-class CustomCalendarScreen extends StatelessWidget {
+class CustomCalendarScreen extends StatefulWidget {
   final bool isLoggedIn;
 
-  CustomCalendarScreen(
-      this.isLoggedIn); // Correct constructor to accept isLoggedIn
+  CustomCalendarScreen(this.isLoggedIn);
+
+  @override
+  _CustomCalendarScreenState createState() => _CustomCalendarScreenState();
+}
+
+class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
+  // This will store the selected dates
+  List<DateTime> selectedDates = [];
+  List<Map<String, String>> galaEvents = [];
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      if (selectedDates.contains(selectedDay)) {
+        selectedDates.remove(selectedDay);
+      } else {
+        selectedDates.add(selectedDay);
+      }
+    });
+  }
+
+  Future<void> _selectTime(BuildContext context, DateTime selectedDate) async {
+    TimeOfDay? startTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    TimeOfDay? endTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (startTime != null && endTime != null) {
+      // Store the event in the galaEvents list
+      setState(() {
+        galaEvents.add({
+          "date": DateFormat('dd-MM-yyyy').format(selectedDate),
+          "start_time": startTime.format(context),
+          "end_time": endTime.format(context),
+        });
+      });
+    }
+  }
+
+  void _submitEventData() {
+    // API call to submit the galaEvents data
+    print("Submitting: $galaEvents");
+    // Call your API here
+  }
 
   @override
   Widget build(BuildContext context) {
+    final user_type ='customer';
 
-    final user_type =  context.watch<AuthNotifier>().user_type;
-     
-    print("isLoggedIn  ${isLoggedIn}   $user_type");
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -28,11 +71,11 @@ class CustomCalendarScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset(
-              'assets/images/gala.png', // Gala logo image
+              'assets/images/gala.png',
               height: 50,
             ),
             GestureDetector(
-              onTap: () => Navigator.of(context).pop(), // Close the modal
+              onTap: () => Navigator.of(context).pop(),
               child: Container(
                 padding: EdgeInsets.all(8),
                 child: Icon(
@@ -42,15 +85,15 @@ class CustomCalendarScreen extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () => (Provider.of<AuthNotifier>(context, listen: false)
-                  .logout()), // Close the modal
+              onTap: () => Provider.of<AuthNotifier>(context, listen: false).logout(),
               child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.white),
-                  )),
-            )
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -59,20 +102,14 @@ class CustomCalendarScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Text(
-            //   'JUNE 2024', // Example for a month display
-            //   style: TextStyle(
-            //     fontSize: 25,
-            //     fontWeight: FontWeight.bold,
-            //     color: Colors.white,
-            //   ),
-            // ),
-            // SizedBox(height: 10),
             TableCalendar(
+              
+              pageAnimationEnabled:true,
               focusedDay: DateTime.now(),
-              firstDay: DateTime(2020),
+              firstDay: DateTime(2024),
               lastDay: DateTime(2030),
-              calendarFormat: CalendarFormat.month,
+              selectedDayPredicate: (day) => selectedDates.contains(day),
+              onDaySelected: _onDaySelected,
               calendarStyle: CalendarStyle(
                 defaultTextStyle: TextStyle(
                   color: Colors.white,
@@ -83,7 +120,7 @@ class CustomCalendarScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 selectedDecoration: BoxDecoration(
-                  color: Colors.orangeAccent,
+                  color: Color(0xffAFFD9C),
                   shape: BoxShape.circle,
                 ),
                 weekendTextStyle: TextStyle(color: Colors.grey),
@@ -92,28 +129,27 @@ class CustomCalendarScreen extends StatelessWidget {
               headerStyle: HeaderStyle(
                 formatButtonVisible: false,
                 titleTextStyle: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
-                leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white),
-                rightChevronIcon:
-                    Icon(Icons.chevron_right, color: Colors.white),
+                leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
+                rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
               ),
-              onDaySelected: (selectedDay, focusedDay) {
-                // Handle day selected
-              },
             ),
             SizedBox(height: 20),
-            if(user_type=='customer')...[
-
-            _buildMenuButton('GALA', context),
-            ]
-            else...[
+            if (user_type == 'customer') ...[
+              _buildMenuButton('GALA/AVAILABILITY', context),
+            ] else ...[
               _buildMenuButton('AVAILABILITY', context),
             ],
             SizedBox(height: 10),
             _buildMenuButton('TASK MANAGEMENT', context),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _submitEventData,
+              child: Text("Submit Event"),
+            ),
           ],
         ),
       ),
@@ -134,16 +170,16 @@ class CustomCalendarScreen extends StatelessWidget {
         ),
         IconButton(
           icon: Icon(Icons.add, color: Colors.redAccent),
-          onPressed: () {
-            // Handle button action
-            if (isLoggedIn) {
-              print("Already logged in");
-            } else if (!isLoggedIn) {
-              print("Login screen open");
-              Navigator.pushReplacementNamed(context, '/login');
+          onPressed: () async {
+            if (selectedDates.isNotEmpty) {
+              for (var date in selectedDates) {
+                await _selectTime(context, date);
+              }
+            } else {
+              print("No dates selected");
             }
           },
-        )
+        ),
       ],
     );
   }

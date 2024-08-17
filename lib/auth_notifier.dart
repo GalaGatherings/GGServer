@@ -33,7 +33,7 @@ class AuthNotifier extends ChangeNotifier {
     _isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
     print("_userId $_userId");
     _userId = prefs.getString('userId');
-    user_type = prefs.getString('user_type')!;
+
     notifyListeners();
   }
 
@@ -41,7 +41,7 @@ class AuthNotifier extends ChangeNotifier {
   Future<void> _saveAuthState() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isAuthenticated', _isAuthenticated);
-    await prefs.setString('userId', _userId ?? '');
+
     await prefs.setString('user_type', 'customer');
   }
 
