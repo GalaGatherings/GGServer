@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
-import 'package:gala_gatherings/screens/login_screen.dart';
+
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CustomCalendarScreen extends StatelessWidget {
@@ -13,7 +14,10 @@ class CustomCalendarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("isLoggedIn  ${isLoggedIn}");
+
+    final user_type =  context.watch<AuthNotifier>().user_type;
+     
+    print("isLoggedIn  ${isLoggedIn}   $user_type");
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -101,7 +105,13 @@ class CustomCalendarScreen extends StatelessWidget {
               },
             ),
             SizedBox(height: 20),
-            _buildMenuButton('GALA/AVAILABILITY', context),
+            if(user_type=='customer')...[
+
+            _buildMenuButton('GALA', context),
+            ]
+            else...[
+              _buildMenuButton('AVAILABILITY', context),
+            ],
             SizedBox(height: 10),
             _buildMenuButton('TASK MANAGEMENT', context),
           ],
@@ -128,7 +138,7 @@ class CustomCalendarScreen extends StatelessWidget {
             // Handle button action
             if (isLoggedIn) {
               print("Already logged in");
-            } else if(!isLoggedIn) {
+            } else if (!isLoggedIn) {
               print("Login screen open");
               Navigator.pushReplacementNamed(context, '/login');
             }
