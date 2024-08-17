@@ -17,6 +17,8 @@ class CustomCalendarScreen extends StatefulWidget {
 }
 
 class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
+   DateTime _focusedDay = DateTime.now(); // Track the currently focused day
+  DateTime _selectedDay = DateTime.now(); // Track the selected day
   // This will store the selected dates
   List<DateTime> selectedDates = [];
   List<Map<String, String>> galaEvents = [];
@@ -53,7 +55,11 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
-      // Ensure no duplicate entries in selected dates
+      // Update both the selected day and the focused day
+      _selectedDay = selectedDay;
+      _focusedDay = focusedDay;  
+
+      // Add or remove selected dates
       if (selectedDates.contains(selectedDay)) {
         selectedDates.remove(selectedDay);
       } else {
@@ -131,11 +137,17 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
                 // color: Color(0xffFBCFCC),
                 child: TableCalendar(
                   pageAnimationEnabled: true,
-                  focusedDay: DateTime.now(),
+                  focusedDay: _focusedDay, // Bind the focused day here
                   firstDay: DateTime(2024),
                   lastDay: DateTime(2030),
                   selectedDayPredicate: (day) => selectedDates.contains(day),
                   onDaySelected: _onDaySelected,
+                  onPageChanged: (focusedDay) {
+                    // Update the focused day when the month changes
+                    setState(() {
+                      _focusedDay = focusedDay;
+                    });
+                  },
                   calendarStyle: CalendarStyle(
                     defaultTextStyle: TextStyle(
                       color: Color(0xff212525),
