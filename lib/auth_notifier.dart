@@ -1,7 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class AuthNotifier extends ChangeNotifier {
@@ -21,30 +22,30 @@ class AuthNotifier extends ChangeNotifier {
 
   // Save authentication state to SharedPreferences
   
-
-AuthNotifier() {
+ AuthNotifier() {
     initializeAuth();
   }
 
   // Initialize authentication state
   Future<void> initializeAuth() async {
-    final box = await Hive.openBox(authBox);
-    _isAuthenticated = box.get('isAuthenticated', defaultValue: false);
-    _userId = box.get('userId');
+    final prefs = await SharedPreferences.getInstance();
+    _isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
+    print("_userId $_userId");
+    _userId = prefs.getString('userId');
     notifyListeners();
   }
 
-  // Save authentication state to Hive
+  // Save authentication state to SharedPreferences
   Future<void> _saveAuthState() async {
-    final box = await Hive.openBox(authBox);
-    await box.put('isAuthenticated', _isAuthenticated);
-    await box.put('userId', _userId ?? '');
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isAuthenticated', _isAuthenticated);
+    await prefs.setString('userId', _userId ?? '');
   }
 
-  // Clear authentication state from Hive
+  // Clear authentication state from SharedPreferences
   Future<void> _clearAuthState() async {
-    final box = await Hive.openBox(authBox);
-    await box.clear();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   }
 
   // Login method
@@ -122,6 +123,7 @@ AuthNotifier() {
 
   // Logout method
   Future<void> logout() async {
+    print("Loging out");
     _isAuthenticated = false;
     _userId = null;
 
@@ -129,5 +131,6 @@ AuthNotifier() {
     await _clearAuthState();
 
     notifyListeners();
+    
   }
 }

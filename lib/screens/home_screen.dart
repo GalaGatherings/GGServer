@@ -3,9 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
 import 'package:gala_gatherings/screens/custom_calendar.dart';
-import 'package:gala_gatherings/screens/signup_screen.dart';
+import 'package:gala_gatherings/screens/login_screen.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:video_player/video_player.dart';
 
@@ -15,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool login= false;
   int _selectedIndex = 0;
   PageController _pageController = PageController();
   List<VideoPlayerController> _videoControllers = [];
@@ -22,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    
 
     // Initialize video controllers
     _videoControllers = [
@@ -87,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = context.watch<AuthNotifier>().isAuthenticated;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -108,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: CircularIconWithImage(),
             onPressed: () {
               // Calendar action
-              _onCalendarPressed(context);
+              _onCalendarPressed(context, isLoggedIn);
             },
           ),
         ],
@@ -141,67 +145,62 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Color(0xffD9D9D9).withOpacity(0.1),
                     borderRadius: BorderRadius.all(Radius.circular(30)),
                   ),
-                  child: BottomNavigationBar(
+                  child: 
+                  BottomNavigationBar(
                     backgroundColor: Colors.transparent,
                     type: BottomNavigationBarType.fixed,
                     items: [
                       BottomNavigationBarItem(
-                        icon: Image.asset('assets/images/food.png', height: 30),
-                        label: 'Food',
+                        icon: Image.asset('assets/images/food.png', height: 30,),
+                        label: '',
                       ),
                       BottomNavigationBarItem(
-                        icon: Image.asset('assets/images/drink.png', height: 30),
-                        label: 'Drinks',
+                        icon: Image.asset('assets/images/drink.png', height: 30,),
+                        label: '',
                       ),
                       BottomNavigationBarItem(
-                        icon: Image.asset('assets/images/flowers.png', height: 30),
-                        label: 'Flowers',
+                        icon: Image.asset('assets/images/flowers.png', height: 30,),
+                        label: '',
                       ),
                       BottomNavigationBarItem(
-                        icon: Image.asset('assets/images/dance.png', height: 30),
-                        label: 'Dance',
+                        icon: Image.asset('assets/images/camera.png', height: 30,),
+                        label: '',
                       ),
                       BottomNavigationBarItem(
                         icon: Image.asset(
                           'assets/images/drum.png',
                           height: 30,
-                          color: Colors.white,
+                         
                         ),
-                        label: 'Music',
+                        label: '',
                       ),
                     ],
                     currentIndex: _selectedIndex,
-                    selectedItemColor: Colors.purple,
+                    selectedItemColor: Colors.white,
                     unselectedItemColor: Colors.white70,
+                    // selectedIconTheme: Colors.red,
                     onTap: _onItemTapped,
                   ),
+             
                 ),
               ),
             ),
           ),
+       
         ],
       ),
     );
   }
 
   // Handle the calendar icon press
-  void _onCalendarPressed(BuildContext context) {
+  void _onCalendarPressed(BuildContext context,bool isLoggedIn) {
     // Get the auth notifier to check the login status
-    final isLoggedIn = Provider.of<AuthNotifier>(context, listen: false).isAuthenticated;
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CustomCalendarScreen(isLoggedIn)),
+      );
 
-    if (isLoggedIn) {
-      // If logged in, open the Syncfusion calendar
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CustomCalendarScreen()),
-      );
-    } else {
-      // If not logged in, navigate to the sign-up screen
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => SignUpScreen()),
-      );
-    }
+   
   }
 }
 

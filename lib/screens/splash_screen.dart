@@ -11,14 +11,14 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
  @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(seconds: 2), () {
-      final authNotifier = Provider.of<AuthNotifier>(context, listen: false);
-
-      if (authNotifier.isAuthenticated) {
+    Future.delayed(Duration(seconds: 1), () {
         Navigator.pushReplacementNamed(context, '/home');
-      } else {
-        Navigator.pushReplacementNamed(context, '/login');
-      }
+      // final authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+
+      // if (authNotifier.isAuthenticated) {
+      // } else {
+      //   Navigator.pushReplacementNamed(context, '/login');
+      // }
     });
 
     return Scaffold(

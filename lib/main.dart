@@ -4,16 +4,15 @@ import 'package:gala_gatherings/screens/home_screen.dart';
 import 'package:gala_gatherings/screens/login_screen.dart';
 import 'package:gala_gatherings/screens/signup_screen.dart';
 import 'package:gala_gatherings/screens/splash_screen.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:provider/provider.dart';
-import 'package:path_provider/path_provider.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Get the directory for Hive
-  final appDocumentDir = await getApplicationDocumentsDirectory();
-  await Hive.initFlutter(appDocumentDir.path);
+
 
   runApp(
     MultiProvider(
