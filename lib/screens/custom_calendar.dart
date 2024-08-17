@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -17,7 +19,7 @@ class CustomCalendarScreen extends StatefulWidget {
 }
 
 class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
-   DateTime _focusedDay = DateTime.now(); // Track the currently focused day
+  DateTime _focusedDay = DateTime.now(); // Track the currently focused day
   DateTime _selectedDay = DateTime.now(); // Track the selected day
   // This will store the selected dates
   List<DateTime> selectedDates = [];
@@ -26,7 +28,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
 
   // Controls the visibility of the time picker panel
   bool _isGalaPanelOpen = false;
-bool _isTaskPanelOpen = false;
+  bool _isTaskPanelOpen = false;
   // Variables for storing selected time
   int selectedStartHour = 1;
   int selectedEndHour = 1;
@@ -35,7 +37,7 @@ bool _isTaskPanelOpen = false;
   void _submitAvailabiltyEventData() {
     //for availabilty
   }
-  void _submitGalaEventData() {
+  void _submitGalaEventData() async {
     // Clear the list to prevent duplicate submissions
     galaEvents.clear();
 
@@ -47,10 +49,26 @@ bool _isTaskPanelOpen = false;
         "end_time": "$selectedEndHour $selectedEndPeriod"
       });
     });
-    var gala = {"gala":galaEvents};
+    var gala = {"gala": galaEvents};
     print("Gala Events Submitted: $gala");
+    //  _isGalaPanelOpen = !_isGalaPanelOpen;
 
-     Provider.of<AuthNotifier>(context, listen: false).user_update(gala);
+    Provider.of<AuthNotifier>(context, listen: false)
+        .user_update(gala)
+        .then((value) => {
+          
+         
+           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(value),
+                    ))
+        });
+    //  print("resJeson  $res");
+    //  var resJson= json.encode(res);
+    //  print("resJson  $resJson");
+
+    //  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //                   content: Text(resJson['message']),
+    //                 ));
 
     // API call logic can be added here
   }
@@ -59,7 +77,7 @@ bool _isTaskPanelOpen = false;
     setState(() {
       // Update both the selected day and the focused day
       _selectedDay = selectedDay;
-      _focusedDay = focusedDay;  
+      _focusedDay = focusedDay;
 
       // Add or remove selected dates
       if (selectedDates.contains(selectedDay)) {
@@ -111,7 +129,13 @@ bool _isTaskPanelOpen = false;
                     //   Icons.close,
                     //   color: Colors.white,
                     // ),
-                    Text('CLOSE',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),)
+                    Text(
+                      'CLOSE',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    )
                   ],
                 ),
               ),
@@ -182,9 +206,8 @@ bool _isTaskPanelOpen = false;
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20)),
-                      
                     ),
-                    titleCentered:true,
+                    titleCentered: true,
                     headerMargin: EdgeInsets.only(bottom: 15),
                     formatButtonVisible: false,
                     titleTextStyle: TextStyle(
@@ -234,14 +257,15 @@ bool _isTaskPanelOpen = false;
           ),
         ),
         Container(
-         constraints: BoxConstraints(maxHeight: 40,maxWidth: 40),
-        //  padding: EdgeInsets.all(30),
-        width: 35,
-        height: 35,
-          
-          decoration: BoxDecoration(color: Color(0xffFB6641),borderRadius: BorderRadius.all(Radius.circular(50)) ),
-          child:
-           Center(
+          constraints: BoxConstraints(maxHeight: 40, maxWidth: 40),
+          //  padding: EdgeInsets.all(30),
+          width: 35,
+          height: 35,
+
+          decoration: BoxDecoration(
+              color: Color(0xffFB6641),
+              borderRadius: BorderRadius.all(Radius.circular(50))),
+          child: Center(
             child: IconButton(
               icon: Icon(
                 _isGalaPanelOpen ? Icons.remove : Icons.add, // Toggle icon
@@ -250,12 +274,11 @@ bool _isTaskPanelOpen = false;
               ),
               onPressed: () {
                 setState(() {
-                  if(text == 'GALA')
-                  _isGalaPanelOpen = !_isGalaPanelOpen; 
+                  if (text == 'GALA')
+                    _isGalaPanelOpen = !_isGalaPanelOpen;
                   // Toggle panel visibility
-                  else if(text == 'TASK MANAGEMENT' )
-                  _isGalaPanelOpen = !_isGalaPanelOpen; 
-
+                  else if (text == 'TASK MANAGEMENT')
+                    _isGalaPanelOpen = !_isGalaPanelOpen;
                 });
               },
             ),

@@ -120,7 +120,7 @@ class AuthNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> user_update(userData) async {
+  Future<String>  user_update(userData) async {
     final url = Uri.parse('$baseUrl/update-user');
     try {
       final response = await http.post(
@@ -128,20 +128,11 @@ class AuthNotifier extends ChangeNotifier {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': userId, ...userData}),
       );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        print("responseDataUpdate  $responseData");
-        if (responseData['code'] == 200) {
-          return responseData['message'];
-        } else {
-          throw Exception('Failed to sign up');
-        }
-      } else {
-        throw Exception('Failed to sign up');
-      }
+      final responseData = jsonDecode(response.body);
+      print("responseData  ${responseData['message']}");
+      return responseData['message'];
     } catch (error) {
-      throw error;
+      return 'error';
     }
   }
 
