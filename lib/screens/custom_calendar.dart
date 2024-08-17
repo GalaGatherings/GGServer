@@ -29,35 +29,38 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   int selectedEndHour = 1;
   String selectedStartPeriod = 'AM';
   String selectedEndPeriod = 'AM';
+  void _submitAvailabiltyEventData() {
+    //for availabilty
+  }
+  void _submitGalaEventData() {
+    // Clear the list to prevent duplicate submissions
+    galaEvents.clear();
 
- void _submitGalaEventData() {
-  // Clear the list to prevent duplicate submissions
-  galaEvents.clear();
-  
-  // Loop through all selected dates and create an event for each date
-  selectedDates.forEach((date) {
-    galaEvents.add({
-      "date": DateFormat('dd-MM-yyyy').format(date),
-      "start_time": "$selectedStartHour $selectedStartPeriod",
-      "end_time": "$selectedEndHour $selectedEndPeriod"
+    // Loop through all selected dates and create an event for each date
+    selectedDates.forEach((date) {
+      galaEvents.add({
+        "date": DateFormat('dd-MM-yyyy').format(date),
+        "start_time": "$selectedStartHour $selectedStartPeriod",
+        "end_time": "$selectedEndHour $selectedEndPeriod"
+      });
     });
-  });
 
-  print("Gala Events Submitted: $galaEvents");
+    print("Gala Events Submitted: $galaEvents");
 
-  // API call logic can be added here
-}
+    // API call logic can be added here
+  }
 
-void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-  setState(() {
-    // Ensure no duplicate entries in selected dates
-    if (selectedDates.contains(selectedDay)) {
-      selectedDates.remove(selectedDay);
-    } else {
-      selectedDates.add(selectedDay);
-    }
-  });
-}
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      // Ensure no duplicate entries in selected dates
+      if (selectedDates.contains(selectedDay)) {
+        selectedDates.remove(selectedDay);
+      } else {
+        selectedDates.add(selectedDay);
+      }
+    });
+  }
+
   void _submitTaskManagementData() {
     // Separate functionality for task management
     // You can customize this section as per task management requirement
@@ -68,7 +71,7 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     });
 
     print("Task Management Events Submitted: $taskEvents");
-    
+
     // API call logic for Task Management can be added here
   }
 
@@ -100,7 +103,8 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
               ),
             ),
             GestureDetector(
-              onTap: () => Provider.of<AuthNotifier>(context, listen: false).logout(),
+              onTap: () =>
+                  Provider.of<AuthNotifier>(context, listen: false).logout(),
               child: Container(
                 padding: EdgeInsets.all(8),
                 child: Text(
@@ -148,20 +152,25 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
-                  leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
-                  rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
+                  leftChevronIcon:
+                      Icon(Icons.chevron_left, color: Colors.black),
+                  rightChevronIcon:
+                      Icon(Icons.chevron_right, color: Colors.black),
                 ),
               ),
-              Container(height: 20),
+              SizedBox(height: 20),
               if (user_type == 'customer') ...[
-                _buildMenuButton('GALA/AVAILABILITY', context, _submitGalaEventData),
+                _buildMenuButton('GALA', context, _submitGalaEventData),
               ] else ...[
-                _buildMenuButton('AVAILABILITY', context, _submitTaskManagementData),
+                _buildMenuButton(
+                    'AVAILABILITY', context, _submitAvailabiltyEventData),
               ],
-              if (_isGalaPanelOpen) _buildTimeSelector(context),
-              Container(height: 10),
-              _buildMenuButton('TASK MANAGEMENT', context, _submitTaskManagementData),
-              Container(height: 20),
+              if (_isGalaPanelOpen)
+                _buildTimeSelector(context, _submitGalaEventData),
+              SizedBox(height: 10),
+              _buildMenuButton(
+                  'TASK MANAGEMENT', context, _submitTaskManagementData),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -169,7 +178,8 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     );
   }
 
-  Widget _buildMenuButton(String text, BuildContext context, VoidCallback submitFunction) {
+  Widget _buildMenuButton(
+      String text, BuildContext context, VoidCallback submitFunction) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -192,15 +202,15 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
             });
           },
         ),
-        ElevatedButton(
-          onPressed: submitFunction,
-          child: Text("Submit"),
-        )
+        // ElevatedButton(
+        //   onPressed: submitFunction,
+        //   child: Text("Submit"),
+        // )
       ],
     );
   }
 
-  Widget _buildTimeSelector(BuildContext context) {
+  Widget _buildTimeSelector(BuildContext context, VoidCallback submitFunction) {
     return Column(
       children: [
         Row(
@@ -214,7 +224,8 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
                 children: [
                   // Start Time Picker
                   SizedBox(
-                    width: MediaQuery.of(context).size.width / 6, // Fixed width for time
+                    width: MediaQuery.of(context).size.width /
+                        6, // Fixed width for time
                     height: 120, // Fixed height for the ListWheelScrollView
                     child: ListWheelScrollView.useDelegate(
                       itemExtent: 50,
@@ -232,7 +243,9 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
                             hour.toString(),
                             style: TextStyle(
                               fontSize: 24,
-                              color: hour == selectedStartHour ? Colors.green : Colors.grey,
+                              color: hour == selectedStartHour
+                                  ? Colors.green
+                                  : Colors.grey,
                             ),
                           );
                         },
@@ -242,7 +255,8 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
                   ),
                   // Start Period Picker (AM/PM)
                   SizedBox(
-                    width: MediaQuery.of(context).size.width / 6, // Fixed width for AM/PM
+                    width: MediaQuery.of(context).size.width /
+                        6, // Fixed width for AM/PM
                     height: 120, // Fixed height for the ListWheelScrollView
                     child: ListWheelScrollView.useDelegate(
                       itemExtent: 50,
@@ -260,7 +274,9 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
                             period,
                             style: TextStyle(
                               fontSize: 24,
-                              color: period == selectedStartPeriod ? Colors.green : Colors.grey,
+                              color: period == selectedStartPeriod
+                                  ? Colors.green
+                                  : Colors.grey,
                             ),
                           );
                         },
@@ -279,11 +295,12 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
                 children: [
                   // End Time Picker
                   SizedBox(
-                    width: MediaQuery.of(context).size.width / 6, // Fixed width for time
+                    width: MediaQuery.of(context).size.width /
+                        6, // Fixed width for time
                     height: 150, // Fixed height for the ListWheelScrollView
                     child: ListWheelScrollView.useDelegate(
                       itemExtent: 50,
-                                           diameterRatio: 1.5,
+                      diameterRatio: 1.5,
                       physics: FixedExtentScrollPhysics(),
                       onSelectedItemChanged: (index) {
                         setState(() {
@@ -297,7 +314,9 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
                             hour.toString(),
                             style: TextStyle(
                               fontSize: 24,
-                              color: hour == selectedEndHour ? Colors.green : Colors.grey,
+                              color: hour == selectedEndHour
+                                  ? Colors.green
+                                  : Colors.grey,
                             ),
                           );
                         },
@@ -307,7 +326,8 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
                   ),
                   // End Period Picker (AM/PM)
                   SizedBox(
-                    width: MediaQuery.of(context).size.width / 6, // Fixed width for AM/PM
+                    width: MediaQuery.of(context).size.width /
+                        6, // Fixed width for AM/PM
                     height: 150, // Fixed height for the ListWheelScrollView
                     child: ListWheelScrollView.useDelegate(
                       itemExtent: 50,
@@ -325,7 +345,9 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
                             period,
                             style: TextStyle(
                               fontSize: 24,
-                              color: period == selectedEndPeriod ? Colors.green : Colors.grey,
+                              color: period == selectedEndPeriod
+                                  ? Colors.green
+                                  : Colors.grey,
                             ),
                           );
                         },
@@ -338,6 +360,21 @@ void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
             ),
           ],
         ),
+        GestureDetector(
+          onTap: submitFunction,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+              decoration: BoxDecoration(
+                color: Color(0xffD9D9D9),
+                borderRadius: BorderRadius.all(Radius.circular(13)),
+              ),
+              child: Text(
+                "Submit",
+                style: TextStyle(
+                  color: Colors.black,fontWeight: FontWeight.bold,
+                ),
+              )),
+        )
       ],
     );
   }
