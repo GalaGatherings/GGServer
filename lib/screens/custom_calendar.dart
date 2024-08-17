@@ -132,7 +132,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
               ),
               Container(height: 20),
               if (user_type == 'customer') ...[
-                _buildMenuButton('GALA/AVAILABILITY', context),
+                _buildMenuButton('GALA', context),
               ] else ...[
                 _buildMenuButton('AVAILABILITY', context),
               ],
