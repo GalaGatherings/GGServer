@@ -252,6 +252,10 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
               if (_isTaskPanelOpen)
                 _buildTaskAndTimeSelector(context, _submitTaskManagementData),
               SizedBox(height: 20),
+              
+             
+                   if (_isTaskPanelOpen)
+                _buildTaskListUI(context),
             ],
           ),
         ),
@@ -259,55 +263,53 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
     );
   }
 
-Widget _buildMenuButton(
-  String text, 
-  BuildContext context, 
-  VoidCallback submitFunction
-) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(
-        text,
-        style: TextStyle(
-          color: Colors.redAccent,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      Container(
-        constraints: BoxConstraints(maxHeight: 40, maxWidth: 40),
-        width: 35,
-        height: 35,
-        decoration: BoxDecoration(
-          color: Color(0xffFB6641),
-          borderRadius: BorderRadius.all(Radius.circular(50)),
-        ),
-        child: Center(
-          child: IconButton(
-            icon: Icon(
-              // Dynamically set the icon based on the panel's state
-              (text == 'GALA' || text == 'AVAILABILITY')
-                  ? (_isGalaPanelOpen ? Icons.remove : Icons.add)
-                  : (_isTaskPanelOpen ? Icons.remove : Icons.add),
-              color: Colors.white,
-              size: 20,
-            ),
-            onPressed: () {
-              setState(() {
-                if (text == 'GALA' || text == 'AVAILABILITY') {
-                  _isGalaPanelOpen = !_isGalaPanelOpen; // Toggle GALA panel
-                } else if (text == 'TASK MANAGEMENT') {
-                  _isTaskPanelOpen = !_isTaskPanelOpen; // Toggle TASK panel
-                }
-              });
-            },
+  Widget _buildMenuButton(
+      String text, BuildContext context, VoidCallback submitFunction) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          text,
+          style: TextStyle(
+            color: Colors.redAccent,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      ),
-    ],
-  );
-}
+        Container(
+          constraints: BoxConstraints(maxHeight: 40, maxWidth: 40),
+          width: 35,
+          height: 35,
+          decoration: BoxDecoration(
+            color: Color(0xffFB6641),
+            borderRadius: BorderRadius.all(Radius.circular(50)),
+          ),
+          child: Center(
+            child: IconButton(
+              icon: Icon(
+                // Dynamically set the icon based on the panel's state
+                (text == 'GALA' || text == 'AVAILABILITY')
+                    ? (_isGalaPanelOpen ? Icons.remove : Icons.add)
+                    : (_isTaskPanelOpen ? Icons.remove : Icons.add),
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () {
+                setState(() {
+                  if (text == 'GALA' || text == 'AVAILABILITY') {
+                    _isGalaPanelOpen = !_isGalaPanelOpen; // Toggle GALA panel
+                  } else if (text == 'TASK MANAGEMENT') {
+                    _isTaskPanelOpen = !_isTaskPanelOpen; // Toggle TASK panel
+                  }
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildTimeSelector(BuildContext context, VoidCallback submitFunction) {
     return Column(
       children: [
@@ -698,11 +700,111 @@ Widget _buildMenuButton(
             ),
           ),
         ),
-        SizedBox(height: 20,)
+        SizedBox(
+          height: 20,
+        )
       ],
-    
     );
   }
 
+
+Widget _buildTaskListUI(BuildContext context) {
+  // Sample task data, you can replace it with the dynamic task list
+  List<Map<String, String>> taskEvents = [
+    {"task": "Meeting with ADAP", "time": "8:00-9:00 AM"},
+    {"task": "Meeting with My Team", "time": "8:00-9:00 AM"},
+    {"task": "Presentation", "time": "8:00-9:00 AM"},
+    {"task": "Assign Tasks", "time": "8:00-9:00 AM"},
+  ];
+
+  return Column(
+    children: [
+    
+     
+      SizedBox(height: 10),
+      // Task list with time
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          children: [
+            // Header row
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Color(0xffFB6641),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'TASKS',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    'Time',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // List of tasks
+            ListView.builder(
+              itemCount: taskEvents.length,
+              shrinkWrap: true, // Important to prevent overflow
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Container(
+                  color: index % 2 == 0
+                      ? Color(0xffFBCFCC)
+                      : Colors.white, // Alternating row colors
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          taskEvents[index]['task']!,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          taskEvents[index]['time']!,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
 // Function for submitting task management data
 }
