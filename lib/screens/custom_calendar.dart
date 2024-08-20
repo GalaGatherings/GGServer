@@ -321,17 +321,31 @@ void _submitTaskManagementData() {
               _buildMenuButton(
                   'TASK MANAGEMENT', context, _submitTaskManagementData),
               // Show the "Add New Task" button by default
-              if (!_isAddingTask && _isTaskPanelOpen)
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isAddingTask =
-                          true; // Show the task input form when clicked
-                      _isTaskPanelOpen = true;
-                    });
-                  },
-                  child: Text('ADD NEW TASK'),
-                ),
+              // Show the "Add New Task" button when the form is not open
+if (!_isAddingTask && _isTaskPanelOpen)
+  ElevatedButton(
+    onPressed: () {
+      setState(() {
+        _isAddingTask = true; // Show the task input form when clicked
+        _isTaskPanelOpen = true;
+      });
+    },
+    child: Text('ADD NEW TASK'),
+  ),
+
+// Show the "Close Task" button when the form is open
+if (_isAddingTask && _isTaskPanelOpen)
+  ElevatedButton(
+    onPressed: () {
+      setState(() {
+        _isAddingTask = false; // Close the task input form
+      });
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.redAccent, // Optional: Change button color to red
+    ),
+    child: Text('CLOSE TASK',style: TextStyle(color: Colors.white),),
+  ),
 // Show the task input form when the user clicks "Add New Task"
               if (_isAddingTask)
                 _buildTaskAndTimeSelector(context, _submitTaskManagementData),
