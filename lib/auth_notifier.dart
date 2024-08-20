@@ -120,7 +120,7 @@ class AuthNotifier extends ChangeNotifier {
     }
   }
 
-  Future<String>  user_update(userData) async {
+  Future<String> user_update(userData) async {
     final url = Uri.parse('$baseUrl/update-user');
     try {
       final response = await http.post(
@@ -133,6 +133,22 @@ class AuthNotifier extends ChangeNotifier {
       return responseData['message'];
     } catch (error) {
       return 'error';
+    }
+  }
+
+  Future<dynamic> getUserData() async {
+    final url = Uri.parse('$baseUrl/get-user-details');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': userId}),
+      );
+      final responseData = jsonDecode(response.body);
+     
+      return responseData['data'];
+    } catch (error) {
+      return {};
     }
   }
 
