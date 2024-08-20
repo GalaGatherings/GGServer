@@ -1,9 +1,6 @@
-import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -12,14 +9,16 @@ import 'package:intl/intl.dart'; // For formatting dates
 class CustomCalendarScreen extends StatefulWidget {
   final bool isLoggedIn;
 
-  CustomCalendarScreen(this.isLoggedIn);
+  const CustomCalendarScreen(this.isLoggedIn);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomCalendarScreenState createState() => _CustomCalendarScreenState();
 }
 
 class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   DateTime _focusedDay = DateTime.now(); // Track the currently focused day
+  // ignore: unused_field
   DateTime _selectedDay = DateTime.now(); // Track the selected day
   // This will store the selected dates
   List<DateTime> selectedDates = [];
@@ -28,6 +27,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
 
   // Controls the visibility of the time picker panel
   bool _isGalaPanelOpen = false;
+  // ignore: unused_field
   bool _isTaskPanelOpen = false;
   // Variables for storing selected time
   int selectedStartHour = 1;
@@ -235,6 +235,8 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
               SizedBox(height: 10),
               _buildMenuButton(
                   'TASK MANAGEMENT', context, _submitTaskManagementData),
+                  if (_isTaskPanelOpen)
+                _buildTaskAndTimeSelector(context, _submitTaskManagementData),
               SizedBox(height: 20),
             ],
           ),
@@ -461,4 +463,178 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
       ],
     );
   }
+
+  Widget _buildTaskAndTimeSelector(BuildContext context, VoidCallback submitFunction) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // Start Time and AM/PM together in a Row
+            Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Start Time Picker
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width /
+                        6, // Fixed width for time
+                    height: 120, // Fixed height for the ListWheelScrollView
+                    child: ListWheelScrollView.useDelegate(
+                      itemExtent: 50,
+                      diameterRatio: 1.5,
+                      physics: FixedExtentScrollPhysics(),
+                      onSelectedItemChanged: (index) {
+                        setState(() {
+                          selectedStartHour = index + 1;
+                        });
+                      },
+                      childDelegate: ListWheelChildBuilderDelegate(
+                        builder: (context, index) {
+                          final hour = index + 1;
+                          return Text(
+                            hour.toString(),
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: hour == selectedStartHour
+                                  ? Colors.green
+                                  : Colors.grey,
+                            ),
+                          );
+                        },
+                        childCount: 12,
+                      ),
+                    ),
+                  ),
+                  // Start Period Picker (AM/PM)
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width /
+                        6, // Fixed width for AM/PM
+                    height: 120, // Fixed height for the ListWheelScrollView
+                    child: ListWheelScrollView.useDelegate(
+                      itemExtent: 50,
+                      diameterRatio: 1.5,
+                      physics: FixedExtentScrollPhysics(),
+                      onSelectedItemChanged: (index) {
+                        setState(() {
+                          selectedStartPeriod = index == 0 ? 'AM' : 'PM';
+                        });
+                      },
+                      childDelegate: ListWheelChildBuilderDelegate(
+                        builder: (context, index) {
+                          final period = index == 0 ? 'AM' : 'PM';
+                          return Text(
+                            period,
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: period == selectedStartPeriod
+                                  ? Colors.green
+                                  : Colors.grey,
+                            ),
+                          );
+                        },
+                        childCount: 2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // End Time and AM/PM together in a Row
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // End Time Picker
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width /
+                        6, // Fixed width for time
+                    height: 150, // Fixed height for the ListWheelScrollView
+                    child: ListWheelScrollView.useDelegate(
+                      itemExtent: 50,
+                      diameterRatio: 1.5,
+                      physics: FixedExtentScrollPhysics(),
+                      onSelectedItemChanged: (index) {
+                        setState(() {
+                          selectedEndHour = index + 1;
+                        });
+                      },
+                      childDelegate: ListWheelChildBuilderDelegate(
+                        builder: (context, index) {
+                          final hour = index + 1;
+                          return Text(
+                            hour.toString(),
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: hour == selectedEndHour
+                                  ? Colors.green
+                                  : Colors.grey,
+                            ),
+                          );
+                        },
+                        childCount: 12,
+                      ),
+                    ),
+                  ),
+                  // End Period Picker (AM/PM)
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width /
+                        6, // Fixed width for AM/PM
+                    height: 150, // Fixed height for the ListWheelScrollView
+                    child: ListWheelScrollView.useDelegate(
+                      itemExtent: 50,
+                      diameterRatio: 1.5,
+                      physics: FixedExtentScrollPhysics(),
+                      onSelectedItemChanged: (index) {
+                        setState(() {
+                          selectedEndPeriod = index == 0 ? 'AM' : 'PM';
+                        });
+                      },
+                      childDelegate: ListWheelChildBuilderDelegate(
+                        builder: (context, index) {
+                          final period = index == 0 ? 'AM' : 'PM';
+                          return Text(
+                            period,
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: period == selectedEndPeriod
+                                  ? Colors.green
+                                  : Colors.grey,
+                            ),
+                          );
+                        },
+                        childCount: 2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Container(child: Text('Tasks '),),
+        GestureDetector(
+          onTap: submitFunction,
+          child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              decoration: BoxDecoration(
+                color: Color(0xffD9D9D9),
+                borderRadius: BorderRadius.all(Radius.circular(13)),
+              ),
+              child: Text(
+                "Submit",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              )),
+        )
+      ],
+    );
+  }
+
+
+
 }
