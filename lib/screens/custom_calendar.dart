@@ -39,30 +39,33 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   List<Map<String, dynamic>> allTasks = [];
 
   @override
-void initState() {
-  super.initState();
-  fetchAllTasks();  // Fetch all tasks for the user when the screen is loaded
-}
-
- Future<void> fetchAllTasks() async {
-  try {
-    // Fetch all tasks for the user once in initState
-    var tasksData = await Provider.of<AuthNotifier>(context, listen: false).getTaskData();
-    
-    if (tasksData != null && tasksData is List) {
-      setState(() {
-        // Store all tasks fetched from the backend
-        allTasks = tasksData.map<Map<String, dynamic>>((task) => task as Map<String, dynamic>).toList();
-      });
-    }
-
-    // After fetching all tasks, filter them for the current date
-    fetchTaskData();
-  } catch (error) {
-    print("Error fetching task data: $error");
+  void initState() {
+    super.initState();
+    fetchAllTasks(); // Fetch all tasks for the user when the screen is loaded
   }
-}
- void fetchTaskData() {
+
+  Future<void> fetchAllTasks() async {
+    try {
+      // Fetch all tasks for the user once in initState
+      var tasksData =
+          await Provider.of<AuthNotifier>(context, listen: false).getTaskData();
+
+      if (tasksData != null && tasksData is List) {
+        setState(() {
+          // Store all tasks fetched from the backend
+          allTasks = tasksData
+              .map<Map<String, dynamic>>((task) => task as Map<String, dynamic>)
+              .toList();
+        });
+      }
+
+      // After fetching all tasks, filter them for the current date
+      fetchTaskData();
+    } catch (error) {
+      print("Error fetching task data: $error");
+    }
+  }
+void fetchTaskData() {
   setState(() {
     // Convert the selected dates to string format
     List<String> selectedDateStrings = selectedDates.map((date) {
@@ -73,62 +76,73 @@ void initState() {
     taskEvents = allTasks.where((task) {
       return selectedDateStrings.contains(task['date']);
     }).toList();
+
+    // Sort the filtered taskEvents by date in ascending order
+    taskEvents.sort((a, b) {
+      // Parse the dates from the task events
+      DateTime dateA = DateFormat('dd-MM-yyyy').parse(a['date']);
+      DateTime dateB = DateFormat('dd-MM-yyyy').parse(b['date']);
+      return dateA.compareTo(dateB); // Ascending order
+    });
   });
 }
+
   void _submitAvailabiltyEventData() {
     //for availabilty
   }
   TextEditingController taskController = TextEditingController();
 
-void _submitTaskManagementData() {
-  bool isValid = true; // Flag to check if all data is valid
+  void _submitTaskManagementData() {
+    bool isValid = true; // Flag to check if all data is valid
 
-  // Check if taskController is empty
-  if (taskController.text.isEmpty) {
-    isValid = false;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Please enter a task name.'),
-    ));
-  }
-
-  // Loop through all selected dates and create an event for each date
-  selectedDates.forEach((date) {
-    if (selectedStartHour == null || selectedEndHour == null) {
+    // Check if taskController is empty
+    if (taskController.text.isEmpty) {
       isValid = false;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please select start and end times.'),
+        content: Text('Please enter a task name.'),
       ));
     }
 
-    // If valid, create the task data
-    if (isValid) {
-      var taskData = {
-        "task": taskController.text,
-        "date": DateFormat('dd-MM-yyyy').format(date),
-        "start_time": "$selectedStartHour $selectedStartPeriod",
-        "end_time": "$selectedEndHour $selectedEndPeriod"
-      };
-
-      // Send each task to the API for individual processing
-      Provider.of<AuthNotifier>(context, listen: false)
-          .updateTask(taskData)
-          .then((value) {
+    // Loop through all selected dates and create an event for each date
+    selectedDates.forEach((date) {
+      if (selectedStartHour == null || selectedEndHour == null) {
+        isValid = false;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(value),
+          content: Text('Please select start and end times.'),
         ));
-      });
-    }
-  });
+      }
 
-  // Clear the task input fields and reset the form only if everything is valid
-  if (isValid) {
-    setState(() {
-      taskController.clear();
-      _isAddingTask = false;
+      // If valid, create the task data
+      if (isValid) {
+        var taskData = {
+          "task": taskController.text,
+          "date": DateFormat('dd-MM-yyyy').format(date),
+          "start_time": "$selectedStartHour $selectedStartPeriod",
+          "end_time": "$selectedEndHour $selectedEndPeriod"
+        };
+
+        // Send each task to the API for individual processing
+        Provider.of<AuthNotifier>(context, listen: false)
+            .updateTask(taskData)
+            .then((value) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(value),
+          ));
+        });
+        fetchAllTasks();
+      }
     });
-    print("Task Management Events Submitted");
+
+    // Clear the task input fields and reset the form only if everything is valid
+    if (isValid) {
+      setState(() {
+        taskController.clear();
+        _isAddingTask = false;
+      });
+      print("Task Management Events Submitted");
+    }
   }
-}
+
   @override
   void dispose() {
     // Dispose of the controller when the widget is removed from the widget tree
@@ -171,22 +185,23 @@ void _submitTaskManagementData() {
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-  setState(() {
-    // Update both the selected day and the focused day
-    _selectedDay = selectedDay;
-    _focusedDay = focusedDay;
+    setState(() {
+      // Update both the selected day and the focused day
+      _selectedDay = selectedDay;
+      _focusedDay = focusedDay;
 
-    // Add or remove selected dates
-    if (selectedDates.contains(selectedDay)) {
-      selectedDates.remove(selectedDay);
-    } else {
-      selectedDates.add(selectedDay);
-    }
+      // Add or remove selected dates
+      if (selectedDates.contains(selectedDay)) {
+        selectedDates.remove(selectedDay);
+      } else {
+        selectedDates.add(selectedDay);
+      }
 
-    // Filter tasks based on the updated selected dates
-    fetchTaskData();
-  });
-}
+      // Filter tasks based on the updated selected dates
+      fetchTaskData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user_type = 'customer';
@@ -322,30 +337,35 @@ void _submitTaskManagementData() {
                   'TASK MANAGEMENT', context, _submitTaskManagementData),
               // Show the "Add New Task" button by default
               // Show the "Add New Task" button when the form is not open
-if (!_isAddingTask && _isTaskPanelOpen)
-  ElevatedButton(
-    onPressed: () {
-      setState(() {
-        _isAddingTask = true; // Show the task input form when clicked
-        _isTaskPanelOpen = true;
-      });
-    },
-    child: Text('ADD NEW TASK'),
-  ),
+              if (!_isAddingTask && _isTaskPanelOpen)
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isAddingTask =
+                          true; // Show the task input form when clicked
+                      _isTaskPanelOpen = true;
+                    });
+                  },
+                  child: Text('ADD NEW TASK'),
+                ),
 
 // Show the "Close Task" button when the form is open
-if (_isAddingTask && _isTaskPanelOpen)
-  ElevatedButton(
-    onPressed: () {
-      setState(() {
-        _isAddingTask = false; // Close the task input form
-      });
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.redAccent, // Optional: Change button color to red
-    ),
-    child: Text('CLOSE TASK',style: TextStyle(color: Colors.white),),
-  ),
+              if (_isAddingTask && _isTaskPanelOpen)
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isAddingTask = false; // Close the task input form
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors
+                        .redAccent, // Optional: Change button color to red
+                  ),
+                  child: Text(
+                    'CLOSE TASK',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
 // Show the task input form when the user clicks "Add New Task"
               if (_isAddingTask)
                 _buildTaskAndTimeSelector(context, _submitTaskManagementData),
@@ -778,105 +798,106 @@ if (_isAddingTask && _isTaskPanelOpen)
     );
   }
 
-Widget _buildTaskListUI(BuildContext context) {
-  if (taskEvents.isEmpty) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-          'No tasks available for the selected date(s).',
-          style: TextStyle(color: Colors.white, fontSize: 16),
+  Widget _buildTaskListUI(BuildContext context) {
+    if (taskEvents.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'No tasks available for the selected date(s).',
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  return Column(
-    children: [
-      SizedBox(height: 10),
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                color: Color(0xffFB6641),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
+    return Column(
+      children: [
+        SizedBox(height: 10),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Color(0xffFB6641),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'TASKS',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      'Time',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'TASKS',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(
-                    'Time',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListView.builder(
-              itemCount: taskEvents.length,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return Container(
-                  color: index % 2 == 0
-                      ? Color(0xffFBCFCC)
-                      : Colors.white, // Alternating row colors
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width / 1.8),
-                          child: Text(
-                            taskEvents[index]['task']!,
+              ListView.builder(
+                itemCount: taskEvents.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Container(
+                    color: index % 2 == 0
+                        ? Color(0xffFBCFCC)
+                        : Colors.white, // Alternating row colors
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(
+                                maxWidth:
+                                    MediaQuery.of(context).size.width / 1.8),
+                            child: Text(
+                              taskEvents[index]['task']!,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '${taskEvents[index]['start_time']} - ${taskEvents[index]['end_time']}',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ),
-                        Text(
-                          '${taskEvents[index]['start_time']} - ${taskEvents[index]['end_time']}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 }
