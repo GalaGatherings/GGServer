@@ -1,5 +1,4 @@
-
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +36,37 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   void _submitAvailabiltyEventData() {
     //for availabilty
   }
+  TextEditingController taskController = TextEditingController();
+
+  void _submitTaskManagementData() {
+    // Clear previous entries
+    taskEvents.clear();
+
+    // Loop through all selected dates and create an event for each date
+    selectedDates.forEach((date) {
+      taskEvents.add({
+        "task": taskController.text,
+        "date": DateFormat('dd-MM-yyyy').format(date),
+        "start_time": "$selectedStartHour $selectedStartPeriod",
+        "end_time": "$selectedEndHour $selectedEndPeriod"
+      });
+    });
+
+    print("Task Management Events Submitted: $taskEvents");
+
+    // Optionally, clear the task controller
+    taskController.clear();
+
+    // API call logic for Task Management can be added here
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the controller when the widget is removed from the widget tree
+    taskController.dispose();
+    super.dispose();
+  }
+
   void _submitGalaEventData() async {
     // Clear the list to prevent duplicate submissions
     galaEvents.clear();
@@ -56,12 +86,10 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
     Provider.of<AuthNotifier>(context, listen: false)
         .user_update(gala)
         .then((value) => {
-          
-         
-           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(value),
-                    ))
-        });
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(value),
+              ))
+            });
     //  print("resJeson  $res");
     //  var resJson= json.encode(res);
     //  print("resJson  $resJson");
@@ -86,20 +114,6 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
         selectedDates.add(selectedDay);
       }
     });
-  }
-
-  void _submitTaskManagementData() {
-    // Separate functionality for task management
-    // You can customize this section as per task management requirement
-    taskEvents.add({
-      "task": "Task Management Example",
-      "start_time": "$selectedStartHour $selectedStartPeriod",
-      "end_time": "$selectedEndHour $selectedEndPeriod"
-    });
-
-    print("Task Management Events Submitted: $taskEvents");
-
-    // API call logic for Task Management can be added here
   }
 
   @override
@@ -235,7 +249,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
               SizedBox(height: 10),
               _buildMenuButton(
                   'TASK MANAGEMENT', context, _submitTaskManagementData),
-                  if (_isTaskPanelOpen)
+              if (_isTaskPanelOpen)
                 _buildTaskAndTimeSelector(context, _submitTaskManagementData),
               SizedBox(height: 20),
             ],
@@ -245,55 +259,55 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
     );
   }
 
-  Widget _buildMenuButton(
-      String text, BuildContext context, VoidCallback submitFunction) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          text,
-          style: TextStyle(
-            color: Colors.redAccent,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+Widget _buildMenuButton(
+  String text, 
+  BuildContext context, 
+  VoidCallback submitFunction
+) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        text,
+        style: TextStyle(
+          color: Colors.redAccent,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
-        Container(
-          constraints: BoxConstraints(maxHeight: 40, maxWidth: 40),
-          //  padding: EdgeInsets.all(30),
-          width: 35,
-          height: 35,
-
-          decoration: BoxDecoration(
-              color: Color(0xffFB6641),
-              borderRadius: BorderRadius.all(Radius.circular(50))),
-          child: Center(
-            child: IconButton(
-              icon: Icon(
-                _isGalaPanelOpen ? Icons.remove : Icons.add, // Toggle icon
-                color: Colors.white,
-                size: 20,
-              ),
-              onPressed: () {
-                setState(() {
-                  if (text == 'GALA')
-                    _isGalaPanelOpen = !_isGalaPanelOpen;
-                  // Toggle panel visibility
-                  else if (text == 'TASK MANAGEMENT')
-                    _isGalaPanelOpen = !_isGalaPanelOpen;
-                });
-              },
+      ),
+      Container(
+        constraints: BoxConstraints(maxHeight: 40, maxWidth: 40),
+        width: 35,
+        height: 35,
+        decoration: BoxDecoration(
+          color: Color(0xffFB6641),
+          borderRadius: BorderRadius.all(Radius.circular(50)),
+        ),
+        child: Center(
+          child: IconButton(
+            icon: Icon(
+              // Dynamically set the icon based on the panel's state
+              (text == 'GALA' || text == 'AVAILABILITY')
+                  ? (_isGalaPanelOpen ? Icons.remove : Icons.add)
+                  : (_isTaskPanelOpen ? Icons.remove : Icons.add),
+              color: Colors.white,
+              size: 20,
             ),
+            onPressed: () {
+              setState(() {
+                if (text == 'GALA' || text == 'AVAILABILITY') {
+                  _isGalaPanelOpen = !_isGalaPanelOpen; // Toggle GALA panel
+                } else if (text == 'TASK MANAGEMENT') {
+                  _isTaskPanelOpen = !_isTaskPanelOpen; // Toggle TASK panel
+                }
+              });
+            },
           ),
         ),
-        // ElevatedButton(
-        //   onPressed: submitFunction,
-        //   child: Text("Submit"),
-        // )
-      ],
-    );
-  }
-
+      ),
+    ],
+  );
+}
   Widget _buildTimeSelector(BuildContext context, VoidCallback submitFunction) {
     return Column(
       children: [
@@ -464,9 +478,36 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
     );
   }
 
-  Widget _buildTaskAndTimeSelector(BuildContext context, VoidCallback submitFunction) {
+  Widget _buildTaskAndTimeSelector(
+      BuildContext context, VoidCallback submitFunction) {
     return Column(
       children: [
+        // Task Name Input Field
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Container(
+            width: MediaQuery.of(context).size.width, // Full-width container
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+            decoration: BoxDecoration(
+              color: Color(0xffD9D9D9),
+              borderRadius: BorderRadius.all(Radius.circular(13)),
+            ),
+            child: TextField(
+              controller: taskController,
+              maxLines: null, // Allows the text to wrap onto the next line
+              decoration: InputDecoration(
+                hintText: "Enter Task Name",
+                hintStyle: TextStyle(color: Colors.black54),
+                border: InputBorder.none,
+              ),
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        // Time Pickers
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -614,27 +655,54 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
             ),
           ],
         ),
-        Container(child: Text('Tasks '),),
         GestureDetector(
-          onTap: submitFunction,
+          onTap: () {
+            // Ensure the task name is not empty before submission
+            if (taskController.text.isNotEmpty) {
+              // Clear taskEvents before adding new data
+              taskEvents.clear();
+
+              // Loop through all selected dates and create an event for each date
+              selectedDates.forEach((date) {
+                taskEvents.add({
+                  "task": taskController.text,
+                  "date": DateFormat('dd-MM-yyyy').format(date),
+                  "start_time": "$selectedStartHour $selectedStartPeriod",
+                  "end_time": "$selectedEndHour $selectedEndPeriod"
+                });
+              });
+
+              print("Task Management Events Submitted: $taskEvents");
+
+              // Reset task name input, but keep the selected dates and times
+              taskController.clear();
+            } else {
+              // Show an error message if the task name is empty
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("Please enter a task name"),
+              ));
+            }
+          },
           child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              decoration: BoxDecoration(
-                color: Color(0xffD9D9D9),
-                borderRadius: BorderRadius.all(Radius.circular(13)),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            decoration: BoxDecoration(
+              color: Color(0xffD9D9D9),
+              borderRadius: BorderRadius.all(Radius.circular(13)),
+            ),
+            child: Text(
+              "Submit",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
               ),
-              child: Text(
-                "Submit",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              )),
-        )
+            ),
+          ),
+        ),
+        SizedBox(height: 20,)
       ],
+    
     );
   }
 
-
-
+// Function for submitting task management data
 }
