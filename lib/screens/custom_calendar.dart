@@ -125,11 +125,12 @@ void fetchTaskData() {
         Provider.of<AuthNotifier>(context, listen: false)
             .updateTask(taskData)
             .then((value) {
+              fetchAllTasks();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(value),
           ));
         });
-        fetchAllTasks();
+    
       }
     });
 
