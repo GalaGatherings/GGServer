@@ -36,45 +36,73 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   String selectedEndPeriod = 'AM';
   bool _isAddingTask = false;
   List<Map<String, dynamic>> taskEvents = [];
+  List<Map<String, dynamic>> allTasks = [];
 
   @override
-  void initState() {
-    super.initState();
-    // Fetch task data when the widget is initialized
-  }
+void initState() {
+  super.initState();
+  fetchAllTasks();  // Fetch all tasks for the user when the screen is loaded
+}
 
- Future<void> fetchTaskData(DateTime selectedDate) async {
+ Future<void> fetchAllTasks() async {
   try {
-    // Format the selected date
-   String formattedDate = DateFormat('dd-MM-yyyy').format(selectedDate);
-var tasksData = await Provider.of<AuthNotifier>(context, listen: false).getTaskData(formattedDate);
-    print("tasksDatais $tasksData $formattedDate ");
+    // Fetch all tasks for the user once in initState
+    var tasksData = await Provider.of<AuthNotifier>(context, listen: false).getTaskData();
+    
     if (tasksData != null && tasksData is List) {
       setState(() {
-        // Filter tasks by selected date and cast them to List<Map<String, dynamic>>
-        taskEvents = tasksData.cast<Map<String, dynamic>>(); // Directly use the API filtered result
-      });
-    } else {
-      setState(() {
-        taskEvents.clear(); // Clear the tasks if no data is available
+        // Store all tasks fetched from the backend
+        allTasks = tasksData.map<Map<String, dynamic>>((task) => task as Map<String, dynamic>).toList();
       });
     }
+
+    // After fetching all tasks, filter them for the current date
+    fetchTaskData();
   } catch (error) {
     print("Error fetching task data: $error");
   }
 }
-  
-  
+ void fetchTaskData() {
+  setState(() {
+    // Convert the selected dates to string format
+    List<String> selectedDateStrings = selectedDates.map((date) {
+      return DateFormat('dd-MM-yyyy').format(date);
+    }).toList();
+
+    // Filter tasks from `allTasks` based on selected dates
+    taskEvents = allTasks.where((task) {
+      return selectedDateStrings.contains(task['date']);
+    }).toList();
+  });
+}
   void _submitAvailabiltyEventData() {
     //for availabilty
   }
   TextEditingController taskController = TextEditingController();
 
-  void _submitTaskManagementData() {
-    // Loop through all selected dates and create an event for each date
-    selectedDates.forEach((date) {
+void _submitTaskManagementData() {
+  bool isValid = true; // Flag to check if all data is valid
+
+  // Check if taskController is empty
+  if (taskController.text.isEmpty) {
+    isValid = false;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Please enter a task name.'),
+    ));
+  }
+
+  // Loop through all selected dates and create an event for each date
+  selectedDates.forEach((date) {
+    if (selectedStartHour == null || selectedEndHour == null) {
+      isValid = false;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please select start and end times.'),
+      ));
+    }
+
+    // If valid, create the task data
+    if (isValid) {
       var taskData = {
-        // Make sure you have the userId available here
         "task": taskController.text,
         "date": DateFormat('dd-MM-yyyy').format(date),
         "start_time": "$selectedStartHour $selectedStartPeriod",
@@ -83,23 +111,24 @@ var tasksData = await Provider.of<AuthNotifier>(context, listen: false).getTaskD
 
       // Send each task to the API for individual processing
       Provider.of<AuthNotifier>(context, listen: false)
-          .updateTask(taskData) // Send one task at a time
-          .then((value) => {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(value),
-                ))
-              });
-    });
+          .updateTask(taskData)
+          .then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(value),
+        ));
+      });
+    }
+  });
 
-    // Clear the task input fields and reset the form
+  // Clear the task input fields and reset the form only if everything is valid
+  if (isValid) {
     setState(() {
       taskController.clear();
       _isAddingTask = false;
     });
-
     print("Task Management Events Submitted");
   }
-
+}
   @override
   void dispose() {
     // Dispose of the controller when the widget is removed from the widget tree
@@ -142,21 +171,22 @@ var tasksData = await Provider.of<AuthNotifier>(context, listen: false).getTaskD
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      // Update both the selected day and the focused day
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay;
-      print("Selecting date ${selectedDay}");
-      fetchTaskData(selectedDay);
-      // Add or remove selected dates
-      if (selectedDates.contains(selectedDay)) {
-        selectedDates.remove(selectedDay);
-      } else {
-        selectedDates.add(selectedDay);
-      }
-    });
-  }
+  setState(() {
+    // Update both the selected day and the focused day
+    _selectedDay = selectedDay;
+    _focusedDay = focusedDay;
 
+    // Add or remove selected dates
+    if (selectedDates.contains(selectedDay)) {
+      selectedDates.remove(selectedDay);
+    } else {
+      selectedDates.add(selectedDay);
+    }
+
+    // Filter tasks based on the updated selected dates
+    fetchTaskData();
+  });
+}
   @override
   Widget build(BuildContext context) {
     final user_type = 'customer';
@@ -740,7 +770,7 @@ Widget _buildTaskListUI(BuildContext context) {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
-          'No tasks available for the selected date.',
+          'No tasks available for the selected date(s).',
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
@@ -790,7 +820,7 @@ Widget _buildTaskListUI(BuildContext context) {
             ),
             ListView.builder(
               itemCount: taskEvents.length,
-              shrinkWrap: true, // Important to prevent overflow
+              shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return Container(
@@ -803,7 +833,9 @@ Widget _buildTaskListUI(BuildContext context) {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
+                        Container(
+                          constraints: BoxConstraints(
+                              maxWidth: MediaQuery.of(context).size.width / 1.8),
                           child: Text(
                             taskEvents[index]['task']!,
                             style: TextStyle(

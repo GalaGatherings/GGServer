@@ -169,19 +169,17 @@ Future<String> updateTask(taskData) async {
       return {};
     }
   }
-Future<dynamic> getTaskData(String date) async {
+Future<dynamic> getTaskData() async {
   final url = Uri.parse('$baseUrl/get-tasks');
   try {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'user_id': userId,
-        'date': date, // Include the selected date
-      }),
+      body: jsonEncode({'user_id': userId}), // Only fetch tasks by user_id
     );
     final responseData = jsonDecode(response.body);
     print("responseData  $responseData");
+    
     if (responseData['code'] == 200) {
       return responseData['tasks']; // Return tasks array from the API
     } else {
