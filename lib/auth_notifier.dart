@@ -136,6 +136,24 @@ class AuthNotifier extends ChangeNotifier {
     }
   }
 
+
+Future<String> updateTask(taskData) async {
+  final url = Uri.parse('$baseUrl/update-task');
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({"user_id":userId,...taskData}), // Send individual task data
+    );
+    final responseData = jsonDecode(response.body);
+    print("responseData  ${responseData['message']}");
+    return responseData['message'];
+  } catch (error) {
+    print("Error updating task: $error");
+    return 'Error updating task';
+  }
+}
+
   Future<dynamic> getUserData() async {
     final url = Uri.parse('$baseUrl/get-user-details');
     try {
@@ -151,7 +169,29 @@ class AuthNotifier extends ChangeNotifier {
       return {};
     }
   }
-
+Future<dynamic> getTaskData(String date) async {
+  final url = Uri.parse('$baseUrl/get-tasks');
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'user_id': userId,
+        'date': date, // Include the selected date
+      }),
+    );
+    final responseData = jsonDecode(response.body);
+    print("responseData  $responseData");
+    if (responseData['code'] == 200) {
+      return responseData['tasks']; // Return tasks array from the API
+    } else {
+      return [];
+    }
+  } catch (error) {
+    print("Error fetching task data: $error");
+    return [];
+  }
+}
   // Logout method
   Future<void> logout() async {
     print("Loging out");

@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:gala_gatherings/auth_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -25,7 +24,6 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   List<DateTime> selectedDates = [];
   List<Map<String, String>> galaEvents = [];
 
-
   // Controls the visibility of the time picker panel
   bool _isGalaPanelOpen = false;
   // ignore: unused_field
@@ -42,29 +40,30 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   @override
   void initState() {
     super.initState();
-    fetchTaskData(); // Fetch task data when the widget is initialized
+    // Fetch task data when the widget is initialized
   }
 
-  Future<void> fetchTaskData() async {
-    // Assuming `getUserData` fetches user data including tasks
-    var userData = await Provider.of<AuthNotifier>(context, listen: false).getUserData();
-
-    // Assuming `userData['tasks']` contains the list of tasks
-    if (userData != null && userData['tasks'] != null) {
-      List<dynamic> tasks = userData['tasks'];
+ Future<void> fetchTaskData(DateTime selectedDate) async {
+  try {
+    // Format the selected date
+   String formattedDate = DateFormat('dd-MM-yyyy').format(selectedDate);
+var tasksData = await Provider.of<AuthNotifier>(context, listen: false).getTaskData(formattedDate);
+    print("tasksDatais $tasksData $formattedDate ");
+    if (tasksData != null && tasksData is List) {
       setState(() {
-        // Convert task data to List<Map<String, String>>
-        taskEvents = tasks.map((task) {
-          return {
-            "task": task['task'],
-            "date": task['date'],
-            "start_time": task['start_time'],
-            "end_time": task['end_time'],
-          };
-        }).toList();
+        // Filter tasks by selected date and cast them to List<Map<String, dynamic>>
+        taskEvents = tasksData.cast<Map<String, dynamic>>(); // Directly use the API filtered result
+      });
+    } else {
+      setState(() {
+        taskEvents.clear(); // Clear the tasks if no data is available
       });
     }
+  } catch (error) {
+    print("Error fetching task data: $error");
   }
+}
+  
   
   void _submitAvailabiltyEventData() {
     //for availabilty
@@ -72,40 +71,33 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   TextEditingController taskController = TextEditingController();
 
   void _submitTaskManagementData() {
-    // Clear previous entries
-    taskEvents.clear();
-
     // Loop through all selected dates and create an event for each date
     selectedDates.forEach((date) {
-      taskEvents.add({
+      var taskData = {
+        // Make sure you have the userId available here
         "task": taskController.text,
         "date": DateFormat('dd-MM-yyyy').format(date),
         "start_time": "$selectedStartHour $selectedStartPeriod",
         "end_time": "$selectedEndHour $selectedEndPeriod"
-      });
+      };
+
+      // Send each task to the API for individual processing
+      Provider.of<AuthNotifier>(context, listen: false)
+          .updateTask(taskData) // Send one task at a time
+          .then((value) => {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(value),
+                ))
+              });
     });
 
-    print("Task Management Events Submitted: $taskEvents");
+    // Clear the task input fields and reset the form
+    setState(() {
+      taskController.clear();
+      _isAddingTask = false;
+    });
 
-    // Optionally, clear the task controller
-    taskController.clear();
-    var tasks = {"tasks": taskEvents};
-    print("Task Events Submitted: $tasks");
-    //  _isGalaPanelOpen = !_isGalaPanelOpen;
- setState(() {
-    taskController.clear();
-    _isAddingTask = false;
-    
-  });
-    Provider.of<AuthNotifier>(context, listen: false)
-        .user_update(tasks)
-        .then((value) => {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(value),
-              ))
-            });
-
-    // API call logic for Task Management can be added here
+    print("Task Management Events Submitted");
   }
 
   @override
@@ -154,7 +146,8 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
       // Update both the selected day and the focused day
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
-
+      print("Selecting date ${selectedDay}");
+      fetchTaskData(selectedDay);
       // Add or remove selected dates
       if (selectedDates.contains(selectedDay)) {
         selectedDates.remove(selectedDay);
@@ -304,7 +297,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
                     setState(() {
                       _isAddingTask =
                           true; // Show the task input form when clicked
-                          _isTaskPanelOpen = true;
+                      _isTaskPanelOpen = true;
                     });
                   },
                   child: Text('ADD NEW TASK'),
@@ -344,8 +337,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
             borderRadius: BorderRadius.all(Radius.circular(50)),
           ),
           child: Center(
-            child:
-             IconButton(
+            child: IconButton(
               icon: Icon(
                 // Dynamically set the icon based on the panel's state
                 (text == 'GALA' || text == 'AVAILABILITY')
@@ -743,16 +735,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   }
 
 Widget _buildTaskListUI(BuildContext context) {
-  // Assume _selectedDay is the currently selected date from your calendar
-  String selectedDateFormatted = DateFormat('dd-MM-yyyy').format(_selectedDay);
-
-  // Filter tasks by selected date
-  List<Map<String, dynamic>> filteredTasks = taskEvents.where((task) {
-    return task['date'] == selectedDateFormatted;
-  }).toList();
-
-  // If there are no tasks for the selected date, show a message
-  if (filteredTasks.isEmpty) {
+  if (taskEvents.isEmpty) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -764,7 +747,6 @@ Widget _buildTaskListUI(BuildContext context) {
     );
   }
 
-  // Display tasks for the selected date
   return Column(
     children: [
       SizedBox(height: 10),
@@ -807,7 +789,7 @@ Widget _buildTaskListUI(BuildContext context) {
               ),
             ),
             ListView.builder(
-              itemCount: filteredTasks.length,
+              itemCount: taskEvents.length,
               shrinkWrap: true, // Important to prevent overflow
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
@@ -821,10 +803,9 @@ Widget _buildTaskListUI(BuildContext context) {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width/1.8),
+                        Expanded(
                           child: Text(
-                            filteredTasks[index]['task']!,
+                            taskEvents[index]['task']!,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -833,7 +814,7 @@ Widget _buildTaskListUI(BuildContext context) {
                           ),
                         ),
                         Text(
-                          '${filteredTasks[index]['start_time']} - ${filteredTasks[index]['end_time']}',
+                          '${taskEvents[index]['start_time']} - ${taskEvents[index]['end_time']}',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
