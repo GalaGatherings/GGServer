@@ -56,6 +56,17 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
 
     // Optionally, clear the task controller
     taskController.clear();
+    var tasks = {"tasks": taskEvents};
+    print("Gala Events Submitted: $tasks");
+    //  _isGalaPanelOpen = !_isGalaPanelOpen;
+
+    Provider.of<AuthNotifier>(context, listen: false)
+        .user_update(tasks)
+        .then((value) => {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(value),
+              ))
+            });
 
     // API call logic for Task Management can be added here
   }
@@ -252,10 +263,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
               if (_isTaskPanelOpen)
                 _buildTaskAndTimeSelector(context, _submitTaskManagementData),
               SizedBox(height: 20),
-              
-             
-                   if (_isTaskPanelOpen)
-                _buildTaskListUI(context),
+              if (_isTaskPanelOpen) _buildTaskListUI(context),
             ],
           ),
         ),
@@ -707,104 +715,101 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
     );
   }
 
+  Widget _buildTaskListUI(BuildContext context) {
+    // Sample task data, you can replace it with the dynamic task list
+    List<Map<String, String>> taskEvents = [
+      {"task": "Meeting with ADAP", "time": "8:00-9:00 AM"},
+      {"task": "Meeting with My Team", "time": "8:00-9:00 AM"},
+      {"task": "Presentation", "time": "8:00-9:00 AM"},
+      {"task": "Assign Tasks", "time": "8:00-9:00 AM"},
+    ];
 
-Widget _buildTaskListUI(BuildContext context) {
-  // Sample task data, you can replace it with the dynamic task list
-  List<Map<String, String>> taskEvents = [
-    {"task": "Meeting with ADAP", "time": "8:00-9:00 AM"},
-    {"task": "Meeting with My Team", "time": "8:00-9:00 AM"},
-    {"task": "Presentation", "time": "8:00-9:00 AM"},
-    {"task": "Assign Tasks", "time": "8:00-9:00 AM"},
-  ];
-
-  return Column(
-    children: [
-    
-     
-      SizedBox(height: 10),
-      // Task list with time
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          children: [
-            // Header row
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                color: Color(0xffFB6641),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
+    return Column(
+      children: [
+        SizedBox(height: 10),
+        // Task list with time
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              // Header row
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Color(0xffFB6641),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'TASKS',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      'Time',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'TASKS',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+              // List of tasks
+              ListView.builder(
+                itemCount: taskEvents.length,
+                shrinkWrap: true, // Important to prevent overflow
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Container(
+                    color: index % 2 == 0
+                        ? Color(0xffFBCFCC)
+                        : Colors.white, // Alternating row colors
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            taskEvents[index]['task']!,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            taskEvents[index]['time']!,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Text(
-                    'Time',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
-            ),
-            // List of tasks
-            ListView.builder(
-              itemCount: taskEvents.length,
-              shrinkWrap: true, // Important to prevent overflow
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return Container(
-                  color: index % 2 == 0
-                      ? Color(0xffFBCFCC)
-                      : Colors.white, // Alternating row colors
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          taskEvents[index]['task']!,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          taskEvents[index]['time']!,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 // Function for submitting task management data
 }
