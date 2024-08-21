@@ -13,12 +13,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration(seconds: 1), () {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            MainLayout(initialIndex: 0), // Navigates to ProfilePage
-      ));
+      // Navigator.of(context).push(MaterialPageRoute(
+      //   builder: (context) =>
+      //       MainLayout(initialIndex: 0), // Navigates to ProfilePage
+      // ));
       // Navigator.pushReplacementNamed(context, '/profile');
-      // Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/home');
       // final authNotifier = Provider.of<AuthNotifier>(context, listen: false);
 
       // if (authNotifier.isAuthenticated) {

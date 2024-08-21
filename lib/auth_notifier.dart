@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthNotifier extends ChangeNotifier {
-  static const String authBox = 'authBox';
+   static const String userCacheKey = 'cachedUserData';
   static const String baseUrl = 'https://galagatherings.com';
 
   bool _isAuthenticated = false;
@@ -62,11 +62,12 @@ class AuthNotifier extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        print("responseData  $responseData");
         if(responseData['code'] == 200){
 
         _userId = responseData['data']['user_id'];
         _isAuthenticated = true;
-        user_type = responseData['user_type'];
+        user_type = responseData['data']['user_type'];
         await _saveAuthState();
 
         // Save auth state
@@ -173,20 +174,52 @@ Future<String> updateTask(taskData) async {
   }
 }
 
-  Future<dynamic> getUserData() async {
-    final url = Uri.parse('$baseUrl/get-user-details');
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'user_id': userId}),
-      );
-      final responseData = jsonDecode(response.body);
-     
-      return responseData['data'];
-    } catch (error) {
-      return {};
+Future<Map<String, dynamic>> getUserData({bool forceRefresh = false}) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  // If forceRefresh is false, attempt to get user data from cache
+  if (!forceRefresh) {
+    String? cachedUserData = prefs.getString('cachedUserData');
+    if (cachedUserData != null) {
+      print("Fetching user data from cache");
+      return Map<String, dynamic>.from(jsonDecode(cachedUserData));
     }
+  }
+
+  // If forceRefresh is true or cache is empty, fetch from API
+  final url = Uri.parse('$baseUrl/get-user-details');
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'user_id': userId}),
+    );
+
+    print("Response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+
+      if (responseData['code'] == 200) {
+        // Save user data to cache
+        await prefs.setString('cachedUserData', jsonEncode(responseData['data']));
+        
+        return Map<String, dynamic>.from(responseData['data']);
+      } else {
+        throw Exception('User data not found');
+      }
+    } else {
+      throw Exception('Failed to fetch user data');
+    }
+  } catch (error) {
+    print("Error fetching user data: $error");
+    throw error;
+  }
+}
+  // Clear the cached data if needed
+  Future<void> clearCachedUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(userCacheKey);
   }
 Future<dynamic> getTaskData() async {
   final url = Uri.parse('$baseUrl/get-tasks');

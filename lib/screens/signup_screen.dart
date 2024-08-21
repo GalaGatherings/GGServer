@@ -182,7 +182,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           SizedBox(height: 20),
                           Center(
                             child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius:
@@ -221,10 +222,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 _mobileController.text,
                                                 _dobController.text,
                                               );
-                                              Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            MainLayout(initialIndex: 0), // Navigates to ProfilePage
-      ));
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) => MainLayout(
+                                                    initialIndex:
+                                                        0), // Navigates to ProfilePage
+                                              ));
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
@@ -274,10 +277,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 _mobileController.text,
                                                 _dobController.text,
                                               );
-                                              Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            MainLayout(initialIndex: 3), // Navigates to ProfilePage
-      ));
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) => MainLayout(
+                                                    initialIndex:
+                                                        3), // Navigates to ProfilePage
+                                              ));
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
@@ -310,8 +315,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       ),
                                     ],
                                   ),
-
-                                  
                                 ],
                               ),
                             ),

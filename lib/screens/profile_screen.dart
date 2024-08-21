@@ -1,8 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:gala_gatherings/auth_notifier.dart'; // Assuming you have your AuthNotifier here
 
-import 'package:flutter/material.dart';
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
 
-class ProfilePage extends StatelessWidget {
+class _ProfilePageState extends State<ProfilePage> {
+  Map<String, dynamic>? userData;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData(); // Fetch the user data when the page initializes
+  }
+
+ Future<void> _fetchUserData({bool forceRefresh = false}) async {
+  try {
+    var rawData = await Provider.of<AuthNotifier>(context, listen: false)
+        .getUserData(forceRefresh: forceRefresh);
+
+    if (rawData is Map && rawData.isNotEmpty) {
+      setState(() {
+        userData = Map<String, dynamic>.from(rawData); // Cast to Map<String, dynamic>
+      });
+    } else {
+      throw Exception('Failed to fetch user data');
+    }
+  } catch (error) {
+    print("Error fetching user data: $error");
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,9 +44,7 @@ class ProfilePage extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.settings, color: Colors.white),
-            onPressed: () {
-              // Add your settings page navigation here
-            },
+            onPressed: () {},
           ),
         ],
         title: Text(
@@ -28,69 +56,84 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 20),
+      body: userData == null
+          ? Center(child: CircularProgressIndicator()) // Show loading indicator until data is fetched
+          : SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20),
 
-            // Profile Picture and Name
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey[800], // Background color for the circle
-              child: Icon(
-                Icons.person, // Replace with your desired icon
-                color: Colors.white,
-                size: 50, // Size of the icon
+                  // Profile Picture, Name and Role
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.grey[800],
+                    backgroundImage: userData!['profile_image'] != null
+                        ? NetworkImage(userData!['profile_image'])
+                        : null,
+                    child: userData!['profile_image'] == null
+                        ? Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 50,
+                          )
+                        : null,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    userData!['name'] ?? 'Unknown User',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    'Bartending',
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  // Additional User Data
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildProfileStat('Shortlist', '1'),
+                      _buildProfileStat('Events', '1'),
+                      _buildProfileStat('Payments', '1'),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+
+                  // Display clips section
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Display clips',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  _buildDisplayClips(),
+                  SizedBox(height: 20),
+
+                  // Specifications and Contact Information
+                  _buildInfoCard('Specifications', 'Describe your experience and hourly price'),
+                  SizedBox(height: 20),
+                  _buildInfoCard('Contact information', 'Personal number and office address', isPaid: false),
+                ],
               ),
             ),
-            SizedBox(height: 10),
-            Text(
-              'Xevier Yami',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // Shortlist, Events, Payments
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildProfileStat('Shortlist', '1'),
-                _buildProfileStat('Events', '1'),
-                _buildProfileStat('Payments', '1'),
-              ],
-            ),
-            SizedBox(height: 20),
-
-            // Display clips section
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Display clips',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            _buildDisplayClips(),
-            SizedBox(height: 20),
-
-            // Specifications and Contact Information
-            _buildInfoCard('Specifications', 'SPECIFICATION FOR FILTERS'),
-            SizedBox(height: 20),
-            _buildInfoCard('Contact information', 'Personal number and office address', isPaid: true),
-          ],
-        ),
-      ),
-      
+     
     );
   }
 
@@ -200,9 +243,5 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Widget to build bottom navigation bar
- 
+
 }
-
-
-

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
+import 'package:gala_gatherings/main_layout.dart';
 import 'package:gala_gatherings/screens/custom_calendar.dart';
 
 import 'package:provider/provider.dart';
@@ -80,11 +81,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    // Navigate to the corresponding video in the PageView
-    _pageController.jumpToPage(index);
+    // setState(() {
+    //   _selectedIndex = index;
+    // });
+    // // Navigate to the corresponding video in the PageView
+    // _pageController.jumpToPage(index);
+     Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            MainLayout(initialIndex: 0), // Navigates to ProfilePage
+      ));
   }
 
   @override
