@@ -66,6 +66,7 @@ class AuthNotifier extends ChangeNotifier {
 
         _userId = responseData['data']['user_id'];
         _isAuthenticated = true;
+        user_type = responseData['user_type'];
         await _saveAuthState();
 
         // Save auth state
@@ -89,6 +90,7 @@ class AuthNotifier extends ChangeNotifier {
   // Sign up method
   Future<void> signUp(String email, String name, String password,
       String userType, String mobileNo, String dob) async {
+        print("sign up");
     final url = Uri.parse('$baseUrl/sign-up');
     try {
       final response = await http.post(
@@ -106,10 +108,20 @@ class AuthNotifier extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        print("responseData  $responseData  ${jsonEncode({
+          'email': email,
+          'name': name,
+          'password': password,
+          'user_type': userType,
+          'mobile_no': mobileNo,
+          'dob': dob,
+        })}");
         if (responseData['code'] == 200) {
           _isAuthenticated = true;
           _userId =
-              responseData['data']['user_id']; // Simulating user ID from API
+              responseData['data']['user_id'];
+              user_type = userType;
+               // Simulating user ID from API
           await _saveAuthState();
           // Save auth state
 

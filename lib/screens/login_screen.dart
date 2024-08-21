@@ -3,7 +3,6 @@ import 'package:gala_gatherings/auth_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:gala_gatherings/screens/signup_screen.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -77,8 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 0.0, horizontal: 40.0),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 40.0),
                     ),
                   ),
                   SizedBox(height: 20), // Space between fields
@@ -114,8 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 0.0, horizontal: 40.0),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0.0, horizontal: 40.0),
                     ),
                   ),
                 ],
@@ -126,21 +125,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (_formKey.currentState!.validate()) {
                     // Call the login method from AuthNotifier
                     try {
-                      var res = await Provider.of<AuthNotifier>(context, listen: false)
+                      var res = await Provider.of<AuthNotifier>(context,
+                              listen: false)
                           .login(
                         _emailController.text,
                         _passwordController.text,
                       );
-                      if(res['code'] != 200){
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Login Failed: ${res['message']}'),
-                      ));
+                      if (res['code'] != 200) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Login Failed: ${res['message']}'),
+                        ));
                       }
                       // Check authentication status and navigate
                       if (Provider.of<AuthNotifier>(context, listen: false)
                           .isAuthenticated) {
-                        Navigator.of(context)
-                            .pushReplacementNamed('/home'); // Navigate to home screen
+                        Navigator.of(context).pushReplacementNamed(
+                            '/home'); // Navigate to home screen
                       }
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -155,8 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                 ),
                 child: Text(
                   'Log in',
@@ -167,7 +166,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Color(0xff0E3E3E)),
                 ),
               ),
-             
               SizedBox(height: 10),
               TextButton(
                 onPressed: () {},
@@ -179,8 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                        builder: (context) => SignUpScreen()),
+                    MaterialPageRoute(builder: (context) => SignUpScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -189,8 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                 ),
                 child: Text(
                   'Sign up',

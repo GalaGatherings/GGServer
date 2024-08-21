@@ -11,14 +11,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
-  
+
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
   final _formKey = GlobalKey<FormState>();
+  String userType = 'customer'; // Default user type
+
+  void _setUserType(String type) {
+    setState(() {
+      userType = type; // Update user type based on selection
+    });
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
@@ -38,7 +46,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffD9D0E3), // Background color of the main container
+      backgroundColor:
+          Color(0xffD9D0E3), // Background color of the main container
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(0.0),
@@ -108,7 +117,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             hintText: "+123 456 789",
                             keyboardType: TextInputType.phone,
                             validator: (value) {
-                              if (value == null || value.isEmpty || !RegExp(r'^[0-9]+$').hasMatch(value)) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  !RegExp(r'^[0-9]+$').hasMatch(value)) {
                                 return "Please enter a valid mobile number";
                               }
                               return null;
@@ -153,7 +164,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             isPasswordVisible: _isConfirmPasswordVisible,
                             onToggleVisibility: () {
                               setState(() {
-                                _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                                _isConfirmPasswordVisible =
+                                    !_isConfirmPasswordVisible;
                               });
                             },
                             validator: (value) {
@@ -168,42 +180,136 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           SizedBox(height: 20),
                           Center(
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  try {
-                                    await Provider.of<AuthNotifier>(context, listen: false).signUp(
-                                      _emailController.text,
-                                      _fullNameController.text,
-                                      _passwordController.text,
-                                      'vendor',  // User type as vendor
-                                      _mobileController.text,
-                                      _dobController.text,
-                                    );
-                                    Navigator.of(context).pushReplacementNamed('/home');
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                      content: Text('Sign Up Failed: $e'),
-                                    ));
-                                  }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.black,
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                padding: EdgeInsets.symmetric(horizontal: 60, vertical: 10),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(100)),
                               ),
-                              child: Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: "Poppins",
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff0E3E3E),
-                                ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Sign Up As',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff0E3E3E),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10),
+
+                                  // Buttons for selecting user type
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // Customer Button
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            try {
+                                              await Provider.of<AuthNotifier>(
+                                                      context,
+                                                      listen: false)
+                                                  .signUp(
+                                                _emailController.text,
+                                                _fullNameController.text,
+                                                _passwordController.text,
+                                                'customer', // Pass the selected user type ('customer' or 'vendor')
+                                                _mobileController.text,
+                                                _dobController.text,
+                                              );
+                                              Navigator.of(context)
+                                                  .pushReplacementNamed(
+                                                      '/home');
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                content:
+                                                    Text('Sign Up Failed: $e'),
+                                              ));
+                                            }
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              userType == 'customer'
+                                                  ? Color(0xff3E065F)
+                                                  : Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 10),
+                                        ),
+                                        child: Text(
+                                          'Customer',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: userType == 'customer'
+                                                ? Colors.white
+                                                : Color(0xff3E065F),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      // Business Button
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            try {
+                                              await Provider.of<AuthNotifier>(
+                                                      context,
+                                                      listen: false)
+                                                  .signUp(
+                                                _emailController.text,
+                                                _fullNameController.text,
+                                                _passwordController.text,
+                                                'vendor', // Pass the selected user type ('customer' or 'vendor')
+                                                _mobileController.text,
+                                                _dobController.text,
+                                              );
+                                              Navigator.of(context)
+                                                  .pushReplacementNamed(
+                                                      '/home');
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                content:
+                                                    Text('Sign Up Failed: $e'),
+                                              ));
+                                            }
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: userType == 'vendor'
+                                              ? Color(0xff3E065F)
+                                              : Colors.grey[200],
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 10),
+                                        ),
+                                        child: Text(
+                                          'Business',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: userType == 'vendor'
+                                                ? Colors.white
+                                                : Color(0xff3E065F),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  
+                                ],
                               ),
                             ),
                           ),
@@ -213,22 +319,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               children: [
                                 Text(
                                   'By continuing, you agree to',
-                                  style: TextStyle(color: Colors.white, fontSize: 14),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 14),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       'Terms of Use ',
-                                      style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     Text(
                                       'and ',
-                                      style: TextStyle(color: Colors.white, fontSize: 14),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 14),
                                     ),
                                     Text(
                                       'Privacy Policy.',
-                                      style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ),
@@ -239,18 +353,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Center(
                             child: TextButton(
                               onPressed: () {
-                                Navigator.of(context).pushReplacementNamed('/login');
+                                Navigator.of(context)
+                                    .pushReplacementNamed('/login');
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     'Already have an account? ',
-                                    style: TextStyle(color: Colors.white, fontSize: 13),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 13),
                                   ),
                                   Text(
                                     'Log In',
-                                    style: TextStyle(color: Color(0xffD9D0E3), fontSize: 14),
+                                    style: TextStyle(
+                                        color: Color(0xffD9D0E3), fontSize: 14),
                                   ),
                                 ],
                               ),

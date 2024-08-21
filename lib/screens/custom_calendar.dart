@@ -26,6 +26,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   // This will store the selected dates
   List<DateTime> selectedDates = [];
   List<Map<String, String>> galaEvents = [];
+  List<Map<String, String>> availabilityEvents = [];
 
   // Controls the visibility of the time picker panel
   bool _isGalaPanelOpen = false;
@@ -43,39 +44,42 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   String user_id = '';
 
   @override
-void initState() {
-  super.initState();
-}
-
-@override
-void didChangeDependencies() {
-  super.didChangeDependencies();
-  fetchAllTasks(); // Fetch all tasks for the user when the dependencies change
-}
-
-Future<void> fetchAllTasks() async {
-  var userID = context.read<AuthNotifier>().userId;  // Use `read` here to get the user ID without listening
-  setState(() => {user_id: userID});
-  try {
-    // Fetch all tasks for the user
-    var tasksData =
-        await Provider.of<AuthNotifier>(context, listen: false).getTaskData();
-
-    if (tasksData != null && tasksData is List) {
-      setState(() {
-        // Store all tasks fetched from the backend
-        allTasks = tasksData
-            .map<Map<String, dynamic>>((task) => task as Map<String, dynamic>)
-            .toList();
-      });
-    }
-
-    // After fetching all tasks, filter them for the current date
-    fetchTaskData();
-  } catch (error) {
-    print("Error fetching task data: $error");
+  void initState() {
+    super.initState();
   }
-}
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    fetchAllTasks(); // Fetch all tasks for the user when the dependencies change
+  }
+
+  Future<void> fetchAllTasks() async {
+    var userID = context
+        .read<AuthNotifier>()
+        .userId; // Use `read` here to get the user ID without listening
+    setState(() => {user_id: userID});
+    try {
+      // Fetch all tasks for the user
+      var tasksData =
+          await Provider.of<AuthNotifier>(context, listen: false).getTaskData();
+
+      if (tasksData != null && tasksData is List) {
+        setState(() {
+          // Store all tasks fetched from the backend
+          allTasks = tasksData
+              .map<Map<String, dynamic>>((task) => task as Map<String, dynamic>)
+              .toList();
+        });
+      }
+
+      // After fetching all tasks, filter them for the current date
+      fetchTaskData();
+    } catch (error) {
+      print("Error fetching task data: $error");
+    }
+  }
+
   void fetchTaskData() {
     setState(() {
       // Convert the selected dates to string format
@@ -99,6 +103,28 @@ Future<void> fetchAllTasks() async {
   }
 
   void _submitAvailabiltyEventData() {
+    availabilityEvents.clear();
+
+    // Loop through all selected dates and create an event for each date
+    selectedDates.forEach((date) {
+      availabilityEvents.add({
+        "date": DateFormat('dd-MM-yyyy').format(date),
+        "start_time": "$selectedStartHour $selectedStartPeriod",
+        "end_time": "$selectedEndHour $selectedEndPeriod"
+      });
+    });
+    var availability = {"availabilty": availabilityEvents};
+    print("Availabilty Events Submitted: $availability");
+    //  _isGalaPanelOpen = !_isGalaPanelOpen;
+
+    Provider.of<AuthNotifier>(context, listen: false)
+        .user_update(availability)
+        .then((value) => {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(value),
+              ))
+            });
+    
     //for availabilty
   }
   TextEditingController taskController = TextEditingController();
@@ -184,15 +210,7 @@ Future<void> fetchAllTasks() async {
                 content: Text(value),
               ))
             });
-    //  print("resJeson  $res");
-    //  var resJson= json.encode(res);
-    //  print("resJson  $resJson");
-
-    //  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //                   content: Text(resJson['message']),
-    //                 ));
-
-    // API call logic can be added here
+    
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -215,8 +233,8 @@ Future<void> fetchAllTasks() async {
 
   @override
   Widget build(BuildContext context) {
-    final user_type = 'customer';
-
+    final user_type = context.read<AuthNotifier>().user_type;
+    print("user_typeiss $user_type");
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -252,8 +270,11 @@ Future<void> fetchAllTasks() async {
               ),
             ),
             GestureDetector(
-              onTap: () =>
-                 { Provider.of<AuthNotifier>(context, listen: false).logout().then((value) =>  Navigator.pushReplacementNamed(context, '/login'))},
+              onTap: () => {
+                Provider.of<AuthNotifier>(context, listen: false).logout().then(
+                    (value) =>
+                        Navigator.pushReplacementNamed(context, '/login'))
+              },
               child: Container(
                 padding: EdgeInsets.all(8),
                 child: Text(
@@ -341,8 +362,13 @@ Future<void> fetchAllTasks() async {
                 _buildMenuButton(
                     'AVAILABILITY', context, _submitAvailabiltyEventData),
               ],
-              if (_isGalaPanelOpen)
+              if (_isGalaPanelOpen)...[
+                  if(user_type == 'customer')
                 _buildTimeSelector(context, _submitGalaEventData),
+                 if(user_type == 'vendor')
+                _buildTimeSelector(context, _submitAvailabiltyEventData),
+                
+              ],
               SizedBox(height: 10),
               _buildMenuButton(
                   'TASK MANAGEMENT', context, _submitTaskManagementData),
@@ -365,7 +391,8 @@ Future<void> fetchAllTasks() async {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      _isAddingTask = false; // Close the task input form
+                      _isAddingTask = false; 
+                      // Close the task input form
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -422,10 +449,6 @@ Future<void> fetchAllTasks() async {
                 size: 20,
               ),
               onPressed: () async {
-               
-
-                
-                
                 if (widget.isLoggedIn == false && user_id == '') {
                   Navigator.push(
                     context,
@@ -438,6 +461,10 @@ Future<void> fetchAllTasks() async {
                   } else if (text == 'TASK MANAGEMENT') {
                     _isTaskPanelOpen = !_isTaskPanelOpen;
                     _isAddingTask = !_isAddingTask; // Toggle TASK panel
+                    if(_isAddingTask == true && _isTaskPanelOpen == false){
+                      _isTaskPanelOpen = false;
+                      _isAddingTask = false;
+                    }
                   }
                 });
               },
