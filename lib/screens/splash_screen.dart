@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
+import 'package:gala_gatherings/main_layout.dart';
 
 import 'package:provider/provider.dart';
 
@@ -9,10 +10,15 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
- @override
+  @override
   Widget build(BuildContext context) {
     Future.delayed(Duration(seconds: 1), () {
-        Navigator.pushReplacementNamed(context, '/home');
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            MainLayout(initialIndex: 0), // Navigates to ProfilePage
+      ));
+      // Navigator.pushReplacementNamed(context, '/profile');
+      // Navigator.pushReplacementNamed(context, '/home');
       // final authNotifier = Provider.of<AuthNotifier>(context, listen: false);
 
       // if (authNotifier.isAuthenticated) {

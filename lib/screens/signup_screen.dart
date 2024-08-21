@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
+import 'package:gala_gatherings/main_layout.dart';
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -220,9 +221,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 _mobileController.text,
                                                 _dobController.text,
                                               );
-                                              Navigator.of(context)
-                                                  .pushReplacementNamed(
-                                                      '/home');
+                                              Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            MainLayout(initialIndex: 0), // Navigates to ProfilePage
+      ));
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
@@ -272,9 +274,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 _mobileController.text,
                                                 _dobController.text,
                                               );
-                                              Navigator.of(context)
-                                                  .pushReplacementNamed(
-                                                      '/home');
+                                              Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            MainLayout(initialIndex: 3), // Navigates to ProfilePage
+      ));
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(

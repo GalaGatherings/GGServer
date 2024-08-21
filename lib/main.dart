@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
+import 'package:gala_gatherings/main_layout.dart';
 import 'package:gala_gatherings/screens/home_screen.dart';
 import 'package:gala_gatherings/screens/login_screen.dart';
+import 'package:gala_gatherings/screens/profile_screen.dart';
 import 'package:gala_gatherings/screens/signup_screen.dart';
 import 'package:gala_gatherings/screens/splash_screen.dart';
 
@@ -39,6 +41,8 @@ class GalaGatheringsApp extends StatelessWidget {
         '/home': (context) => HomeScreen(),
         '/signup': (context) => SignUpScreen(),
         '/login': (context) => LoginScreen(),
+        '/profile': (context) => ProfilePage(),
+        '/main': (context) => MainLayout(),
       },
     );
   }
