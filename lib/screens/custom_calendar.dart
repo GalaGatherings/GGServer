@@ -253,7 +253,7 @@ Future<void> fetchAllTasks() async {
             ),
             GestureDetector(
               onTap: () =>
-                  Provider.of<AuthNotifier>(context, listen: false).logout(),
+                 { Provider.of<AuthNotifier>(context, listen: false).logout().then((value) =>  Navigator.pushReplacementNamed(context, '/login'))},
               child: Container(
                 padding: EdgeInsets.all(8),
                 child: Text(

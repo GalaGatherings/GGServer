@@ -126,11 +126,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (_formKey.currentState!.validate()) {
                     // Call the login method from AuthNotifier
                     try {
-                      await Provider.of<AuthNotifier>(context, listen: false)
+                      var res = await Provider.of<AuthNotifier>(context, listen: false)
                           .login(
                         _emailController.text,
                         _passwordController.text,
                       );
+                      if(res['code'] != 200){
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Login Failed: ${res['message']}'),
+                      ));
+                      }
                       // Check authentication status and navigate
                       if (Provider.of<AuthNotifier>(context, listen: false)
                           .isAuthenticated) {

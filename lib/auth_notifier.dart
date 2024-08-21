@@ -48,7 +48,7 @@ class AuthNotifier extends ChangeNotifier {
   }
 
   // Login method
-  Future<void> login(String email, String password) async {
+  Future<dynamic> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/login');
     try {
       final response = await http.post(
@@ -62,6 +62,8 @@ class AuthNotifier extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        if(responseData['code'] == 200){
+
         _userId = responseData['data']['user_id'];
         _isAuthenticated = true;
         await _saveAuthState();
@@ -69,6 +71,11 @@ class AuthNotifier extends ChangeNotifier {
         // Save auth state
 
         notifyListeners();
+        return responseData;
+        }
+        else{
+           return responseData;
+        }
       } else {
         throw Exception('Failed to login');
       }

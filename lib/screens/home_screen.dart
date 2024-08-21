@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:gala_gatherings/auth_notifier.dart';
 import 'package:gala_gatherings/screens/custom_calendar.dart';
-import 'package:gala_gatherings/screens/login_screen.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
