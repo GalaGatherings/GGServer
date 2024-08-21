@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_gatherings/screens/login_screen.dart';
+import 'package:gala_gatherings/screens/signup_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:gala_gatherings/auth_notifier.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart'; // For formatting dates
 
@@ -37,55 +40,63 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   bool _isAddingTask = false;
   List<Map<String, dynamic>> taskEvents = [];
   List<Map<String, dynamic>> allTasks = [];
+  String user_id = '';
 
   @override
-  void initState() {
-    super.initState();
-    fetchAllTasks(); // Fetch all tasks for the user when the screen is loaded
-  }
-
-  Future<void> fetchAllTasks() async {
-    try {
-      // Fetch all tasks for the user once in initState
-      var tasksData =
-          await Provider.of<AuthNotifier>(context, listen: false).getTaskData();
-
-      if (tasksData != null && tasksData is List) {
-        setState(() {
-          // Store all tasks fetched from the backend
-          allTasks = tasksData
-              .map<Map<String, dynamic>>((task) => task as Map<String, dynamic>)
-              .toList();
-        });
-      }
-
-      // After fetching all tasks, filter them for the current date
-      fetchTaskData();
-    } catch (error) {
-      print("Error fetching task data: $error");
-    }
-  }
-void fetchTaskData() {
-  setState(() {
-    // Convert the selected dates to string format
-    List<String> selectedDateStrings = selectedDates.map((date) {
-      return DateFormat('dd-MM-yyyy').format(date);
-    }).toList();
-
-    // Filter tasks from `allTasks` based on selected dates
-    taskEvents = allTasks.where((task) {
-      return selectedDateStrings.contains(task['date']);
-    }).toList();
-
-    // Sort the filtered taskEvents by date in ascending order
-    taskEvents.sort((a, b) {
-      // Parse the dates from the task events
-      DateTime dateA = DateFormat('dd-MM-yyyy').parse(a['date']);
-      DateTime dateB = DateFormat('dd-MM-yyyy').parse(b['date']);
-      return dateA.compareTo(dateB); // Ascending order
-    });
-  });
+void initState() {
+  super.initState();
 }
+
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  fetchAllTasks(); // Fetch all tasks for the user when the dependencies change
+}
+
+Future<void> fetchAllTasks() async {
+  var userID = context.read<AuthNotifier>().userId;  // Use `read` here to get the user ID without listening
+  setState(() => {user_id: userID});
+  try {
+    // Fetch all tasks for the user
+    var tasksData =
+        await Provider.of<AuthNotifier>(context, listen: false).getTaskData();
+
+    if (tasksData != null && tasksData is List) {
+      setState(() {
+        // Store all tasks fetched from the backend
+        allTasks = tasksData
+            .map<Map<String, dynamic>>((task) => task as Map<String, dynamic>)
+            .toList();
+      });
+    }
+
+    // After fetching all tasks, filter them for the current date
+    fetchTaskData();
+  } catch (error) {
+    print("Error fetching task data: $error");
+  }
+}
+  void fetchTaskData() {
+    setState(() {
+      // Convert the selected dates to string format
+      List<String> selectedDateStrings = selectedDates.map((date) {
+        return DateFormat('dd-MM-yyyy').format(date);
+      }).toList();
+
+      // Filter tasks from `allTasks` based on selected dates
+      taskEvents = allTasks.where((task) {
+        return selectedDateStrings.contains(task['date']);
+      }).toList();
+
+      // Sort the filtered taskEvents by date in ascending order
+      taskEvents.sort((a, b) {
+        // Parse the dates from the task events
+        DateTime dateA = DateFormat('dd-MM-yyyy').parse(a['date']);
+        DateTime dateB = DateFormat('dd-MM-yyyy').parse(b['date']);
+        return dateA.compareTo(dateB); // Ascending order
+      });
+    });
+  }
 
   void _submitAvailabiltyEventData() {
     //for availabilty
@@ -125,12 +136,11 @@ void fetchTaskData() {
         Provider.of<AuthNotifier>(context, listen: false)
             .updateTask(taskData)
             .then((value) {
-              fetchAllTasks();
+          fetchAllTasks();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(value),
           ));
         });
-    
       }
     });
 
@@ -241,17 +251,17 @@ void fetchTaskData() {
                 ),
               ),
             ),
-            // GestureDetector(
-            //   onTap: () =>
-            //       Provider.of<AuthNotifier>(context, listen: false).logout(),
-            //   child: Container(
-            //     padding: EdgeInsets.all(8),
-            //     child: Text(
-            //       'Logout',
-            //       style: TextStyle(color: Colors.white),
-            //     ),
-            //   ),
-            // ),
+            GestureDetector(
+              onTap: () =>
+                  Provider.of<AuthNotifier>(context, listen: false).logout(),
+              child: Container(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -411,7 +421,17 @@ void fetchTaskData() {
                 color: Colors.white,
                 size: 20,
               ),
-              onPressed: () {
+              onPressed: () async {
+               
+
+                
+                
+                if (widget.isLoggedIn == false && user_id == '') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                }
                 setState(() {
                   if (text == 'GALA' || text == 'AVAILABILITY') {
                     _isGalaPanelOpen = !_isGalaPanelOpen; // Toggle GALA panel
