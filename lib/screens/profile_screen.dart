@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:gala_gatherings/auth_notifier.dart'; // Assuming you have your AuthNotifier here
 
@@ -16,22 +17,23 @@ class _ProfilePageState extends State<ProfilePage> {
     _fetchUserData(); // Fetch the user data when the page initializes
   }
 
- Future<void> _fetchUserData({bool forceRefresh = false}) async {
-  try {
-    var rawData = await Provider.of<AuthNotifier>(context, listen: false)
-        .getUserData(forceRefresh: forceRefresh);
+  Future<void> _fetchUserData({bool forceRefresh = false}) async {
+    try {
+      var rawData = await Provider.of<AuthNotifier>(context, listen: false)
+          .getUserData(forceRefresh: forceRefresh);
 
-    if (rawData is Map && rawData.isNotEmpty) {
-      setState(() {
-        userData = Map<String, dynamic>.from(rawData); // Cast to Map<String, dynamic>
-      });
-    } else {
-      throw Exception('Failed to fetch user data');
+      if (rawData is Map && rawData.isNotEmpty) {
+        setState(() {
+          userData = Map<String, dynamic>.from(
+              rawData); // Cast to Map<String, dynamic>
+        });
+      } else {
+        throw Exception('Failed to fetch user data');
+      }
+    } catch (error) {
+      print("Error fetching user data: $error");
     }
-  } catch (error) {
-    print("Error fetching user data: $error");
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -47,55 +49,87 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () {},
           ),
         ],
-        title: Text(
-          'Gala!',
-          style: TextStyle(
-            color: Color(0xFFB084FF),
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
+        title: Container(
+          alignment: Alignment.centerLeft,
+          child: Image.asset(
+            'assets/images/gala.png',
+            height: 50,
           ),
         ),
       ),
       body: userData == null
-          ? Center(child: CircularProgressIndicator()) // Show loading indicator until data is fetched
+          ? Center(
+              child:
+                  CircularProgressIndicator()) // Show loading indicator until data is fetched
           : SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(height: 20),
 
                   // Profile Picture, Name and Role
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey[800],
-                    backgroundImage: userData!['profile_image'] != null
-                        ? NetworkImage(userData!['profile_image'])
-                        : null,
-                    child: userData!['profile_image'] == null
-                        ? Icon(
-                            Icons.person,
-                            color: Colors.white,
-                            size: 50,
-                          )
-                        : null,
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    userData!['name'] ?? 'Unknown User',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    'Bartending',
-                    style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 18,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.grey[800],
+                          backgroundImage: userData!['profile_image'] != null
+                              ? NetworkImage(userData!['profile_image'])
+                              : null,
+                          child: userData!['profile_image'] == null
+                              ? Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 50,
+                                )
+                              : null,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            userData!['name'] ?? 'Unknown User',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Image.asset(
+                                'assets/images/flowers.png',
+                                height: 20,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Florist',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 1),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                   SizedBox(height: 20),
 
@@ -127,36 +161,45 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(height: 20),
 
                   // Specifications and Contact Information
-                  _buildInfoCard('Specifications', 'Describe your experience and hourly price'),
+                  _buildInfoCard('Specifications',
+                      'Describe your experience and hourly price'),
                   SizedBox(height: 20),
-                  _buildInfoCard('Contact information', 'Personal number and office address', isPaid: false),
+                  _buildInfoCard('Contact information',
+                      'Personal number and office address',
+                      isPaid: false),
                 ],
               ),
             ),
-     
     );
   }
 
   // Widget to build profile stat
   Widget _buildProfileStat(String label, String count) {
-    return Column(
-      children: [
-        Text(
-          count,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+    return Container(
+      width: MediaQuery.of(context).size.width/3.5,
+      padding: EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(22),color: Color(0xffD9D9D9).withOpacity(0.5)),
+      child: Column(
+        children: [
+          Text(
+            count,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Inter'
+            ),
           ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 16,
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontFamily: 'Inter'
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -194,11 +237,8 @@ class _ProfilePageState extends State<ProfilePage> {
   // Widget to build specifications and contact information cards
   Widget _buildInfoCard(String title, String content, {bool isPaid = false}) {
     return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[800],
-        borderRadius: BorderRadius.circular(10),
-      ),
+      // padding: EdgeInsets.all(16),
+     
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -231,17 +271,33 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           SizedBox(height: 10),
-          Text(
-            content,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
+          // Text(
+          //   content,
+          //   style: TextStyle(
+          //     color: Colors.white,
+          //     fontSize: 16,
+          //   ),
+          // ),
+           TextFormField(
+            cursorColor: Color(0xff7203FF),
+          // controller: controller,
+          // keyboardType: keyboardType,
+          // validator: validator,
+          decoration: InputDecoration(
+            
+            filled: true,
+            fillColor: Colors.black,
+            hintText: content,
+            hintStyle: TextStyle(color: Colors.white),
+            border: OutlineInputBorder(
+              
+              borderRadius: BorderRadius.circular(10),
             ),
+            contentPadding: EdgeInsets.only(left: 10.0),
           ),
+        ),
         ],
       ),
     );
   }
-
-
 }
