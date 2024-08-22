@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +38,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final categorySelected = context.watch<AuthNotifier>().category;
+    print("categorySelected $categorySelected");
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -117,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 width: 5,
                               ),
                               Text(
-                                'Florist',
+                                categorySelected,
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,

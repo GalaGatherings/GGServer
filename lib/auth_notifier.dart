@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ class AuthNotifier extends ChangeNotifier {
 
   bool _isAuthenticated = false;
   String user_type = 'customer';
+  String category = 'bartender';
   String? _userId;
 
   bool get isAuthenticated => _isAuthenticated;
@@ -39,6 +41,7 @@ class AuthNotifier extends ChangeNotifier {
     await prefs.setBool('isAuthenticated', _isAuthenticated);
 
     await prefs.setString('user_type', 'customer');
+    await prefs.setString('category', 'bartender');
   }
 
   // Clear authentication state from SharedPreferences
@@ -221,6 +224,14 @@ Future<Map<String, dynamic>> getUserData({bool forceRefresh = false}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(userCacheKey);
   }
+
+Future<void> categorySelection(String categorySelected) async {
+    print("categorySelected  $categorySelected");
+    category = categorySelected;
+
+  }
+
+
 Future<dynamic> getTaskData() async {
   final url = Uri.parse('$baseUrl/get-tasks');
   try {

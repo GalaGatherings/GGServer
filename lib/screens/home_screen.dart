@@ -80,12 +80,25 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+
   void _onItemTapped(int index) {
+    print("ujbkj,b kj  $index");
     // setState(() {
     //   _selectedIndex = index;
     // });
     // // Navigate to the corresponding video in the PageView
     // _pageController.jumpToPage(index);
+    var catg= {
+      "0":"catering",
+      "1":"bartender",
+      "2":"florist",
+      "3":"photographer",
+      "4":"musician"
+
+    };
+  
+    Provider.of<AuthNotifier>(context, listen: false)
+          .categorySelection(catg['$index']!);
      Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
             MainLayout(initialIndex: 0), // Navigates to ProfilePage

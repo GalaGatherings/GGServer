@@ -44,25 +44,26 @@ class _MainLayoutState extends State<MainLayout> {
           BottomNavyBarItem(
             icon: Icon(Icons.home),
             title: Text('Feed'),
-            activeColor: Colors.purpleAccent,
+            activeColor: Color(0xff7203FF),
           ),
           BottomNavyBarItem(
             icon: Icon(Icons.message),
             title: Text('Messages'),
-            activeColor: Colors.purpleAccent,
+            activeColor: Color(0xff7203FF),
           ),
           BottomNavyBarItem(
             icon: Icon(Icons.event),
             title: Text('Filter'),
-            activeColor: Colors.purpleAccent,
+            activeColor: Color(0xff7203FF),
           ),
           BottomNavyBarItem(
             icon: Icon(Icons.person),
             title: Text('Profile'),
-            activeColor: Colors.purpleAccent,
+            activeColor: Color(0xff7203FF),
           ),
         ],
       ),
     );
   }
 }
+
