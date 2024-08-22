@@ -210,9 +210,9 @@ class _ProfilePageState extends State<ProfilePage> {
   // Widget to build display clips section
   Widget _buildDisplayClips() {
     return SizedBox(
-      height: 100,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
+      // height: 130,
+      child: Row(
+        
         children: [
           _buildClipCard('https://picsum.photos/200'),
           _buildClipCard('https://picsum.photos/200'),
@@ -225,16 +225,33 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Widget to build individual clip card
   Widget _buildClipCard(String imageUrl) {
-    return Container(
-      margin: EdgeInsets.only(right: 10),
-      width: 80,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
+    return Column(
+      mainAxisAlignment:MainAxisAlignment.start,
+      // crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        
+        Container(
+          
+          height: 30,
+          child: IconButton(
+              icon: Icon(Icons.delete, color: Colors.red,size: 20,),
+              onPressed: () {},
+            ),
         ),
-      ),
+        Container(
+
+          margin: EdgeInsets.only(right: 10),
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              image: NetworkImage(imageUrl),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -292,7 +309,7 @@ class _ProfilePageState extends State<ProfilePage> {
             filled: true,
             fillColor: Colors.black,
             hintText: content,
-            hintStyle: TextStyle(color: Colors.white),
+            hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
             border: OutlineInputBorder(
               
               borderRadius: BorderRadius.circular(10),
