@@ -372,7 +372,7 @@ Future<void> _fetchData() async {
                     ),
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Search for restaurants or dishes',
+                      hintText: 'Search for Products or Vendors',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 14,
@@ -419,7 +419,7 @@ Future<void> _fetchData() async {
                     children: [
                       SizedBox(height: 5),
                       Text(
-                        'Dishes',
+                        'Products',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -438,7 +438,7 @@ Future<void> _fetchData() async {
                             ),
                             height: 4.0,
                             child: Text(
-                              'Dishes',
+                              'Products',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -456,7 +456,7 @@ Future<void> _fetchData() async {
                     children: [
                       SizedBox(height: 5),
                       Text(
-                        'Restaurants',
+                        'Vendors',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -475,7 +475,7 @@ Future<void> _fetchData() async {
                             ),
                             height: 4.0,
                             child: Text(
-                              'Restaurants',
+                              'Vendors',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -596,7 +596,7 @@ Future<void> _fetchData() async {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'No restaurants in   ',
+                      'No Vendors in   ',
                       style: TextStyle(
                         color:darkMode?Colors.white: Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
@@ -631,15 +631,6 @@ Future<void> _fetchData() async {
 }
 
 class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
-  final List<Map<String, String>> locations = [
-    {'description': 'Current Location', 'location': ''},
-    {'description': 'Jamshedpur, Jharkhand', 'location': '22.8046, 86.2029'},
-    {'description': 'Siliguri, West Bengal', 'location': '26.7271, 88.3953'},
-    {'description': 'Kolkata, West Bengal', 'location': '22.5726, 88.3639'},
-    {'description': 'Mumbai, Maharashtra', 'location': '19.0760, 72.8777'},
-    {"description": "Bangalore, Karnataka", "location": "12.9716, 77.5946"},
-    {"description": "Sikkim, India", "location": "27.5330, 88.5122"}
-  ];
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -647,7 +638,7 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
       IconButton(
         icon: Icon(Icons.clear),
         onPressed: () {
-          Navigator.of(context).pop();
+          query = '';
         },
       )
     ];
@@ -655,118 +646,100 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return const SizedBox(
-      width: 0,
-    ); // Ensure this line is present
-  }
-
-  @override
-  ThemeData appBarTheme(BuildContext context) {
-    return Theme.of(context).copyWith(
-      appBarTheme:  AppBarTheme(
-        color: Color(0xff1D1D1D), // Your app bar color1D1D1D
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
-        toolbarTextStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-        ),
-        titleTextStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-        ),
-      ),
-      inputDecorationTheme: const InputDecorationTheme(
-        hintStyle: TextStyle(
-          color: Colors.white, // Adjust as needed
-          fontSize: 18,
-        ),
-      ),
-      textTheme: const TextTheme(
-        titleLarge: TextStyle(
-          color: Colors.white, // Adjust as needed
-          fontSize: 18,
-        ),
-      ),
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, {}); // Close without selecting a location
+      },
     );
   }
 
   @override
   Widget buildResults(BuildContext context) {
-    final results = locations
-        .where((loc) =>
-            loc['description']!.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    return ListView.builder(
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(results[index]['description']!),
-          onTap: () {
-            if (results[index]['description'] == 'Current Location') {
-              // Handle current location selection
-              _getCurrentLocation(context);
-            } else {
-              Navigator.of(context).pop();
-              // close(context, results[index]);
-            }
-          },
-        );
+    return FutureBuilder(
+      future: _searchLocation(query),
+      builder: (context, AsyncSnapshot<List<Location>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No results found'));
+        }
+        final locations = snapshot.data!;
+        return _buildLocationList(context, locations);
       },
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestions = locations
-        .where((loc) =>
-            loc['description']!.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    return Container(
-      color: Color(0xff313030),
-      child: ListView.builder(
-        itemCount: suggestions.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(suggestions[index]['description']!,style: TextStyle(color: Colors.white),),
-            onTap: () {
-              if (suggestions[index]['description'] == 'Current Location') {
-                // Handle current location selection
-                _getCurrentLocation(context);
-              } else {
-                close(context, suggestions[index]);
-              }
-            },
-          );
-        },
-      ),
+    return FutureBuilder(
+      future: _searchLocation(query),
+      builder: (context, AsyncSnapshot<List<Location>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No results found'));
+        }
+        final locations = snapshot.data!;
+        return _buildLocationList(context, locations);
+      },
     );
   }
 
-  void _getCurrentLocation(BuildContext context) async {
-    var _currentPosition;
-    var area;
+  Widget _buildLocationList(BuildContext context, List<Location> locations) {
+    return ListView.builder(
+      itemCount: locations.length,
+      itemBuilder: (context, index) {
+        final location = locations[index];
+        return ListTile(
+          title: Text(
+              'Lat: ${location.latitude}, Lng: ${location.longitude}'), // You can also use a reverse geocoding method to get a more user-friendly address
+          onTap: () {
+            close(context, {
+              'description': 'Lat: ${location.latitude}, Lng: ${location.longitude}',
+              'location': '${location.latitude},${location.longitude}'
+            });
+          },
+        );
+      },
+    );
+  }
 
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    _currentPosition = position;
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-    if (placemarks.isNotEmpty) {
-      Placemark placemark = placemarks.first;
-      area = '${placemark.administrativeArea}';
-      close(context, {
-        'description': '$area',
-        'location': '${position.latitude},${position.longitude}',
-      });
-    } else {
-      close(context, {'description': 'Location not found', 'location': ''});
+  Future<List<Location>> _searchLocation(String query) async {
+    if (query.isEmpty) {
+      return [];
     }
 
-    await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
-        _currentPosition?.latitude, _currentPosition?.longitude, area);
-    print("locLogsearchView.dart $_currentPosition  $area");
+    try {
+      // Search for the query using the Geocoding API
+      List<Location> locations = await locationFromAddress(query);
+      return locations;
+    } catch (e) {
+      print("Error occurred while searching for location: $e");
+      return [];
+    }
+  }
+
+  Future<void> _getCurrentLocation(BuildContext context) async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks.first;
+        String area = '${placemark.administrativeArea}, ${placemark.country}';
+        close(context, {
+          'description': area,
+          'location': '${position.latitude},${position.longitude}',
+        });
+      }
+    } catch (e) {
+      print('Error fetching current location: $e');
+      close(context, {'description': 'Location not found', 'location': ''});
+    }
   }
 }
+

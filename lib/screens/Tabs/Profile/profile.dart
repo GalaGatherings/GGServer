@@ -16,7 +16,6 @@ import 'package:gala_gatherings/constants/globalVaribales.dart';
 import 'package:gala_gatherings/models/model.dart';
 import 'package:gala_gatherings/prefrence_helper.dart';
 
-
 import 'package:gala_gatherings/screens/Tabs/Profile/customer_widgets_profile.dart';
 
 import 'package:gala_gatherings/widgets/appwide_banner.dart';
@@ -30,7 +29,6 @@ import 'package:gala_gatherings/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 
 import 'package:flutter/cupertino.dart';
-
 
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -538,7 +536,18 @@ class _ProfileState extends State<Profile> {
                                                 final whatsappUrl =
                                                     'https://wa.me/91$phoneNumber';
                                                 _launchURL(whatsappUrl);
-                                              } else {
+                                              } 
+                                              else if (phoneNumber.length == 11) {
+                                                final whatsappUrl =
+                                                    'https://wa.me/$phoneNumber';
+                                                _launchURL(whatsappUrl);
+                                              } 
+                                              else if (phoneNumber.length == 12) {
+                                                final whatsappUrl =
+                                                    'https://wa.me/$phoneNumber';
+                                                _launchURL(whatsappUrl);
+                                              } 
+                                              else {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
@@ -649,7 +658,6 @@ class _ProfileState extends State<Profile> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        
                                         if (Provider.of<Auth>(context,
                                                     listen: false)
                                                 .userData?['user_type'] !=
@@ -798,34 +806,44 @@ class _ProfileState extends State<Profile> {
                                                             AppWideLoadingBanner()
                                                                 .loadingBanner(
                                                                     context);
-                                                            dynamic data =
-                                                                await Provider.of<
-                                                                            Auth>(
+
+                                                            try {
+                                                              dynamic data = await Provider.of<
+                                                                          Auth>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .ScanMenu(
+                                                                      'Camera');
+
+                                                              // Dismiss loading banner
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+
+                                                              if (data ==
+                                                                  'file size very large') {
+                                                                TOastNotification()
+                                                                    .showErrorToast(
                                                                         context,
-                                                                        listen:
-                                                                            false)
-                                                                    .ScanMenu(
-                                                                        'Camera');
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            // print(data);
-                                                            if (data ==
-                                                                'file size very large') {
+                                                                        'file size very large');
+                                                              } else if (data !=
+                                                                      'No image picked' &&
+                                                                  data != '') {
+                                                                showScannedMenuBottomSheet(
+                                                                    context,
+                                                                    data[
+                                                                        'data'],
+                                                                    true);
+                                                              }
+                                                            } catch (e) {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
                                                               TOastNotification()
                                                                   .showErrorToast(
                                                                       context,
-                                                                      'file size very large');
-                                                            } else if (data !=
-                                                                    'No image picked' &&
-                                                                data != '') {
-                                                              showScannedMenuBottomSheet(
-                                                                  context,
-                                                                  data['data'],
-                                                                  true);
+                                                                      'An error occurred');
                                                             }
                                                           },
                                                           child: const Padding(
@@ -1360,7 +1378,7 @@ class _ProfileState extends State<Profile> {
                                                                 context,
                                                                 listen: false)
                                                             .userData?['user_id'],
-                                                            darkMode:darkMode,
+                                                        darkMode: darkMode,
                                                         data: feedList[index]);
                                                   },
                                                 )),
@@ -1719,7 +1737,8 @@ class _ManualAddModalState extends State<ManualAddModal> {
     String category = categoryController.text;
     String description = descriptionController.text;
     if (name == '' || price == '' || category == '') {
-      TOastNotification().showErrorToast(context, 'Name price and category are mandatory');
+      TOastNotification()
+          .showErrorToast(context, 'Name price and category are mandatory');
     }
     // Call the API to update the product
     else {
@@ -1729,11 +1748,10 @@ class _ManualAddModalState extends State<ManualAddModal> {
           "name": name,
           "type": selectedType,
           "category": category,
-          "description":description
+          "description": description
         }
       ]);
 
-      
       TOastNotification().showSuccesToast(context, 'Products Added');
     }
     Navigator.pop(context); // Close the modal after saving
@@ -1808,9 +1826,9 @@ class _ManualAddModalState extends State<ManualAddModal> {
                 controller: categoryController,
                 darkMode: widget.darkMode,
               ),
-             
+
               const SizedBox(height: 20),
-              
+
               // Add Description Section
               buildInputField(
                 label: 'Add description',
@@ -1818,7 +1836,7 @@ class _ManualAddModalState extends State<ManualAddModal> {
                 controller: descriptionController,
                 darkMode: widget.darkMode,
               ),
-              const SizedBox(height:30),
+              const SizedBox(height: 30),
               // Save and Add Another Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -2055,7 +2073,8 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
 
     for (int i = 0; i < list.length; i++) {
       nameControllers[i] = TextEditingController(text: list[i]['name']);
-      priceControllers[i] = TextEditingController(text: list[i]['price']);
+      priceControllers[i] =
+          TextEditingController(text: list[i]['price'].toString());
       categoryControllers[i] = TextEditingController(text: list[i]['category']);
     }
   }
@@ -2253,7 +2272,6 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
               Space(1.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-             
                 children: [
                   SheetLabelWidget(
                     txt: 'Product',
@@ -2371,8 +2389,7 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                             ],
                           ),
                         ),
-                        
-                       
+
                         // const Spacer(),
                         SizedBox(
                           width: 20.w,
@@ -2406,7 +2423,7 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                             },
                           ),
                         ),
-                          // const Spacer(),
+                        const Spacer(),
                         IconButton(
                           icon: Icon(Icons.delete_outline_rounded,
                               color: Color(0xffFF5A77)),
@@ -2975,7 +2992,6 @@ class _MenuState extends State<Menu> {
                         ),
                       ],
                     ),
-                   
                   ],
                 ),
               ),
@@ -3001,17 +3017,15 @@ class FeedWidget extends StatelessWidget {
 
   final int index;
   final UserModel? userModel;
-  final bool darkMode ;
+  final bool darkMode;
   final dynamic data;
   final dynamic fulldata;
   final String userId;
   final String type;
   final String isSelfProfile;
 
-
   Color getBackgroundColor(
       String isSelfProfile, bool isVendor, String main_user_type) {
-
     var usertype = userModel?.userType;
     if (usertype == null) usertype = main_user_type;
     if (isSelfProfile == 'Yes' && isVendor && usertype == 'Vendor') {
@@ -3066,8 +3080,10 @@ class FeedWidget extends StatelessWidget {
                   BoxShadow(
                     offset: const Offset(1, 4),
                     // color: _isVendor ? const Color.fromRGBO(10, 76, 97, 0.31) :  const Color(0xBC73BC).withOpacity(0.6),
-                    color: darkMode?Colors.black.withOpacity(0.47): getBackgroundColor(
-                        isSelfProfile, _isVendor, main_user_type),
+                    color: darkMode
+                        ? Colors.black.withOpacity(0.47)
+                        : getBackgroundColor(
+                            isSelfProfile, _isVendor, main_user_type),
                     blurRadius: 12,
                   ),
                 ],

@@ -212,7 +212,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           if (_formKey.currentState!
                                               .validate()) {
                                             try {
-                                              await Provider.of<Auth>(
+                                              final mes= await Provider.of<Auth>(
                                                       context,
                                                       listen: false)
                                                   .signUp(context,
@@ -223,6 +223,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 _mobileController.text,
                                                 _dobController.text,
                                               );
+                                              if(mes=='Registration Succesful'){
+                                                Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+                                              }
                                              
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)

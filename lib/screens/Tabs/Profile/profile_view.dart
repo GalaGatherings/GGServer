@@ -634,7 +634,32 @@ Future<String?> getDarkModeStatus() async {
                                                             // Check if the URL can be launched
                                                             _launchURL(
                                                                 whatsappUrl);
-                                                          } else {
+                                                          } 
+                                                          else if (phoneNumber
+                                                                  .length ==
+                                                              11) {
+                                                            final whatsappUrl =
+                                                                'https://wa.me/$phoneNumber';
+                                                            print(
+                                                                "Launching WhatsApp URL: $whatsappUrl");
+
+                                                            // Check if the URL can be launched
+                                                            _launchURL(
+                                                                whatsappUrl);
+                                                          } 
+                                                           else if (phoneNumber
+                                                                  .length ==
+                                                              12) {
+                                                            final whatsappUrl =
+                                                                'https://wa.me/$phoneNumber';
+                                                            print(
+                                                                "Launching WhatsApp URL: $whatsappUrl");
+
+                                                            // Check if the URL can be launched
+                                                            _launchURL(
+                                                                whatsappUrl);
+                                                          } 
+                                                          else {
                                                             ScaffoldMessenger
                                                                     .of(context)
                                                                 .showSnackBar(

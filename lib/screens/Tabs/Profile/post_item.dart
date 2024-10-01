@@ -105,7 +105,7 @@ class _PostItemState extends State<PostItem> {
     setState(() {
       darkMode = prefs.getString('dark_mode') == "true" ? true : false;
     });
-   
+
     return prefs.getString('dark_mode');
   }
 
@@ -129,7 +129,7 @@ class _PostItemState extends State<PostItem> {
         .then((value) {
       print("details:: $value");
       Navigator.of(context).pop();
-    
+
       FeedBottomSheet().ProductsInPostSheet(
           context, widget.data, _isLiked, value, widget.data['user_id']);
       return [];
@@ -245,15 +245,14 @@ class _PostItemState extends State<PostItem> {
     if (!widget._isMultiple) filePath = widget.data['file_path'];
 
     final aspectRatio = await getImageAspectRatio(filePath);
-
-    setState(() {
-      _aspectRatio = aspectRatio ?? 1; // Default to 1.0 if null
-    });
+    if (mounted) {
+      setState(() {
+        _aspectRatio = aspectRatio ?? 1; // Default to 1.0 if null
+      });
+    }
   }
 
   double getClosestAspectRatio(double aspectRatio) {
-
-
     // Define the aspect ratios for comparison
     const double aspect16_9 = 16 / 9; // 1.777... (approximately 1.78)
     const double aspect4_3 = 4 / 3; // 1.333... (approximately 1.33)
@@ -290,17 +289,15 @@ class _PostItemState extends State<PostItem> {
             'Vendor';
     // print("isSharePost ${widget.isSharePost}" );
     // final date_time = formatTimeDifference('created_at');
- 
+
     return Container(
       decoration: ShapeDecoration(
         shadows: [
           BoxShadow(
             offset: const Offset(0, 10), // Position the shadow down
-            color:
-             darkMode
+            color: darkMode
                 ? Color(0xff000000).withOpacity(0.35)
-                :
-                 _isVendor
+                : _isVendor
                     ? Color(0xffB1D9D8).withOpacity(0.35)
                     : Provider.of<Auth>(context, listen: false)
                                 .userData?['user_type'] ==
@@ -313,11 +310,9 @@ class _PostItemState extends State<PostItem> {
             spreadRadius: 0, // Optional: Adjusts the size of the shadow
           ),
         ],
-        color: 
-        darkMode
+        color: darkMode
             ? Color(0xff313030)
-            :
-            _isVendor
+            : _isVendor
                 ? Color.fromARGB(102, 243, 255, 255).withOpacity(1)
                 : Provider.of<Auth>(context, listen: false)
                             .userData?['user_type'] ==
@@ -443,9 +438,7 @@ class _PostItemState extends State<PostItem> {
                                         : widget.data['store_name'][0]
                                             .toUpperCase(),
                                 style: const TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white
-                                ),
+                                    fontSize: 20, color: Colors.white),
                               ),
                             )),
                       )
@@ -732,10 +725,8 @@ class _PostItemState extends State<PostItem> {
                               ],
                               shape: const SmoothRectangleBorder(),
                             ),
-                           
                             child: GestureDetector(
                               onDoubleTap: () async {
-                              
                                 var code = widget.isProfilePost
                                     ? await Provider.of<Auth>(context,
                                             listen: false)
@@ -861,10 +852,10 @@ class _PostItemState extends State<PostItem> {
                   //                   blurRadius: 25,
                   //                 )
                   //             ],
-                            
+
                   //             shape: const SmoothRectangleBorder(),
                   //           ),
-                           
+
                   //             child: ClipSmoothRect(
                   //               radius: SmoothBorderRadius(
                   //                 cornerRadius: 40,
@@ -894,7 +885,7 @@ class _PostItemState extends State<PostItem> {
                   //       initialPage: 0,
                   //     ),
                   //   ),
-           :Container(),
+                  : Container(),
               if (_showLikeIcon) // Show like icon if _showLikeIcon is true
                 Positioned(
                   left: 30.w,
@@ -942,58 +933,52 @@ class _PostItemState extends State<PostItem> {
                         gradient: const LinearGradient(
                           begin: Alignment(-1.0, 1),
                           end: Alignment(1, -1.0),
-                          colors: [
-                            Color(0xffFFA500),
-                            Color(0xffFED170)
-                          ],
+                          colors: [Color(0xffFFA500), Color(0xffFED170)],
                         ),
-                       shadows: [
-                                if (darkMode) // Check for dark mode first
-                                  BoxShadow(
-                                    offset: Offset(3, 4),
-                                    color: Color(0xff030303).withOpacity(0.77),
-                                    blurRadius: 25,
-                                  )
-                                else if (_isVendor) // Check if it's a vendor
-                                  BoxShadow(
-                                    offset: Offset(3, 4),
-                                    color: Color.fromRGBO(124, 193, 191, 1)
-                                        .withOpacity(0.3),
-                                    blurRadius: 25,
-                                  )
-                                else if (Provider.of<Auth>(context,
-                                            listen: false)
-                                        .userData?['user_type'] ==
-                                    UserType
-                                        .Supplier.name) // Check for supplier
-                                  BoxShadow(
-                                    offset: Offset(3, 4),
-                                    color: Color.fromRGBO(77, 191, 74, 1)
-                                        .withOpacity(0.3),
-                                    blurRadius: 25,
-                                  )
-                                else // Default case for other user types
-                                  BoxShadow(
-                                    offset: Offset(3, 4),
-                                    color: Color.fromRGBO(158, 116, 158, 1)
-                                        .withOpacity(0.3),
-                                    blurRadius: 25,
-                                  )
-                              ],
-                            
+                        shadows: [
+                          if (darkMode) // Check for dark mode first
+                            BoxShadow(
+                              offset: Offset(3, 4),
+                              color: Color(0xff030303).withOpacity(0.77),
+                              blurRadius: 25,
+                            )
+                          else if (_isVendor) // Check if it's a vendor
+                            BoxShadow(
+                              offset: Offset(3, 4),
+                              color: Color.fromRGBO(124, 193, 191, 1)
+                                  .withOpacity(0.3),
+                              blurRadius: 25,
+                            )
+                          else if (Provider.of<Auth>(context, listen: false)
+                                  .userData?['user_type'] ==
+                              UserType.Supplier.name) // Check for supplier
+                            BoxShadow(
+                              offset: Offset(3, 4),
+                              color: Color.fromRGBO(77, 191, 74, 1)
+                                  .withOpacity(0.3),
+                              blurRadius: 25,
+                            )
+                          else // Default case for other user types
+                            BoxShadow(
+                              offset: Offset(3, 4),
+                              color: Color.fromRGBO(158, 116, 158, 1)
+                                  .withOpacity(0.3),
+                              blurRadius: 25,
+                            )
+                        ],
                         shape: SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius(
                           cornerRadius: 15,
                           cornerSmoothing: 1,
                         )),
                       ),
-                      child:  Icon(Icons.search, size: 25),
+                      child: Icon(Icons.search, size: 25),
                     ),
                   ),
                 ),
             ],
           ),
-          
+
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
             child: Column(
@@ -1004,7 +989,7 @@ class _PostItemState extends State<PostItem> {
                     const SizedBox(
                       width: 3,
                     ),
-          
+
                     //like button
                     IconButton(
                       visualDensity: const VisualDensity(
@@ -1012,7 +997,7 @@ class _PostItemState extends State<PostItem> {
                       onPressed: () async {
                         // print("abcds:: ${widget.userId}");
                         String code = '';
-          
+
                         code = widget.isProfilePost
                             ? await Provider.of<Auth>(context, listen: false)
                                 .likePost(
@@ -1020,7 +1005,7 @@ class _PostItemState extends State<PostItem> {
                             : await Provider.of<Auth>(context, listen: false)
                                 .likePost(
                                     widget.data['id'], widget.data['user_id']);
-          
+
                         if (code == '200') {
                           setState(() {
                             _isLiked = !_isLiked;
@@ -1030,11 +1015,11 @@ class _PostItemState extends State<PostItem> {
                                 final userId =
                                     Provider.of<Auth>(context, listen: false)
                                         .userData?['user_id'];
-          
+
                                 // Check if the user is already in the list
                                 final isAlreadyLiked = _likeData
                                     .any((like) => like['id'] == userId);
-          
+
                                 // If not present, add the user to the list
                                 if (!isAlreadyLiked) {
                                   _likeData.add({
@@ -1060,7 +1045,7 @@ class _PostItemState extends State<PostItem> {
                             }
                             if (_isLiked == true) _showLikeIcon = true;
                           });
-          
+
                           Future.delayed(const Duration(seconds: 2), () {
                             setState(() {
                               _showLikeIcon = false;
@@ -1088,19 +1073,22 @@ class _PostItemState extends State<PostItem> {
                                 /*_isLiked ?  Assets.favourite_svg :*/
                                 Assets.favourite_svg,
                                 // ignore: deprecated_member_use
-                                color: darkMode?Colors.white: _isVendor
-                                    ? const Color(0xFF094B60)
-                                    : Provider.of<Auth>(context, listen: false)
-                                                .userData?['user_type'] ==
-                                            UserType.Supplier.name
-                                        ? Color.fromARGB(255, 26, 48, 10)
-                                        : const Color(0xFF2E0536),
+                                color: darkMode
+                                    ? Colors.white
+                                    : _isVendor
+                                        ? const Color(0xFF094B60)
+                                        : Provider.of<Auth>(context,
+                                                        listen: false)
+                                                    .userData?['user_type'] ==
+                                                UserType.Supplier.name
+                                            ? Color.fromARGB(255, 26, 48, 10)
+                                            : const Color(0xFF2E0536),
                                 // colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.xor)
                               ),
                         // Change color when liked
                       ),
                     ),
-          
+
                     //comment button
                     IconButton(
                         visualDensity: const VisualDensity(
@@ -1141,13 +1129,15 @@ class _PostItemState extends State<PostItem> {
                         icon: SvgPicture.asset(
                           Assets.comment_svg,
                           // ignore: deprecated_member_use
-                          color:darkMode?Colors.white:  _isVendor
-                              ? const Color(0xFF094B60)
-                              : Provider.of<Auth>(context, listen: false)
-                                          .userData?['user_type'] ==
-                                      UserType.Supplier.name
-                                  ? Color.fromARGB(255, 26, 48, 10)
-                                  : const Color(0xFF2E0536),
+                          color: darkMode
+                              ? Colors.white
+                              : _isVendor
+                                  ? const Color(0xFF094B60)
+                                  : Provider.of<Auth>(context, listen: false)
+                                              .userData?['user_type'] ==
+                                          UserType.Supplier.name
+                                      ? Color.fromARGB(255, 26, 48, 10)
+                                      : const Color(0xFF2E0536),
                           height: 25,
                           width: 25,
                         )),
@@ -1169,14 +1159,14 @@ class _PostItemState extends State<PostItem> {
                             //     packageName: 'com.app.cloudbelly_app',
                             //   ),
                             // );
-          
+
                             // final Uri shortUrl = parameters.link;
-          
+
                             // 2. Download the image
                             final imageUrl = widget.data['file_path'];
                             final response =
                                 await http.get(Uri.parse(imageUrl));
-          
+
                             if (response.statusCode == 200) {
                               // 3. Save the image to the device's storage
                               final tempDir = await getTemporaryDirectory();
@@ -1184,7 +1174,7 @@ class _PostItemState extends State<PostItem> {
                                   '${tempDir.path}/shared_image.png';
                               final file = File(filePath);
                               await file.writeAsBytes(response.bodyBytes);
-          
+
                               // 4. Share the image and dynamic link
                               // Share.shareFiles([filePath], text: "$shortUrl");
                             } else {
@@ -1197,13 +1187,15 @@ class _PostItemState extends State<PostItem> {
                         icon: SvgPicture.asset(
                           Assets.share,
                           // ignore: deprecated_member_use
-                          color:darkMode?Colors.white:  _isVendor
-                              ? const Color(0xFF094B60)
-                              : Provider.of<Auth>(context, listen: false)
-                                          .userData?['user_type'] ==
-                                      UserType.Supplier.name
-                                  ? Color.fromARGB(255, 26, 48, 10)
-                                  : const Color(0xFF2E0536),
+                          color: darkMode
+                              ? Colors.white
+                              : _isVendor
+                                  ? const Color(0xFF094B60)
+                                  : Provider.of<Auth>(context, listen: false)
+                                              .userData?['user_type'] ==
+                                          UserType.Supplier.name
+                                      ? Color.fromARGB(255, 26, 48, 10)
+                                      : const Color(0xFF2E0536),
                           height: 25,
                           width: 25,
                         ))
@@ -1287,14 +1279,16 @@ class _PostItemState extends State<PostItem> {
                               Text(
                                 'Liked by',
                                 style: TextStyle(
-                                  color:darkMode?Color(0xffB1F0EF): _isVendor
-                                      ? const Color(0xFF519896)
-                                      : Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .userData?['user_type'] ==
-                                              UserType.Supplier.name
-                                          ? Color.fromARGB(255, 26, 48, 10)
-                                          : const Color(0xFFB232CB),
+                                  color: darkMode
+                                      ? Color(0xffB1F0EF)
+                                      : _isVendor
+                                          ? const Color(0xFF519896)
+                                          : Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .userData?['user_type'] ==
+                                                  UserType.Supplier.name
+                                              ? Color.fromARGB(255, 26, 48, 10)
+                                              : const Color(0xFFB232CB),
                                   fontSize: 13,
                                   fontFamily: 'Product Sans Medium',
                                   fontWeight: FontWeight.w500,
@@ -1306,14 +1300,16 @@ class _PostItemState extends State<PostItem> {
                               Text(
                                 '${_likeData.length == 0 ? '0 people' : _likeData.length == 1 ? _likeData[0]['name'] : '${_likeData[0]['name']} and ${_likeData.length - 1} others'}',
                                 style: TextStyle(
-                                  color: darkMode?Colors.white: _isVendor
-                                      ? const Color(0xFF094B60)
-                                      : Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .userData?['user_type'] ==
-                                              UserType.Supplier.name
-                                          ? Color.fromARGB(255, 26, 48, 10)
-                                          : const Color(0xFF2E0536),
+                                  color: darkMode
+                                      ? Colors.white
+                                      : _isVendor
+                                          ? const Color(0xFF094B60)
+                                          : Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .userData?['user_type'] ==
+                                                  UserType.Supplier.name
+                                              ? Color.fromARGB(255, 26, 48, 10)
+                                              : const Color(0xFF2E0536),
                                   fontSize: 13,
                                   fontFamily: 'Product Sans',
                                   fontWeight: FontWeight.w700,
@@ -1339,8 +1335,10 @@ class _PostItemState extends State<PostItem> {
                                                 listen: false)
                                             .userData!['store_name']
                                         : widget.data['store_name'],
-                                    style:  TextStyle(
-                                      color: darkMode?Color(0xffB1F0EF): Color(0xFFFA6E00),
+                                    style: TextStyle(
+                                      color: darkMode
+                                          ? Color(0xffB1F0EF)
+                                          : Color(0xFFFA6E00),
                                       fontSize: 13,
                                       fontFamily: 'Product Sans',
                                       fontWeight: FontWeight.w700,
@@ -1355,9 +1353,11 @@ class _PostItemState extends State<PostItem> {
                                         overflow: TextOverflow.clip,
                                         maxLines: 1,
                                         style: TextStyle(
-                                          color:darkMode?Colors.white: _isVendor
-                                              ? const Color(0xFF0A4C61)
-                                              : const Color(0xFF2E0536),
+                                          color: darkMode
+                                              ? Colors.white
+                                              : _isVendor
+                                                  ? const Color(0xFF0A4C61)
+                                                  : const Color(0xFF2E0536),
                                           fontSize: 13,
                                           fontFamily: 'Product Sans',
                                           fontWeight: FontWeight.w500,
@@ -1374,9 +1374,11 @@ class _PostItemState extends State<PostItem> {
                                     widget.data['caption'].substring(50),
                                     maxLines: null,
                                     style: TextStyle(
-                                      color:darkMode?Color(0xffB1F0EF): _isVendor
-                                          ? const Color(0xFF0A4C61)
-                                          : const Color(0xFF2E0536),
+                                      color: darkMode
+                                          ? Color(0xffB1F0EF)
+                                          : _isVendor
+                                              ? const Color(0xFF0A4C61)
+                                              : const Color(0xFF2E0536),
                                       fontSize: 13,
                                       fontFamily: 'Product Sans Medium',
                                       fontWeight: FontWeight.w500,
@@ -1387,9 +1389,9 @@ class _PostItemState extends State<PostItem> {
                             ],
                           ),
                         // Space(0.3.h),
-                         if (widget.data['caption'] == null ||
+                        if (widget.data['caption'] == null ||
                             widget.data['caption'].isEmpty)
-                        Space(0.5.h),
+                          Space(0.5.h),
                         TouchableOpacity(
                           onTap: () async {
                             AppWideLoadingBanner().loadingBanner(context);
@@ -1403,7 +1405,7 @@ class _PostItemState extends State<PostItem> {
                             final temp =
                                 await Provider.of<Auth>(context, listen: false)
                                     .getUserInfo(userIds);
-          
+
                             for (int i = 0;
                                 i < (widget.data['comments'] ?? []).length;
                                 i++) {
@@ -1413,7 +1415,7 @@ class _PostItemState extends State<PostItem> {
                                   temp[i]['profile_photo'];
                             }
                             Navigator.of(context).pop();
-          
+
                             AppWideBottomSheet()
                                 .showSheet(
                                     context,
@@ -1436,9 +1438,11 @@ class _PostItemState extends State<PostItem> {
                                   ? 'View ${(widget.data['comments'] ?? []).length} comments'
                                   : '${(widget.data['comments'] ?? []).length} comments',
                               style: TextStyle(
-                                color:darkMode?Color(0xffB1F0EF): _isVendor
-                                    ? const Color(0xFF519796)
-                                    : const Color(0xFFB232CB),
+                                color: darkMode
+                                    ? Color(0xffB1F0EF)
+                                    : _isVendor
+                                        ? const Color(0xFF519796)
+                                        : const Color(0xFFB232CB),
                                 fontSize: 11,
                                 fontFamily: 'Product Sans Medium',
                                 fontWeight: FontWeight.w500,
@@ -1452,9 +1456,11 @@ class _PostItemState extends State<PostItem> {
                         Text(
                           '${formatTimeDifference(widget.data['created_at'])}',
                           style: TextStyle(
-                            color:darkMode?Color(0xffB1F0EF): _isVendor
-                                ? const Color(0xFF519796)
-                                : const Color(0xFFB232CB),
+                            color: darkMode
+                                ? Color(0xffB1F0EF)
+                                : _isVendor
+                                    ? const Color(0xFF519796)
+                                    : const Color(0xFFB232CB),
                             fontSize: 9,
                             fontFamily: 'Product Sans Medium',
                             fontWeight: FontWeight.w500,
@@ -1462,7 +1468,6 @@ class _PostItemState extends State<PostItem> {
                             letterSpacing: 0.09,
                           ),
                         ),
-                        
                       ]),
                 )
               ],
