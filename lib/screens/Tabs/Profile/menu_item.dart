@@ -302,7 +302,7 @@ class _MenuItemState extends State<MenuItem> {
                           widget.data['images'][0],
                           widget.data['description'] ?? '',
                           widget.data['name'] ?? '',
-                          widget.data['price'] ?? '',
+                          widget.data['price'].toString() ?? '',
                           widget.data['type'] ?? 'Veg');
                   },
                   child: Container(

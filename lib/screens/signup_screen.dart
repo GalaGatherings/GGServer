@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gala_gatherings/api_service.dart';
 import 'package:gala_gatherings/screens/Tabs/tabs.dart';
-
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
