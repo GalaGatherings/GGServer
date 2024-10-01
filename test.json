@@ -1,0 +1,22 @@
+[
+    {
+        "_id": "66f993de869b6c5ef5737256",
+        "phone": "8744834149",
+        "store_name": "Antra",
+        "profile_photo": "https: //galagatheringsbucket.s3.amazonaws.com/aae40339-9712-47a7-95f2-5398e3e45fa4_compressed_image.jpg",
+        "address": {
+            "location": "Daiguttu, Mango, Jamshedpur",
+            "latitude": "22.8258566",
+            "longitude": "86.2066534",
+            "hno": "h no 5",
+            "pincode": "832110",
+            "landmark": "near Jhanda Singh High School",
+            "type": "Home"
+        },
+        "current_location": {
+            "latitude": 22.8255395,
+            "longitude": 86.2077852,
+            "area": "Jharkhand"
+        }
+    }
+]

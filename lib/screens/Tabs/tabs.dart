@@ -50,14 +50,14 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     iconList = <IconData>[
       Icons.home,
       Icons.search,
-      Icons.notifications_outlined,
+      Icons.people_rounded,
       Icons.person,
       // Icons.brightness_1,
     ];
     textList = <String>[
       'Feed',
       'Search',
-      'Products',
+      'Vendors',
       'Profile',
       // 'Account',
     ];

@@ -122,6 +122,7 @@ class _ProfileState extends State<Profile> {
 
   Future<void> getUserDataFromPref() async {
     userData = UserPreferences.getUser();
+    
   }
 
   Future<void> _getMenu() async {
@@ -183,6 +184,7 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+
   void fetchUserDetailsbyKey() async {
     final res = await getUserDetailsbyKey(
         Provider.of<Auth>(context, listen: false).userData?['user_id'], [
@@ -190,7 +192,12 @@ class _ProfileState extends State<Profile> {
       'kyc_status',
       'followings',
       'followers',
-      'fssai'
+      'fssai',
+      'user_type',
+      'description',
+      'category',
+      'sub_category',
+      'store_name'
     ]);
     print(" resssp ${json.encode(res)}");
     setState(() {
@@ -198,7 +205,13 @@ class _ProfileState extends State<Profile> {
     });
     Map<String, dynamic>? userData = UserPreferences.getUser();
     if (userData != null) {
+     
       userData['store_availability'] = _switchValue;
+      userData['user_type'] = res['user_type'];
+      userData['description'] = res['description'];
+      userData['category'] = res['category'];
+      userData['sub_category'] = res['sub_category'];
+      userData['store_name'] = res['store_name'];
       userData['fssai'] = res['fssai'];
       userData['kyc_status'] = res['kyc_status'] ?? 'not verified';
       await UserPreferences.setUser(userData);
@@ -242,7 +255,7 @@ class _ProfileState extends State<Profile> {
     false;
     _getFeed();
     _getMenu();
-    userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    userType = Provider.of<Auth>(context, listen: false).userData?['user_type'] ?? 'vendor';
   }
 
   @override
@@ -330,7 +343,7 @@ class _ProfileState extends State<Profile> {
                                         ),
                                       ),
                                       Text(
-                                        'Store Status',
+                                        'Business Status',
                                         style: TextStyle(
                                           color: darkMode
                                               ? Colors.white
@@ -492,7 +505,7 @@ class _ProfileState extends State<Profile> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  height: 15,
+                                                  height: 10,
                                                 ),
                                                 Text(
                                                   Provider.of<Auth>(context,
@@ -511,10 +524,23 @@ class _ProfileState extends State<Profile> {
                                                 Text(
                                                   Provider.of<Auth>(context,
                                                           listen: true)
-                                                      .userData?['user_type'],
+                                                      .userData?['category'] ?? '' ,
                                                   style: TextStyle(
                                                       color: darkMode
                                                           ? Colors.white
+                                                          : boxShadowColor,
+                                                      fontFamily:
+                                                          'Product Sans',
+                                                      fontSize: 12,
+                                                      letterSpacing: 1),
+                                                ),
+                                                 Text(
+                                                  Provider.of<Auth>(context,
+                                                          listen: true)
+                                                      .userData?['description'] ?? '' ,
+                                                  style: TextStyle(
+                                                      color: darkMode
+                                                          ? Color(0xffB1F0EF)
                                                           : boxShadowColor,
                                                       fontFamily:
                                                           'Product Sans',
@@ -582,7 +608,7 @@ class _ProfileState extends State<Profile> {
                                           data: Provider.of<Auth>(context,
                                                       listen: false)
                                                   .userData?['rating'] ??
-                                              "",
+                                              "-",
                                           txt: 'Rating',
                                           color: darkMode
                                               ? Colors.white
@@ -1625,9 +1651,9 @@ class _ProfileState extends State<Profile> {
 
   Future<void> submitStoreAvailability() async {
     // Fetch the kyc_status safely
-    String kycStatus = UserPreferences.getUser()?['kyc_status'];
+    
 
-    if (kycStatus == 'verified') {
+   
       // Check for true value explicitly
       String msg = await Provider.of<Auth>(context, listen: false)
           .storeAvailability(_switchValue);
@@ -1646,14 +1672,7 @@ class _ProfileState extends State<Profile> {
       } else {
         TOastNotification().showErrorToast(context, msg);
       }
-    } else {
-      setState(() {
-        Provider.of<Auth>(context, listen: false)
-            .userData?['store_availability'] = false;
-      });
-      TOastNotification()
-          .showErrorToast(context, 'Your KYC status is incomplete');
-    }
+     
   }
 
   void _showFollowers(BuildContext context, List<dynamic> followers) {
@@ -2648,20 +2667,20 @@ class _MenuState extends State<Menu> {
     super.initState();
 
     // getUserDetailsbyKey()
-    fetchUserDetailsbyKey();
+    // fetchUserDetailsbyKey();
   }
 
-  void fetchUserDetailsbyKey() async {
-    final res = await getUserDetailsbyKey(widget.user, ['store_availability']);
+  // void fetchUserDetailsbyKey() async {
+  //   final res = await getUserDetailsbyKey(widget.user, ['store_availability']);
 
-    final prefs = await SharedPreferences.getInstance();
+  //   final prefs = await SharedPreferences.getInstance();
 
-    if (res['store_availability'] && res['store_availability'] != null)
-      setState(() {
-        storeAvailability = res['store_availability'] ?? false;
-        darkMode = prefs.getString('dark_mode') == "true" ? true : false;
-      });
-  }
+  //   if (res['store_availability'] && res['store_availability'] != null)
+  //     setState(() {
+  //       storeAvailability = res['store_availability'] ?? false;
+  //       darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+  //     });
+  // }
 
   Future<Map<String, dynamic>> getUserDetailsbyKey(
       String userId, List<String> projectKey) async {

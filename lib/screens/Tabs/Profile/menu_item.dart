@@ -378,7 +378,10 @@ class _MenuItemState extends State<MenuItem> {
                 ),
 
                 // vendor login - stock_status null || stock_status true //visited profile  -
-                if (widget.storeAvailability)
+                if (widget.storeAvailability && Provider.of<Auth>(context, listen: false)
+                            .userData?['user_id'] ==
+                        widget.data['user_id'] &&
+                    !refreshing)
                   if (widget.data['stock_status'] == null ||
                       widget.data['stock_status']) ...{
                     Positioned(

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:gala_gatherings/NotificationScree.dart';
@@ -8,7 +7,6 @@ import 'package:gala_gatherings/constants/enums.dart';
 import 'package:gala_gatherings/constants/globalVaribales.dart';
 import 'package:gala_gatherings/prefrence_helper.dart';
 
-
 import 'package:gala_gatherings/widgets/appwide_loading_bannner.dart';
 import 'package:gala_gatherings/widgets/dashboard.dart';
 import 'package:gala_gatherings/widgets/space.dart';
@@ -17,15 +15,13 @@ import 'package:gala_gatherings/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:intl/intl.dart';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toastification/toastification.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileSettingView extends StatefulWidget {
@@ -37,6 +33,7 @@ class ProfileSettingView extends StatefulWidget {
 
 class _ProfileSettingViewState extends State<ProfileSettingView> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController addressController = TextEditingController();
@@ -52,6 +49,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   Map<String, dynamic> workingHours = {};
   Map<String, dynamic>? userDetails;
   bool darkMode = false;
+  String selectedCategory = '';
+  String selectedSubcategory = '';
 
   @override
   void initState() {
@@ -73,111 +72,24 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   Future<void> submitStoreName() async {
     // final prefs = await SharedPreferences.getInstance();
     if (nameController.text != '') {
-      AppWideLoadingBanner().loadingBanner(context);
 
+      AppWideLoadingBanner().loadingBanner(context);
+userDetails = UserPreferences.getUser();
       String msg = await Provider.of<Auth>(context, listen: false)
           .storeName(nameController.text);
       if (msg == 'User information updated successfully.') {
         Provider.of<Auth>(context, listen: false).userData?['store_name'] =
             nameController.text;
-        Map<String, dynamic>? userData = {
+        Map<String, dynamic>? userData = {...userDetails!,
+
           'user_id':
               Provider.of<Auth>(context, listen: false).userData?['user_id'],
-          'user_name':
-              Provider.of<Auth>(context, listen: false).userData?['user_name'],
-          'email': Provider.of<Auth>(context, listen: false).userData?['email'],
+         
           'store_name': nameController.text,
-          'profile_photo': Provider.of<Auth>(context, listen: false)
-                  .userData?['profile_photo'] ??
-              '',
-          'store_availability': Provider.of<Auth>(context, listen: false)
-                  .userData?['store_availability'] ??
-              false,
           
-          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
-              null)
-            'address': {
-              "location": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['location'],
-              "latitude": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['latitude'],
-              "longitude": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['longitude'],
-              "hno": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['hno'],
-              "pincode": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['pincode'],
-              "landmark": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['landmark'],
-              "type": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['type'],
-            },
-          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
-              null)
-            'location': {
-              'details': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['details'] ??
-                  '',
-              'latitude': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['latitude'] ??
-                  '',
-              'longitude': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['longitude'] ??
-                  '',
-            },
-          if (Provider.of<Auth>(context, listen: false)
-                  .userData?['working_hours'] !=
-              null)
-            'working_hours': {
-              'start_time': Provider.of<Auth>(context, listen: false)
-                      .userData?['working_hours']['start_time'] ??
-                  '',
-              'end_time': Provider.of<Auth>(context, listen: false)
-                      .userData?['working_hours']['end_time'] ??
-                  '',
-            },
-          'delivery_addresses': Provider.of<Auth>(context, listen: false)
-                  .userData?['delivery_addresses'] ??
-              [],
-          'bank_name': Provider.of<Auth>(context, listen: false)
-                  .userData?['bank_name'] ??
-              '',
-          'pincode':
-              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
-                  '',
-          'rating':
-              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
-                  '-',
-          'followers': Provider.of<Auth>(context, listen: false)
-                  .userData?['followers'] ??
-              [],
-          'followings': Provider.of<Auth>(context, listen: false)
-                  .userData?['followings'] ??
-              [],
-          'cover_image': Provider.of<Auth>(context, listen: false)
-                  .userData?['cover_image'] ??
-              '',
-          'account_number': Provider.of<Auth>(context, listen: false)
-                  .userData?['account_number'] ??
-              '',
-          'ifsc_code': Provider.of<Auth>(context, listen: false)
-                  .userData?['ifsc_code'] ??
-              '',
-          'phone':
-              Provider.of<Auth>(context, listen: false).userData?['phone'] ??
-                  '',
-          'upi_id':
-              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
-                  '',
-          'fssai':
-              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
-                  '',
-          'user_type': Provider.of<Auth>(context, listen: false)
-                  .userData?['user_type'] ??
-              'Vendor',
         };
         await UserPreferences.setUser(userData);
-        userDetails = UserPreferences.getUser();
+        
         print(
             'name: ${Provider.of<Auth>(context, listen: false).userData?['store_name']}');
         TOastNotification().showSuccesToast(
@@ -208,105 +120,16 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       Navigator.of(context).pop();
       Provider.of<Auth>(context, listen: false).userData?['profile_photo'] =
           userImage;
-      Map<String, dynamic>? userData = {
+          userDetails = UserPreferences.getUser();
+      Map<String, dynamic>? userData = {...userDetails!,
         'user_id':
             Provider.of<Auth>(context, listen: false).userData?['user_id'],
-        'user_name':
-            Provider.of<Auth>(context, listen: false).userData?['user_name'],
-        'email': Provider.of<Auth>(context, listen: false).userData?['email'],
-        'store_name':
-            Provider.of<Auth>(context, listen: false).userData?['store_name'],
+       
         'profile_photo': userImage ?? '',
-        'store_availability': Provider.of<Auth>(context, listen: false)
-                .userData?['store_availability'] ??
-            false,
-        'pan_number':
-            Provider.of<Auth>(context, listen: false).userData?['pan_number'] ??
-                '',
-        'aadhar_number': Provider.of<Auth>(context, listen: false)
-                .userData?['aadhar_number'] ??
-            '',
-        if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
-            null)
-          'address': {
-            "location": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['location'],
-            "latitude": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['latitude'],
-            "longitude": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['longitude'],
-            "hno": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['hno'],
-            "pincode": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['pincode'],
-            "landmark": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['landmark'],
-            "type": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['type'],
-          },
-        if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
-            null)
-          'location': {
-            'details': Provider.of<Auth>(context, listen: false)
-                    .userData?['location']['details'] ??
-                '',
-            'latitude': Provider.of<Auth>(context, listen: false)
-                    .userData?['location']['latitude'] ??
-                '',
-            'longitude': Provider.of<Auth>(context, listen: false)
-                    .userData?['location']['longitude'] ??
-                '',
-          },
-        if (Provider.of<Auth>(context, listen: false)
-                .userData?['working_hours'] !=
-            null)
-          'working_hours': {
-            'start_time': Provider.of<Auth>(context, listen: false)
-                    .userData?['working_hours']['start_time'] ??
-                '',
-            'end_time': Provider.of<Auth>(context, listen: false)
-                    .userData?['working_hours']['end_time'] ??
-                '',
-          },
-        'delivery_addresses': Provider.of<Auth>(context, listen: false)
-                .userData?['delivery_addresses'] ??
-            [],
-        'bank_name':
-            Provider.of<Auth>(context, listen: false).userData?['bank_name'] ??
-                '',
-        'pincode':
-            Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
-                '',
-        'rating':
-            Provider.of<Auth>(context, listen: false).userData?['rating'] ??
-                '-',
-        'followers':
-            Provider.of<Auth>(context, listen: false).userData?['followers'] ??
-                [],
-        'followings':
-            Provider.of<Auth>(context, listen: false).userData?['followings'] ??
-                [],
-        'cover_image': Provider.of<Auth>(context, listen: false)
-                .userData?['cover_image'] ??
-            '',
-        'account_number': Provider.of<Auth>(context, listen: false)
-                .userData?['account_number'] ??
-            '',
-        'ifsc_code':
-            Provider.of<Auth>(context, listen: false).userData?['ifsc_code'] ??
-                '',
-        'phone':
-            Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
-        'upi_id':
-            Provider.of<Auth>(context, listen: false).userData?['upi_id'] ?? '',
-        'fssai':
-            Provider.of<Auth>(context, listen: false).userData?['fssai'] ?? '',
-        'user_type':
-            Provider.of<Auth>(context, listen: false).userData?['user_type'] ??
-                'Vendor',
+        
       };
       await UserPreferences.setUser(userData);
-      userDetails = UserPreferences.getUser();
+      
       print(
           'profile_photo: ${Provider.of<Auth>(context, listen: false).userData?['profile_photo']}');
       TOastNotification()
@@ -324,111 +147,21 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
     // final prefs = await SharedPreferences.getInstance();
     if (emailController.text != '') {
       AppWideLoadingBanner().loadingBanner(context);
-
+ userDetails = UserPreferences.getUser();
       String msg = await Provider.of<Auth>(context, listen: false)
           .email(emailController.text);
       if (msg == 'User information updated successfully.') {
         Provider.of<Auth>(context, listen: false).userData?['email'] =
             emailController.text;
-        Map<String, dynamic>? userData = {
+        Map<String, dynamic>? userData = {...userDetails!,
           'user_id':
               Provider.of<Auth>(context, listen: false).userData?['user_id'],
-          'user_name':
-              Provider.of<Auth>(context, listen: false).userData?['user_name'],
-          'email': emailController.text,
-          'store_name':
-              Provider.of<Auth>(context, listen: false).userData?['store_name'],
-          'profile_photo': Provider.of<Auth>(context, listen: false)
-                  .userData?['profile_photo'] ??
-              '',
-          'store_availability': Provider.of<Auth>(context, listen: false)
-                  .userData?['store_availability'] ??
-              false,
           
-          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
-              null)
-            'address': {
-              "location": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['location'],
-              "latitude": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['latitude'],
-              "longitude": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['longitude'],
-              "hno": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['hno'],
-              "pincode": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['pincode'],
-              "landmark": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['landmark'],
-              "type": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['type'],
-            },
-          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
-              null)
-            'location': {
-              'details': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['details'] ??
-                  '',
-              'latitude': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['latitude'] ??
-                  '',
-              'longitude': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['longitude'] ??
-                  '',
-            },
-          if (Provider.of<Auth>(context, listen: false)
-                  .userData?['working_hours'] !=
-              null)
-            'working_hours': {
-              'start_time': Provider.of<Auth>(context, listen: false)
-                      .userData?['working_hours']['start_time'] ??
-                  '',
-              'end_time': Provider.of<Auth>(context, listen: false)
-                      .userData?['working_hours']['end_time'] ??
-                  '',
-            },
-          'delivery_addresses': Provider.of<Auth>(context, listen: false)
-                  .userData?['delivery_addresses'] ??
-              [],
-          'bank_name': Provider.of<Auth>(context, listen: false)
-                  .userData?['bank_name'] ??
-              '',
-          'pincode':
-              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
-                  '',
-          'rating':
-              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
-                  '-',
-          'followers': Provider.of<Auth>(context, listen: false)
-                  .userData?['followers'] ??
-              [],
-          'followings': Provider.of<Auth>(context, listen: false)
-                  .userData?['followings'] ??
-              [],
-          'cover_image': Provider.of<Auth>(context, listen: false)
-                  .userData?['cover_image'] ??
-              '',
-          'account_number': Provider.of<Auth>(context, listen: false)
-                  .userData?['account_number'] ??
-              '',
-          'ifsc_code': Provider.of<Auth>(context, listen: false)
-                  .userData?['ifsc_code'] ??
-              '',
-          'phone':
-              Provider.of<Auth>(context, listen: false).userData?['phone'] ??
-                  '',
-          'upi_id':
-              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
-                  '',
-          'fssai':
-              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
-                  '',
-          'user_type': Provider.of<Auth>(context, listen: false)
-                  .userData?['user_type'] ??
-              'Vendor',
+          'email': emailController.text,
+          
         };
         await UserPreferences.setUser(userData);
-        userDetails = UserPreferences.getUser();
+       
 
         //  print('pin: ${pan_number}');
         TOastNotification()
@@ -445,6 +178,39 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
     }
   }
 
+  Future<void> submitDescription() async {
+    // final prefs = await SharedPreferences.getInstance();
+    if (emailController.text != '') {
+      AppWideLoadingBanner().loadingBanner(context);
+
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .vendorDescription(descriptionController.text);
+      if (msg == 'User information updated successfully.') {
+        Provider.of<Auth>(context, listen: false).userData?['email'] =
+            emailController.text;
+        Map<String, dynamic>? userData = {
+          'user_id':
+              Provider.of<Auth>(context, listen: false).userData?['user_id'],
+          'email': descriptionController.text,
+        };
+        await UserPreferences.setUser(userData);
+        userDetails = UserPreferences.getUser();
+
+        //  print('pin: ${pan_number}');
+        TOastNotification()
+            .showSuccesToast(context, 'Description update successfully');
+        Navigator.of(context).pop();
+        // prefs.setInt('counter', 3);
+      } else {
+        TOastNotification().showErrorToast(context, msg);
+        Navigator.of(context).pop();
+      }
+      print(msg);
+    } else {
+      TOastNotification().showErrorToast(context, 'Please fill description');
+    }
+  }
+
   Future<void> submitContactNumber() async {
     print("contactNUmber:: ${numberController.text}");
 
@@ -455,15 +221,16 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       String msg = await Provider.of<Auth>(context, listen: false)
           .contactNumber(numberController.text);
       if (msg == 'User information updated successfully.') {
+       userDetails = UserPreferences.getUser();
         Provider.of<Auth>(context, listen: false).userData?['phone'] =
             numberController.text;
-        Map<String, dynamic>? userData = {
+        Map<String, dynamic>? userData = {...userDetails!,
           'user_id':
               Provider.of<Auth>(context, listen: false).userData?['user_id'],
           'phone': numberController.text ?? '',
         };
         await UserPreferences.setUser(userData);
-        userDetails = UserPreferences.getUser();
+        
         print(
             "contactNUmber:: ${Provider.of<Auth>(context, listen: false).userData?['phone']}");
         //  print('pin: ${pan_number}');
@@ -481,173 +248,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
     }
   }
 
-  Future<void> submitStoreWorkingHours() async {
-    // final prefs = await SharedPreferences.getInstance();
-    if (fromTime != null && tillTime != null) {
-      workingHours = {
-        "start_time": "${fromTime?.hour}:${fromTime?.minute}",
-        "end_time": "${tillTime?.hour}:${tillTime?.minute}"
-      };
-      AppWideLoadingBanner().loadingBanner(context);
-
-      String msg = await Provider.of<Auth>(context, listen: false)
-          .workingHours(workingHours);
-      if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false).userData?['working_hours'] =
-            workingHours;
-        Map<String, dynamic>? userData = {
-          'user_id':
-              Provider.of<Auth>(context, listen: false).userData?['user_id'],
-          'user_name':
-              Provider.of<Auth>(context, listen: false).userData?['user_name'],
-          'email': Provider.of<Auth>(context, listen: false).userData?['email'],
-          'store_name':
-              Provider.of<Auth>(context, listen: false).userData?['store_name'],
-          'profile_photo': Provider.of<Auth>(context, listen: false)
-                  .userData?['profile_photo'] ??
-              '' ??
-              '',
-          'store_availability': Provider.of<Auth>(context, listen: false)
-                  .userData?['store_availability'] ??
-              false,
-          
-          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
-              null)
-            'address': {
-              "location": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['location'],
-              "latitude": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['latitude'],
-              "longitude": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['longitude'],
-              "hno": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['hno'],
-              "pincode": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['pincode'],
-              "landmark": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['landmark'],
-              "type": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['type'],
-            },
-          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
-              null)
-            'location': {
-              'details': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['details'] ??
-                  '',
-              'latitude': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['latitude'] ??
-                  '',
-              'longitude': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['longitude'] ??
-                  '',
-            },
-          if (Provider.of<Auth>(context, listen: false)
-                  .userData?['working_hours'] !=
-              null)
-            'working_hours': {
-              'start_time': "${fromTime?.hour}:${fromTime?.minute}" ?? '',
-              'end_time': "${tillTime?.hour}:${tillTime?.minute}" ?? '',
-            },
-          'delivery_addresses': Provider.of<Auth>(context, listen: false)
-                  .userData?['delivery_addresses'] ??
-              [],
-          'bank_name': Provider.of<Auth>(context, listen: false)
-                  .userData?['bank_name'] ??
-              '',
-          'pincode':
-              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
-                  '',
-          'rating':
-              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
-                  '-',
-          'followers': Provider.of<Auth>(context, listen: false)
-                  .userData?['followers'] ??
-              [],
-          'followings': Provider.of<Auth>(context, listen: false)
-                  .userData?['followings'] ??
-              [],
-          'cover_image': Provider.of<Auth>(context, listen: false)
-                  .userData?['cover_image'] ??
-              '',
-          'account_number': Provider.of<Auth>(context, listen: false)
-                  .userData?['account_number'] ??
-              '',
-          'ifsc_code': Provider.of<Auth>(context, listen: false)
-                  .userData?['ifsc_code'] ??
-              '',
-          'phone':
-              Provider.of<Auth>(context, listen: false).userData?['phone'] ??
-                  '',
-          'upi_id':
-              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
-                  '',
-          'fssai':
-              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
-                  '',
-          'user_type': Provider.of<Auth>(context, listen: false)
-                  .userData?['user_type'] ??
-              'Vendor',
-        };
-        await UserPreferences.setUser(userData);
-        userDetails = UserPreferences.getUser();
-
-        //  print('pin: ${pan_number}');
-        TOastNotification()
-            .showSuccesToast(context, 'working hours update successfully');
-        Navigator.of(context).pop();
-        // prefs.setInt('counter', 3);
-      } else {
-        TOastNotification().showErrorToast(context, msg);
-        Navigator.of(context).pop();
-      }
-      print(msg);
-    } else {
-      TOastNotification().showErrorToast(context, 'Please select Both Time');
-    }
-  }
-
-  Future<void> submitStoreAvailability() async {
-    // final prefs = await SharedPreferences.getInstance();
-
-    AppWideLoadingBanner().loadingBanner(context);
-    print('pp${Provider.of<Auth>(context, listen: false).userData?['upi_id']}');
-    if (Provider.of<Auth>(context, listen: false).userData?['upi_id'] == '' &&
-        Provider.of<Auth>(context, listen: false).userData?['pan_number'] ==
-            '') {
-      TOastNotification().showErrorToast(
-          context, 'First complete Kyc details and Payment Setup');
-    } else if (Provider.of<Auth>(context, listen: false).userData?['upi_id'] !=
-            '' &&
-        Provider.of<Auth>(context, listen: false).userData?['pan_number'] !=
-            '' &&
-        !kycVerified) {
-      TOastNotification().showErrorToast(
-          context, 'Please Wait, Your application is in review');
-    } else if (paymentSetup && kycSetup && kycVerified) {
-      String msg = await Provider.of<Auth>(context, listen: false)
-          .storeAvailability(_switchValue);
-      if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false)
-            .userData?['store_availability'] = _switchValue;
-        Map<String, dynamic>? userData = UserPreferences.getUser();
-        userData?['store_availability'] = _switchValue;
-        await UserPreferences.setUser(userData!);
-        userDetails = UserPreferences.getUser();
-
-        //  print('pin: ${pan_number}');
-        TOastNotification()
-            .showSuccesToast(context, 'StoreAvailability update successfully');
-        // Navigator.of(context).pop();
-        // prefs.setInt('counter', 3);
-      } else {
-        TOastNotification().showErrorToast(context, msg);
-        Navigator.of(context).pop();
-      }
-      print(msg);
-    }
-    Navigator.of(context).pop();
-  }
 
   Future<void> logout() async {
     AppWideLoadingBanner().loadingBanner(context);
@@ -1100,7 +700,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       backgroundColor: darkMode ? Color(0xff1D1D1D) : const Color(0xFFFFFFFF),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(30, 1.h, 30, 8.h),
+          padding: EdgeInsets.fromLTRB(30, 6.h, 30, 8.h),
           child: Column(
             //back icon
 
@@ -1747,7 +1347,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextWidgetStoreSetup(
-                  label: 'Whatsapp number',
+                  label: 'Phone number',
                   color: darkMode
                       ? Color.fromARGB(255, 229, 227, 227)
                       : boxShadowColor,
@@ -1839,10 +1439,113 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Space(
                 3.h,
               ),
-             
-             
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextWidgetStoreSetup(
+                  label: 'Write your description',
+                  color: darkMode
+                      ? Color.fromARGB(255, 229, 227, 227)
+                      : boxShadowColor,
+                ),
+              ),
+              Space(1.h),
+              Container(
+                // rgba(165, 200, 199, 1),
+                decoration: ShapeDecoration(
+                  shadows: [
+                    BoxShadow(
+                      offset: const Offset(0, 4),
+                      color: darkMode
+                          ? Colors.black.withOpacity(0.47)
+                          : Provider.of<Auth>(context, listen: false)
+                                      .userData?['user_type'] ==
+                                  UserType.Vendor.name
+                              ? const Color.fromRGBO(165, 200, 199, 0.3)
+                              : Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_type'] ==
+                                      UserType.Supplier.name
+                                  ? const Color.fromRGBO(77, 191, 74, 0.3)
+                                  : const Color.fromRGBO(188, 115, 188, 0.3),
+                      blurRadius: 20,
+                    ),
+                  ],
+                  color: Colors.white,
+                  shape: const SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.all(
+                        SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                  ),
+                ),
+                // height: 6.h,
+                child: TextField(
+                  onChanged: (value) {
+                    descriptionController.text = value;
+                    setState(() {});
+                  },
+                  style: Provider.of<Auth>(context, listen: false)
+                              .userData?['user_type'] ==
+                          UserType.Vendor.name
+                      ? const TextStyle(
+                          color: Color(0xFF0A4C61),
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                        )
+                      : const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF2E0536)),
+
+                  // inputFormatters: <TextInputFormatter>[
+                  //   FilteringTextInputFormatter.digitsOnly
+                  // ],
+                  controller: descriptionController,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    suffixIcon: descriptionController.text.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Image.asset(
+                              Assets.editIcon,
+                              height: 15,
+                              width: 15,
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              submitDescription();
+                            },
+                            icon: const Icon(Icons.done),
+                            color: const Color(0xFFFA6E00),
+                          ),
+                    hintText: "Enter your description here",
+                    contentPadding: const EdgeInsets.only(left: 14, top: 10),
+                    hintStyle: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF0A4C61),
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w400),
+                    border: InputBorder.none,
+                    // suffixIcon:
+                  ),
+                ),
+              ),
+              Space(
+                3.h,
+              ),
+
+              //seelct jonour
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 1),
+                child: GlobalJobSelection(), // Use the job selection widget
+              ),
+
+              Space(
+                3.h,
+              ),
+
               // Add terms and condition and privacy policy
-             
+
               GestureDetector(
                 onTap: () {
                   // Handle tap on the area around the BackdropFilter
@@ -1862,7 +1565,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           ),
         ),
       ),
-
     );
   }
 
@@ -2058,12 +1760,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   void fetchUserDataFromAPI() async {
     // Replace with actual user id list if needed
-    print(
-        "ddddd ${json.encode(Provider.of<Auth>(context, listen: false).userData?['user_id'])}");
     List<dynamic> userIdList = [UserPreferences.getUser()?['user_id']];
-    print("list ${userIdList}");
+
     List<dynamic> fetchedUserDetails =
         await Provider.of<Auth>(context, listen: false).getUserInfo(userIdList);
+
     if (fetchedUserDetails.isNotEmpty) {
       setState(() {
         userDetails = fetchedUserDetails[0];
@@ -2071,37 +1772,61 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
     }
 
     if (userDetails != null) {
-      print("userdet ${json.encode(userDetails)}");
+      // Auto-fill the controllers and UI elements with fetched data
       nameController.text = userDetails!['store_name'] ?? '';
       emailController.text = userDetails!['email'] ?? '';
+      descriptionController.text = userDetails!['description'] ?? '';
+
       profilePhoto = userDetails!['profile_photo'] ?? '';
       numberController.text = userDetails!['phone'] ?? '';
       fromTiming = userDetails!['working_hours']?['start_time'];
       tillTiming = userDetails!['working_hours']?['end_time'];
-      if (userDetails!['kyc_status'] == 'verified') {
-        kycVerified = true;
-      }
-      if (userDetails!['pan_number'] != '') {
-        paymentSetup = true;
-      }
-      if (userDetails!['fssai'] != '') {
-        kycSetup = true;
-      }
+
+      // KYC and Payment Setup
+      kycVerified = userDetails!['kyc_status'] == 'verified';
+      paymentSetup = userDetails!['pan_number'] != '' ? true : false;
+      kycSetup = userDetails!['fssai'] != '' ? true : false;
+
       addressController.text = userDetails!['address']?['location'] ?? '';
       _switchValue = userDetails!['store_availability'] ?? false;
 
-      // update
+      // Auto-fill category and sub_category
+      selectedCategory = userDetails!['category'] ?? '';
+      selectedSubcategory = userDetails!['sub_category'] ?? '';
+
+      // Update the locally stored user preferences with fetched data
       Map<String, dynamic>? userData = UserPreferences.getUser();
-      userData?['store_availability'] = _switchValue;
-      userData?['kyc_status'] = kycVerified;
-      print("kycccc ${userData?['kyc_status']}");
-      await UserPreferences.setUser(userData!);
+
+      if (userData != null) {
+        // Ensure existing user data is not lost
+        userData = {
+          ...userData, // Keep the existing user data
+          'store_availability': _switchValue,
+          'kyc_status': kycVerified,
+          'store_name': userDetails?['store_name'] ?? userData['store_name'],
+          'email': userDetails?['email'] ?? userData['email'],
+          'profile_photo':
+              userDetails?['profile_photo'] ?? userData['profile_photo'],
+          'phone': userDetails?['phone'] ?? userData['phone'],
+          'working_hours':
+              userDetails?['working_hours'] ?? userData['working_hours'],
+          'pan_number': userDetails?['pan_number'] ?? userData['pan_number'],
+          'fssai': userDetails?['fssai'] ?? userData['fssai'],
+          'address': userDetails?['address'] ?? userData['address'],
+          'category': userDetails?['category'] ?? userData['category'],
+          'sub_category':
+              userDetails?['sub_category'] ?? userData['sub_category'],
+        };
+
+        // Save the updated data in preferences
+        await UserPreferences.setUser(userData);
+      }
     }
   }
 
   Future<void> showOrderDetailsBottomSheet(
       BuildContext context, var order) async {
-    print("ddff $order");
+   
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -2540,6 +2265,255 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           },
         );
       },
+    );
+  }
+}
+
+class GlobalJobSelection extends StatefulWidget {
+  @override
+  _GlobalJobSelectionState createState() => _GlobalJobSelectionState();
+}
+
+class _GlobalJobSelectionState extends State<GlobalJobSelection> {
+  String? selectedCategory;
+  String? selectedSubcategory;
+  bool darkMode = true;
+
+  // Define categories and their subcategories
+  final Map<String, List<String>> jobCategories = {
+    'Catering': [
+      'Indian cuisine',
+      'Pakistani Cuisine',
+      'Bangladeshi Cuisine',
+      'American Chinese cuisine',
+      'Italian cuisine',
+      'Japanese Cuisine',
+      'Mexican cuisine',
+      'French cuisine',
+      'Korean cuisine',
+      'Spanish Cuisine',
+      'Thai cuisine',
+      'Lebanese cuisine',
+      'Greek cuisine',
+      'Greek-American cuisine',
+      'Argentinian food',
+      'Fusion cuisine',
+      'Fast food',
+      'Vegan cuisine'
+    ],
+    'Florist': [
+      'Florist (Employee): Large Retail and Grocery Space',
+      'Florist (Employee): Floral Retail, Small Business',
+      'Floral Design Freelancer',
+      'Studio Florists',
+      'Flower Shop Business Owner',
+      'Flower Truck Business Owner (Or Other Mobile Floral Retail)',
+      'Flower Cart Owner',
+      'Online Florist: Retail / Selling Flowers Online',
+      'Floral Wholesaler or Wholesaler Sales Rep',
+      'Farmer-Florist'
+    ],
+    'Bartender': [
+      'Bartender',
+      'Barback',
+      'Service bartender',
+      'Bartending manager',
+      'Mixologist',
+      'Freestyle bartenders',
+      'Party bartenders',
+      'Elegant bartender',
+      'Super bartender'
+    ],
+    'Musician': [
+      'Music Production & Writing',
+      'Music Producers',
+      'Composers',
+      'Singers & Vocalists',
+      'Session Musicians',
+      'Songwriters',
+      'Jingles & Intros',
+      'Custom Songs',
+      'Audio Engineering & Post Production',
+      'Mixing & Mastering',
+      'Audio Editing',
+      'Vocal Tuning',
+      'Voice Over & Narration',
+      '24hr Turnaround',
+      'Female Voice Over',
+      'Male Voice Over',
+      'DJing',
+      'DJ Drops & Tags',
+      'Sound Design',
+      'Online Music Lessons'
+    ],
+    'Photographer': [
+      'Event Photographer',
+      'Portrait Photographer',
+      'Wedding Photographer',
+      'Commercial Photographer',
+      'Sports Photographer',
+      'Fashion Photographer',
+      'Travel Photographer',
+      'Documentary Photographer'
+    ]
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _autoFillSelection(); // Auto-fill the dropdowns if data is preset
+  }
+
+  void _autoFillSelection() {
+    // Get user data from preferences if preset and fill the category and subcategory
+    Map<String, dynamic>? userData = UserPreferences.getUser();
+
+    if (userData != null) {
+      setState(() {
+        selectedCategory = userData['category'] ?? null;
+        selectedSubcategory = userData['sub_category'] ?? null;
+      });
+    }
+  }
+
+  Future<void> _updateCategoryAndSubcategory() async {
+    if (selectedCategory != null && selectedSubcategory != null) {
+      await Provider.of<Auth>(context, listen: false).updateBusinessType(
+        selectedCategory!,
+        selectedSubcategory!,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            'Select your business type / category from the below list',
+            style: TextStyle(
+              color: darkMode ? Colors.white : const Color(0xFF0A4C61),
+              fontSize: 14,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        SizedBox(height: 16),
+
+        // Main Category Dropdown (Job Category)
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(0, 4),
+                color: darkMode
+                    ? Color(0xFF0A4C61).withOpacity(0.9)
+                    : const Color.fromRGBO(165, 200, 199, 0.3),
+                blurRadius: 20,
+              ),
+            ],
+          ),
+          child: DropdownButton<String>(
+            isExpanded: true,
+            hint: Text(
+              'Select your business category',
+              style: TextStyle(
+                fontFamily: 'Product Sans',
+                color: darkMode
+                    ? const Color.fromARGB(255, 229, 227, 227)
+                    : const Color(0xFF0A4C61),
+              ),
+            ),
+            value: selectedCategory,
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedCategory = newValue;
+                selectedSubcategory =
+                    null; // Reset subcategory when category changes
+                _updateCategoryAndSubcategory(); // Call API to save on category change
+              });
+            },
+            items: jobCategories.keys
+                .map<DropdownMenuItem<String>>((String category) {
+              return DropdownMenuItem<String>(
+                value: category,
+                child: Text(category),
+              );
+            }).toList(),
+          ),
+        ),
+
+        SizedBox(height: 16),
+
+        // Subcategory Dropdown (Job Subcategory)
+        if (selectedCategory != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 4),
+                  color: darkMode
+                      ? Colors.black.withOpacity(0.47)
+                      : const Color.fromRGBO(165, 200, 199, 0.3),
+                  blurRadius: 20,
+                ),
+              ],
+            ),
+            child: DropdownButton<String>(
+              isExpanded: true,
+              hint: Text(
+                'Select Subcategory',
+                style: TextStyle(
+                  color: darkMode
+                      ? const Color.fromARGB(255, 229, 227, 227)
+                      : const Color(0xFF0A4C61),
+                ),
+              ),
+              value: selectedSubcategory,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedSubcategory = newValue;
+                  _updateCategoryAndSubcategory(); // Call API to save on subcategory change
+                });
+              },
+              items: jobCategories[selectedCategory]!
+                  .map<DropdownMenuItem<String>>((String subcategory) {
+                return DropdownMenuItem<String>(
+                  value: subcategory,
+                  child: Text(subcategory),
+                );
+              }).toList(),
+            ),
+          ),
+
+        SizedBox(height: 16),
+
+        // Display selected category and subcategory
+        if (selectedCategory != null && selectedSubcategory != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Selected: $selectedCategory - $selectedSubcategory',
+              style: TextStyle(
+                color: darkMode
+                    ? const Color.fromARGB(255, 229, 227, 227)
+                    : const Color(0xFF0A4C61),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

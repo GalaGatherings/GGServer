@@ -690,7 +690,7 @@ Future<String?> getDarkModeStatus() async {
                                                         data: Provider.of<Auth>(
                                                                 context,
                                                                 listen: false)
-                                                            .userData?['rating'],
+                                                            .userData?['rating'] ?? '-',
                                                         txt: 'Rating',
                                                         color:darkMode?Colors.white:
                                                             sharedProfileColour(

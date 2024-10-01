@@ -8,17 +8,15 @@ import 'package:gala_gatherings/main.dart';
 import 'package:gala_gatherings/screens/Tabs/Profile/profile_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class NotificationProvider with ChangeNotifier {
   List<Map<String, dynamic>> _notifications = [];

@@ -1,6 +1,7 @@
 // lib/widgets/dish_card.dart
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gala_gatherings/constants/globalVaribales.dart';
+import 'package:gala_gatherings/screens/Tabs/Profile/profile_view.dart';
 // import 'package:gala_gatherings/screens/Tabs/Profile/profile_view.dart';
 import 'package:gala_gatherings/widgets/modal_list_widget.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -109,18 +110,18 @@ class DishCard extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => ProfileView(
-                      //       userIdList: [
-                      //         dish.user_id
-                      //       ], // Adjust this according to your ProfileView constructor
-                      //     ),
-                      //   ),
-                      // ).then((value) {
-                      //   // You can clear the userId or perform any other actions here if needed
-                      // });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileView(
+                            userIdList: [
+                              dish.user_id
+                            ], // Adjust this according to your ProfileView constructor
+                          ),
+                        ),
+                      ).then((value) {
+                        // You can clear the userId or perform any other actions here if needed
+                      });
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -1274,6 +1274,30 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+ Future<String> vendorDescription(description) async {
+    final String url = 'https://galagatherings.com/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "description": description
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
 
   Future<String> contactNumber(contact_number) async {
     final String url = 'https://galagatherings.com/update-user';
@@ -1454,7 +1478,32 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+ 
+Future<void> updateBusinessType(String category, String subCategory) async {
+    final requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      'category': category,
+      "sub_category": subCategory,
+    };
 
+    try {
+      final response = await http.post(
+        Uri.parse('https://galagatherings.com/update-user'),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        // Update user data or handle the response as needed
+        final responseData = jsonDecode(response.body);
+        print('Updated successfully: $responseData');
+      } else {
+        print('Failed to update');
+      }
+    } catch (error) {
+      print('Error updating business type: $error');
+    }
+  }
   Future<String> pickImageAndUpoad(BuildContext context,
       {String src = 'Gallery'}) async {
     final picker = ImagePicker();
@@ -2253,7 +2302,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<List<ProductDetails>> getProductDetails(List<dynamic> list) async {
-    print("list:: $list");
+
     final String url = '${baseUrl}get_products';
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
@@ -2316,7 +2365,7 @@ class Auth with ChangeNotifier {
 
   Future<dynamic> createProductOrder(List<dynamic> list,
       AddressModel? addressModel, String userId, double deliveryFee) async {
-    print("list:: $list");
+
     final String url = '${baseUrl}order/create';
     print(userData?['user_id']);
     // bool _isOK = false;
@@ -2436,7 +2485,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<List<UserModel>> getUserDetails(List<String> userIds) async {
-    print("list:: $userIds");
+
     final String url = '${baseUrl}get-user-info';
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {

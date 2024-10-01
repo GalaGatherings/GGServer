@@ -10,11 +10,11 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/restaurant.dart';
 
-class RestaurantCard extends StatelessWidget {
+class VendorsCard extends StatelessWidget {
   final Restaurant restaurant;
   final bool darkMode;
 
-  RestaurantCard({required this.restaurant, required this.darkMode});
+  VendorsCard({required this.restaurant, required this.darkMode});
 
   Future<void> _launchURL(String url) async {
     try {
@@ -47,7 +47,9 @@ class RestaurantCard extends StatelessWidget {
                 height: 155,
                 width: 130,
                 decoration: ShapeDecoration(
-                  color:darkMode?Color(0xff000000).withOpacity(0.47): Colors.white,
+                  color: darkMode
+                      ? Color(0xff000000).withOpacity(0.47)
+                      : Colors.white,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
                       cornerRadius: 22.0,
@@ -121,7 +123,6 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                     
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -147,40 +148,35 @@ class RestaurantCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 3),
                   Row(
                     children: [
-                      // Image.asset(
-                      //   'assets/images/Heart.png', // Ensure this asset file exists
-                      //   width: 20, // Set the width of the image
-                      //   height: 20, // Set the height of the image
-                      // ),
-                      // SizedBox(
-                      //     width:
-                      //         8.0), // Add some space between the image and the text
-                      // Text(
-                      //   '--  --', // Add the rating text here
-                      //   style: TextStyle(
-                      //       fontSize: 14.0,
-                      //       color: Color(0xff9428A9),
-                      //       fontWeight: FontWeight.bold),
-                      // ),
-                      // SizedBox(width: 3.0),
-
-                      // Spacer(), // Pushes the text to the right
                       Text(
-                        '45-50 mins',
+                        restaurant.category,
                         style: TextStyle(
                             fontSize: 15.0,
                             color: darkMode
-                                ? Color(0xffB1F0EF)
+                                ? Color(0xffFA6E00)
                                 : Color(0xff9428A9),
                             fontWeight: FontWeight.bold),
                         textAlign: TextAlign.right,
                       ),
                     ],
                   ),
-                  SizedBox(height: 5),
+                    SizedBox(height: 4),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: 90.w),
+                    child: Text(
+                      restaurant.description,
+                      style: TextStyle(
+                          fontSize: 12.0,
+                          color:
+                              darkMode ? Color(0xffB1F0EF) : Color(0xff9428A9),
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  SizedBox(height: 4),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -197,36 +193,10 @@ class RestaurantCard extends StatelessWidget {
                           //     .ellipsis, // This will add ellipsis (...) if text overflows
                         ),
                       ),
-                      // SizedBox(width: 8),
-                      // Spacer(), // Add some spacing between the location and distance
-                      // Text(
-                      //   '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
-                      //   style: TextStyle(
-                      //     fontSize: 14.0,
-                      //     color: Color(0xffFA6E00),
-                      //     fontWeight: FontWeight.bold,
-                      //   ),
-                      // ),
-                      //  Text(
-                      //   '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
-                      //   style: TextStyle(
-                      //     fontSize: 14.0,
-                      //     color: Color(0xffFA6E00),
-                      //     fontWeight: FontWeight.bold,
-                      //   ),
-                      // ),
                     ],
                   ),
                   SizedBox(
                     height: 1.h,
-                  ),
-                  Text(
-                    '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: darkMode ? Color(0xff54A6C1) : Color(0xffFA6E00),
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
                 ],
               ),
