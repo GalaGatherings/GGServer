@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, unused_field
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:gala_gatherings/NotificationScree.dart';
 
 import 'package:gala_gatherings/api_service.dart';
 import 'package:gala_gatherings/belly_gpt.dart';
@@ -11,6 +12,7 @@ import 'package:gala_gatherings/screens/Tabs/Profile/profile.dart';
 
 
 import 'package:gala_gatherings/screens/Tabs/coupon_screen.dart';
+import 'package:gala_gatherings/screens/Tabs/create_feed.dart';
 import 'package:gala_gatherings/screens/Tabs/image_generation.dart';
 
 
@@ -48,14 +50,22 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
     iconList = <IconData>[
       Icons.home,
-      Icons.search,
+      userType == UserType.Vendor.name
+          ? Icons.laptop
+          : userType == UserType.Supplier.name
+              ? Icons.laptop
+              : Icons.search,
       Icons.notifications_outlined,
       Icons.person,
       // Icons.brightness_1,
     ];
     textList = <String>[
       'Feed',
-      'Search',
+      userType == UserType.Vendor.name
+          ? 'Dashboard'
+          : userType == UserType.Supplier.name
+              ? 'Dashboard'
+              : 'Search',
       'Notifications',
       'Profile',
       // 'Account',
@@ -63,10 +73,9 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     pages = [
       const Feed(),
       SearchView(),
-      // NotificationScreen(
-      //   initialTabIndex: 0, // Ensure initialTabIndex is an int
-      // ),
-      SearchView(),
+      NotificationScreen(
+        initialTabIndex: 0, // Ensure initialTabIndex is an int
+      ),
       const Profile(),
     ];
 
@@ -233,7 +242,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                               Expanded(
                                 child: _buildShortcutButton(
                                   context,
-                                  'GG Imaging',
+                                  'BellyIMAGING',
                                   'assets/images/imageFile.png',
                                   _imageGeneration,
                                 ),
@@ -499,7 +508,7 @@ Widget _buildShortcutButton(BuildContext context, String title,
     } else if (url.contains('file size very large')) {
       TOastNotification().showErrorToast(context, 'file size very large');
     } else if (!url.contains('element')) {
-      // CreateFeed().showModalSheetForNewPost(context, url, menuList);
+      CreateFeed().showModalSheetForNewPost(context, url, menuList);
     } else {
       TOastNotification()
           .showErrorToast(context, 'Error While Uploading Image');
