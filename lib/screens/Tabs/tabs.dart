@@ -7,6 +7,7 @@ import 'package:gala_gatherings/api_service.dart';
 import 'package:gala_gatherings/belly_gpt.dart';
 import 'package:gala_gatherings/constants/assets.dart';
 import 'package:gala_gatherings/constants/enums.dart';
+import 'package:gala_gatherings/global_search.dart';
 import 'package:gala_gatherings/screens/Tabs/Feed/feed.dart';
 import 'package:gala_gatherings/screens/Tabs/Profile/profile.dart';
 
@@ -56,16 +57,17 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     textList = <String>[
       'Feed',
       'Search',
-      'Notifications',
+      'Products',
       'Profile',
       // 'Account',
     ];
     pages = [
       const Feed(),
       SearchView(),
-      NotificationScreen(
-        initialTabIndex: 0, // Ensure initialTabIndex is an int
-      ),
+      // NotificationScreen(
+      //   initialTabIndex: 0, // Ensure initialTabIndex is an int
+      // ),
+      GlobalSearchView(),
       const Profile(),
     ];
 

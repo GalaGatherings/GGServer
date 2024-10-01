@@ -1298,9 +1298,9 @@ Future<String?> getDarkModeStatus() async {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                            'Store Info',
+                                                            'Vendor Info',
                                                             style: TextStyle(
-                                                                color:
+                                                                color:darkMode?Colors.white:
                                                                     boxShadowColor,
                                                                 fontWeight:
                                                                     FontWeight
@@ -1373,10 +1373,11 @@ Future<String?> getDarkModeStatus() async {
                                                               Text(
                                                                 (locationDet !=
                                                                         {})
-                                                                    ? "${locationDet['hno']} ${locationDet['location']} ${locationDet['landmark']}"
+                                                                    ?locationDet['hno'] == null?'No location found':
+                                                                     "${locationDet['hno']} ${locationDet['location']} ${locationDet['landmark']}"
                                                                     : 'No location found',
                                                                 style: TextStyle(
-                                                                    color: Color(
+                                                                    color:darkMode?Colors.white: Color(
                                                                         0xff1B7997),
                                                                     fontSize:
                                                                         13,
@@ -1431,7 +1432,7 @@ Future<String?> getDarkModeStatus() async {
                                                               Text(
                                                                 "${userList.first.phone}",
                                                                 style: TextStyle(
-                                                                    color: Color(
+                                                                    color:darkMode?Colors.white: Color(
                                                                         0xff1B7997),
                                                                     fontSize:
                                                                         12,

@@ -430,122 +430,124 @@ class _MenuItemState extends State<MenuItem> {
                                   darkMode: darkMode,
                                   txt: 'ADD'),
                             )
-                          : Container(
-                              width: 24.w,
-                              // padding: EdgeInsets.symmetric(horizontal: 2.w),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Provider.of<Auth>(context, listen: false)
-                                          .removeItem(ProductDetails.fromJson(
-                                              widget.data));
-                                    },
-                                    child: Container(
-                                      height: 30,
-                                      width: 30,
-                                      decoration: ShapeDecoration(
-                                        color: const Color(0xFFFA6E00),
-                                        shape: SmoothRectangleBorder(
-                                          borderRadius: SmoothBorderRadius(
-                                            cornerRadius: 12,
-                                            cornerSmoothing: 1,
-                                          ),
-                                        ),
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                          '-',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontFamily: 'Product Sans',
-                                            fontWeight: FontWeight.w700,
-                                            height: 1.0,
-                                            letterSpacing: 0.14,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: ShapeDecoration(
-                                      color: const Color(0xff0A4C61),
-                                      shape: SmoothRectangleBorder(
-                                        borderRadius: SmoothBorderRadius(
-                                          cornerRadius: 12,
-                                          cornerSmoothing: 1,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        Provider.of<Auth>(context)
-                                            .itemAdd
-                                            .lastWhere(
-                                              (element) =>
-                                                  element.id ==
-                                                  widget.data["_id"],
-                                            )
-                                            .quantity
-                                            .toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontFamily: 'Product Sans',
-                                          fontWeight: FontWeight.w700,
-                                          height: 1.0,
-                                          letterSpacing: 0.14,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      if (widget.scroll != null) {
-                                        // print("scrolling");
-                                        // Handle scroll action if needed
-                                      }
-                                      Provider.of<Auth>(context, listen: false)
-                                          .addItem(ProductDetails.fromJson(
-                                              widget.data));
-                                    },
-                                    child: Container(
-                                      height: 30,
-                                      width: 30,
-                                      decoration: ShapeDecoration(
-                                        color: const Color(0xFFFA6E00),
-                                        shape: SmoothRectangleBorder(
-                                          borderRadius: SmoothBorderRadius(
-                                            cornerRadius: 12,
-                                            cornerSmoothing: 1,
-                                          ),
-                                        ),
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                          '+',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontFamily: 'Product Sans',
-                                            fontWeight: FontWeight.w700,
-                                            height: 1.0,
-                                            letterSpacing: 0.14,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          // : Container(
+                          //     width: 24.w,
+                          //     // padding: EdgeInsets.symmetric(horizontal: 2.w),
+                          //     child: Row(
+                          //       mainAxisAlignment:
+                          //           MainAxisAlignment.spaceBetween,
+                          //       children: [
+                          //         InkWell(
+                          //           onTap: () {
+                          //             Provider.of<Auth>(context, listen: false)
+                          //                 .removeItem(ProductDetails.fromJson(
+                          //                     widget.data));
+                          //           },
+                          //           child: Container(
+                          //             height: 30,
+                          //             width: 30,
+                          //             decoration: ShapeDecoration(
+                          //               color: const Color(0xFFFA6E00),
+                          //               shape: SmoothRectangleBorder(
+                          //                 borderRadius: SmoothBorderRadius(
+                          //                   cornerRadius: 12,
+                          //                   cornerSmoothing: 1,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             child: const Center(
+                          //               child: Text(
+                          //                 '-',
+                          //                 textAlign: TextAlign.center,
+                          //                 style: TextStyle(
+                          //                   color: Colors.white,
+                          //                   fontSize: 20,
+                          //                   fontFamily: 'Product Sans',
+                          //                   fontWeight: FontWeight.w700,
+                          //                   height: 1.0,
+                          //                   letterSpacing: 0.14,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         Container(
+                          //           height: 30,
+                          //           width: 30,
+                          //           decoration: ShapeDecoration(
+                          //             color: const Color(0xff0A4C61),
+                          //             shape: SmoothRectangleBorder(
+                          //               borderRadius: SmoothBorderRadius(
+                          //                 cornerRadius: 12,
+                          //                 cornerSmoothing: 1,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           child: Center(
+                          //             child: Text(
+                          //               Provider.of<Auth>(context)
+                          //                   .itemAdd
+                          //                   .lastWhere(
+                          //                     (element) =>
+                          //                         element.id ==
+                          //                         widget.data["_id"],
+                          //                   )
+                          //                   .quantity
+                          //                   .toString(),
+                          //               style: const TextStyle(
+                          //                 color: Colors.white,
+                          //                 fontSize: 16,
+                          //                 fontFamily: 'Product Sans',
+                          //                 fontWeight: FontWeight.w700,
+                          //                 height: 1.0,
+                          //                 letterSpacing: 0.14,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         InkWell(
+                          //           onTap: () {
+                          //             if (widget.scroll != null) {
+                          //               // print("scrolling");
+                          //               // Handle scroll action if needed
+                          //             }
+                          //             Provider.of<Auth>(context, listen: false)
+                          //                 .addItem(ProductDetails.fromJson(
+                          //                     widget.data));
+                          //           },
+                          //           child: Container(
+                          //             height: 30,
+                          //             width: 30,
+                          //             decoration: ShapeDecoration(
+                          //               color: const Color(0xFFFA6E00),
+                          //               shape: SmoothRectangleBorder(
+                          //                 borderRadius: SmoothBorderRadius(
+                          //                   cornerRadius: 12,
+                          //                   cornerSmoothing: 1,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             child: const Center(
+                          //               child: Text(
+                          //                 '+',
+                          //                 textAlign: TextAlign.center,
+                          //                 style: TextStyle(
+                          //                   color: Colors.white,
+                          //                   fontSize: 20,
+                          //                   fontFamily: 'Product Sans',
+                          //                   fontWeight: FontWeight.w700,
+                          //                   height: 1.0,
+                          //                   letterSpacing: 0.14,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                    
+                    :Container()
                     ),
                   }
               ],

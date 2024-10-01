@@ -15,12 +15,12 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SearchView extends StatefulWidget {
+class GlobalSearchView extends StatefulWidget {
   @override
-  _SearchViewState createState() => _SearchViewState();
+  _GlobalSearchViewState createState() => _GlobalSearchViewState();
 }
 
-class _SearchViewState extends State<SearchView> {
+class _GlobalSearchViewState extends State<GlobalSearchView> {
   final TextEditingController _searchController = TextEditingController();
   List<Dish> dishItems = [];
   List<Restaurant> restaurantItems = [];
@@ -157,7 +157,7 @@ Future<void> _fetchData() async {
     await _getCurrentLocation(context); // Ensure location is fetched first
   }
 
-  String function = isDishesSelected ? 'products' : 'vendors';
+  String function =  'vendors';
 
   var response = await http.post(
     Uri.parse('https://galagatherings.com/search/$function'),

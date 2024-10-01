@@ -560,7 +560,7 @@ class _ProfileState extends State<Profile> {
                                             child: Container(
                                               padding:
                                                   const EdgeInsets.fromLTRB(
-                                                      0, 7, 12, 2),
+                                                      0, 5, 5, 2),
                                               child: Image.asset(
                                                 'assets/images/WhatsApp.png',
                                                 width: 27,
