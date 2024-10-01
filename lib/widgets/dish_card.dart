@@ -144,44 +144,25 @@ class DishCard extends StatelessWidget {
                             SizedBox(
                               height: 0.5.h,
                             ),
-                            Container(
-                              width: 16,
-                              height: 16,
+                            // Container(
+                            //   width: 16,
+                            //   height: 16,
 
-                              // decoration:ShapeDecoration(
-                              //   color: Colors.white,
-                              //   shape: SmoothRectangleBorder(
-                              //     borderRadius: SmoothBorderRadius(
-                              //       cornerRadius: 7.0,
-                              //       cornerSmoothing: 1,
-                              //     ),
-                              //   ),
-                              //   shadows: [
-                              //     BoxShadow(
-                              //       color: Colors.grey.withOpacity(0.2),
-                              //       spreadRadius: 1,
-                              //       blurRadius: 7,
-                              //       offset: Offset(0, 3),
-                              //     ),
-                              //   ],
-                              //   // side: BorderSide(
-                              //   //   color: Colors.black,
-                              //   //   width: 2.0,
-                              //   // ),
-                              // ),
-                              child: Center(
-                                child: Container(
-                                  width: 9,
-                                  height: 9,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: dish.type == 'Veg'
-                                        ? Color(0xff6EFD6B)
-                                        : Color(0xffE23131),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            
+                            //   child: Center(
+                            //     child: Container(
+                            //       width: 9,
+                            //       height: 9,
+                            //       decoration: BoxDecoration(
+                            //         shape: BoxShape.circle,
+                            //         color: dish.type == 'Veg'
+                            //             ? Color(0xff6EFD6B)
+                            //             : Color(0xffE23131),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                         
                           ],
                         ),
                         Spacer(),

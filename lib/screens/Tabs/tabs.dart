@@ -23,9 +23,7 @@ import 'package:gala_gatherings/widgets/space.dart';
 import 'package:gala_gatherings/widgets/toast_notification.dart';
 
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,22 +48,14 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
     iconList = <IconData>[
       Icons.home,
-      userType == UserType.Vendor.name
-          ? Icons.laptop
-          : userType == UserType.Supplier.name
-              ? Icons.laptop
-              : Icons.search,
+      Icons.search,
       Icons.notifications_outlined,
       Icons.person,
       // Icons.brightness_1,
     ];
     textList = <String>[
       'Feed',
-      userType == UserType.Vendor.name
-          ? 'Dashboard'
-          : userType == UserType.Supplier.name
-              ? 'Dashboard'
-              : 'Search',
+      'Search',
       'Notifications',
       'Profile',
       // 'Account',
@@ -261,18 +251,18 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                                   _addPost,
                                 ),
                               ),
-                              if (userType == 'Vendor') ...[
-                                SizedBox(width: 30),
-                                Expanded(
-                                  child: _buildShortcutButton(
-                                    context,
-                                    'Create Coupon',
-                                     'assets/images/coupons.png',
-                                    () => _createNewCoupon(
-                                        context), // Correct way to pass context
-                                  ),
-                                ),
-                              ]
+                              // if (userType == 'Vendor') ...[
+                              //   SizedBox(width: 30),
+                              //   Expanded(
+                              //     child: _buildShortcutButton(
+                              //       context,
+                              //       'Create Coupon',
+                              //        'assets/images/coupons.png',
+                              //       () => _createNewCoupon(
+                              //           context), // Correct way to pass context
+                              //     ),
+                              //   ),
+                              // ]
                             ],
                           ),
                           SizedBox(height: 30),

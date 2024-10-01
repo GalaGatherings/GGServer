@@ -1,6 +1,10 @@
 // ignore_for_file: must_be_immutable, prefer_is_empty, use_build_context_synchronously, curly_braces_in_flow_control_structures, unnecessary_import
 
 import 'dart:convert';
+import 'package:gala_gatherings/screens/Tabs/Profile/menu_item.dart';
+import 'package:gala_gatherings/screens/Tabs/Profile/post_screen.dart';
+import 'package:gala_gatherings/screens/Tabs/Profile/profile_setting_view.dart';
+import 'package:gala_gatherings/screens/Tabs/Profile/profile_share_view.dart';
 import 'package:gala_gatherings/widgets/dashboard.dart';
 import 'package:gala_gatherings/widgets/modal_list_widget.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +31,9 @@ import 'package:figma_squircle/figma_squircle.dart';
 
 import 'package:flutter/cupertino.dart';
 
-import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -174,7 +177,6 @@ class _ProfileState extends State<Profile> {
     await Provider.of<Auth>(context, listen: false)
         .getFeed(Provider.of<Auth>(context, listen: false).userData?['user_id'])
         .then((feed) {
-      print("feed  $feed ");
       setState(() {
         feedList = [];
         feedList.addAll(feed);
@@ -355,8 +357,8 @@ class _ProfileState extends State<Profile> {
                                         context
                                             .read<TransitionEffect>()
                                             .setBlurSigma(5.0);
-                                        // ProfileShareBottomSheet()
-                                        //     .AddAddressSheet(context);
+                                        ProfileShareBottomSheet()
+                                            .AddAddressSheet(context);
                                       },
                                     ),
                                     if (userType != 'Customer')
@@ -369,11 +371,11 @@ class _ProfileState extends State<Profile> {
                                       ),
                                     InkWell(
                                       onTap: () {
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //             const ProfileSettingView()));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ProfileSettingView()));
                                       },
                                       child: Container(
                                         width: 40,
@@ -426,7 +428,7 @@ class _ProfileState extends State<Profile> {
                             children: [
                               Center(
                                   child: Container(
-                                width: 95.w,
+                                width: 90.w,
                                 decoration: ShapeDecoration(
                                   shadows: [
                                     BoxShadow(
@@ -465,7 +467,6 @@ class _ProfileState extends State<Profile> {
                                   children: [
                                     // Space(3.h),
                                     Container(
-                                     
                                       padding:
                                           EdgeInsets.fromLTRB(10, 15, 10, 0),
                                       child: Row(
@@ -482,7 +483,7 @@ class _ProfileState extends State<Profile> {
                                             child: const StoreLogoWidget(),
                                           ),
                                           SizedBox(
-                                            width: 2.w,
+                                            width: 14,
                                           ),
                                           Container(
                                             width: 50.w,
@@ -548,9 +549,9 @@ class _ProfileState extends State<Profile> {
                                               }
                                             },
                                             child: Container(
-                                              margin:
+                                              padding:
                                                   const EdgeInsets.fromLTRB(
-                                                      0, 7, 5, 2),
+                                                      0, 7, 12, 2),
                                               child: Image.asset(
                                                 'assets/images/WhatsApp.png',
                                                 width: 27,
@@ -587,9 +588,9 @@ class _ProfileState extends State<Profile> {
                                                             .userData?[
                                                         'followers'] ??
                                                     [];
-                                            if (dynamicFollowers.length != 0)
-                                              _showFollowers(
-                                                  context, dynamicFollowers);
+
+                                            _showFollowers(
+                                                context, dynamicFollowers);
                                           },
                                           child: ColumnWidgetHomeScreen(
                                             data: Provider.of<Auth>(context,
@@ -618,9 +619,9 @@ class _ProfileState extends State<Profile> {
                                                             .userData?[
                                                         'followings'] ??
                                                     [];
-                                            if (dynamicFollowings.length != 0)
-                                              _showFollowings(
-                                                  context, dynamicFollowings);
+
+                                            _showFollowings(
+                                                context, dynamicFollowings);
                                           },
                                           child: ColumnWidgetHomeScreen(
                                             data: Provider.of<Auth>(context,
@@ -648,30 +649,7 @@ class _ProfileState extends State<Profile> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        if (Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .userData?['user_type'] ==
-                                            UserType.Customer.name)
-                                          TouchableOpacity(
-                                            onTap: () {
-                                              TextEditingController
-                                                  _controller =
-                                                  TextEditingController(
-                                                      text: Provider.of<Auth>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .userData?[
-                                                          'store_name']);
-                                              // AppWideBottomSheet().showSheet(
-                                              //     context,
-                                              //     EditProfileWidget(
-                                              //         controller: _controller),
-                                              //     75.h);
-                                            },
-                                            child: ButtonWidgetHomeScreen(
-                                                txt: 'Edit profile',
-                                                isActive: true),
-                                          ),
+                                        
                                         if (Provider.of<Auth>(context,
                                                     listen: false)
                                                 .userData?['user_type'] !=
@@ -1073,7 +1051,7 @@ class _ProfileState extends State<Profile> {
                                                   child: CommonButtonProfile(
                                                     isActive:
                                                         _activeButtonIndex == 2,
-                                                    txt: 'Products',
+                                                    txt: 'Menu ',
                                                     width: 52,
                                                     color: darkMode
                                                         ? Colors.white
@@ -1255,7 +1233,7 @@ class _ProfileState extends State<Profile> {
                                                         isActive:
                                                             _activeButtonIndex ==
                                                                 2,
-                                                        txt: 'Products',
+                                                        txt: 'Menu ',
                                                         width: 40,
                                                         color: darkMode
                                                             ? Colors.white
@@ -1319,13 +1297,9 @@ class _ProfileState extends State<Profile> {
                                                       Text(
                                                         'No items  ',
                                                         style: TextStyle(
-                                                            color: darkMode
-                                                                ? Colors.white
-                                                                    .withOpacity(
-                                                                        0.7)
-                                                                : boxShadowColor
-                                                                    .withOpacity(
-                                                                        0.2),
+                                                            color: boxShadowColor
+                                                                .withOpacity(
+                                                                    0.2),
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 35,
@@ -1335,13 +1309,9 @@ class _ProfileState extends State<Profile> {
                                                       Text(
                                                         'in content  ',
                                                         style: TextStyle(
-                                                            color: darkMode
-                                                                ? Colors.white
-                                                                    .withOpacity(
-                                                                        0.7)
-                                                                : boxShadowColor
-                                                                    .withOpacity(
-                                                                        0.2),
+                                                            color: boxShadowColor
+                                                                .withOpacity(
+                                                                    0.2),
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 35,
@@ -1390,7 +1360,7 @@ class _ProfileState extends State<Profile> {
                                                                 context,
                                                                 listen: false)
                                                             .userData?['user_id'],
-                                                        darkMode: darkMode,
+                                                            darkMode:darkMode,
                                                         data: feedList[index]);
                                                   },
                                                 )),
@@ -1415,11 +1385,8 @@ class _ProfileState extends State<Profile> {
                                         Text(
                                           'No reviews',
                                           style: TextStyle(
-                                              color: darkMode
-                                                  ? Colors.white
-                                                      .withOpacity(0.7)
-                                                  : boxShadowColor
-                                                      .withOpacity(0.2),
+                                              color: boxShadowColor
+                                                  .withOpacity(0.2),
                                               fontWeight: FontWeight.bold,
                                               fontSize: 35,
                                               fontFamily: 'Product Sans'),
@@ -1752,8 +1719,7 @@ class _ManualAddModalState extends State<ManualAddModal> {
     String category = categoryController.text;
     String description = descriptionController.text;
     if (name == '' || price == '' || category == '') {
-      TOastNotification()
-          .showErrorToast(context, 'Name price and category are mandatory');
+      TOastNotification().showErrorToast(context, 'Name price and category are mandatory');
     }
     // Call the API to update the product
     else {
@@ -1763,10 +1729,11 @@ class _ManualAddModalState extends State<ManualAddModal> {
           "name": name,
           "type": selectedType,
           "category": category,
-          "description": description
+          "description":description
         }
       ]);
 
+      
       TOastNotification().showSuccesToast(context, 'Products Added');
     }
     Navigator.pop(context); // Close the modal after saving
@@ -1841,97 +1808,9 @@ class _ManualAddModalState extends State<ManualAddModal> {
                 controller: categoryController,
                 darkMode: widget.darkMode,
               ),
+             
               const SizedBox(height: 20),
-              // Veg/Non-Veg Toggle
-              Text(
-                'Veg/Non-veg',
-                style: TextStyle(
-                  fontFamily: 'Product Sans',
-                  color: widget.darkMode ? Colors.white : Color(0xFF0A4C61),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 12),
-              StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedType = 'Veg'; // Select Veg
-                            });
-                          },
-                          child: Container(
-                            decoration: ShapeDecoration(
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 15,
-                                  cornerSmoothing: 1,
-                                ),
-                              ),
-                              color: selectedType == 'Veg'
-                                  ? Color.fromARGB(255, 22, 196, 129)
-                                      .withOpacity(0.4)
-                                  : Colors.transparent,
-                            ),
-                            padding: EdgeInsets.all(12),
-                            child: Center(
-                              child: Text(
-                                'Veg',
-                                style: TextStyle(
-                                  fontFamily: 'Product Sans',
-                                  color: selectedType == 'Veg'
-                                      ? Colors.white
-                                      : Colors.white54,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedType = 'Non-Veg'; // Select Non-Veg
-                            });
-                          },
-                          child: Container(
-                            decoration: ShapeDecoration(
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 15,
-                                  cornerSmoothing: 1,
-                                ),
-                              ),
-                              color: selectedType == 'Non-Veg'
-                                  ? Color(0xffFF473B).withOpacity(0.4)
-                                  : Colors.transparent,
-                            ),
-                            padding: EdgeInsets.all(12),
-                            child: Center(
-                              child: Text(
-                                'Non-Veg',
-                                style: TextStyle(
-                                  fontFamily: 'Product Sans',
-                                  color: selectedType == 'Non-Veg'
-                                      ? Colors.white
-                                      : Colors.white54,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
+              
               // Add Description Section
               buildInputField(
                 label: 'Add description',
@@ -1939,7 +1818,7 @@ class _ManualAddModalState extends State<ManualAddModal> {
                 controller: descriptionController,
                 darkMode: widget.darkMode,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height:30),
               // Save and Add Another Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -2166,19 +2045,17 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
 
     for (var item in widget.data) {
       var newItem = Map<String, dynamic>.from(item);
-      if (widget.isUpload) {
-        newItem['type'] = 'Veg';
-      } else {
-        newItem['type'] = item['type'] == 'Veg' ? 'Veg' : 'Non Veg';
-      }
+      // if (widget.isUpload) {
+      //   newItem['type'] = 'Veg';
+      // } else {
+      //   newItem['type'] = item['type'] == 'Veg' ? 'Veg' : 'Non Veg';
+      // }
       list.add(newItem);
     }
 
     for (int i = 0; i < list.length; i++) {
       nameControllers[i] = TextEditingController(text: list[i]['name']);
-      priceControllers[i] =
-          TextEditingController(text: list[i]['price'].toString());
-
+      priceControllers[i] = TextEditingController(text: list[i]['price']);
       categoryControllers[i] = TextEditingController(text: list[i]['category']);
     }
   }
@@ -2376,19 +2253,20 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
               Space(1.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
+             
                 children: [
                   SheetLabelWidget(
                     txt: 'Product',
-                    width: 20.w,
+                    width: 25.w,
                   ),
                   SheetLabelWidget(
                     txt: 'Price',
                     width: 18.w,
                   ),
-                  SheetLabelWidget(
-                    txt: 'V/N',
-                    width: 10.w,
-                  ),
+                  // SheetLabelWidget(
+                  //   txt: 'V/N',
+                  //   width: 10.w,
+                  // ),
                   Space(2.w, isHorizontal: true),
                   SheetLabelWidget(
                     txt: 'Category',
@@ -2414,7 +2292,7 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: 20.w,
+                          width: 25.w,
                           child: TextField(
                             maxLines: null,
                             style: const TextStyle(
@@ -2493,35 +2371,9 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                             ],
                           ),
                         ),
-                        SizedBox(
-                          width: 10.w,
-                          child: Transform.scale(
-                            scale: 0.85,
-                            child: CupertinoSwitch(
-                              value: isNonVeg,
-                              onChanged: (value) async {
-                                final updatedType = value ? 'Non Veg' : 'Veg';
-                                if (!widget.isUpload) {
-                                  await Provider.of<Auth>(context,
-                                          listen: false)
-                                      .updateMenuItem(
-                                    list[index]['_id'],
-                                    list[index]['price'].toString(),
-                                    list[index]['name'],
-                                    updatedType,
-                                    list[index]['category'],
-                                  );
-                                }
-                                setState(() {
-                                  list[index]['type'] = updatedType;
-                                });
-                              },
-                              activeColor: const Color.fromRGBO(232, 89, 89, 1),
-                              trackColor: const Color.fromRGBO(77, 171, 75, 1),
-                            ),
-                          ),
-                        ),
-                        const Spacer(),
+                        
+                       
+                        // const Spacer(),
                         SizedBox(
                           width: 20.w,
                           child: TextField(
@@ -2554,6 +2406,7 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                             },
                           ),
                         ),
+                          // const Spacer(),
                         IconButton(
                           icon: Icon(Icons.delete_outline_rounded,
                               color: Color(0xffFF5A77)),
@@ -2608,7 +2461,7 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                     if (code == '200') {
                       // Ensure code is compared as an integer
                       TOastNotification().showSuccesToast(
-                          context, 'Products Uploaded successfully');
+                          context, 'Menu Uploaded successfully');
 
                       AppWideBottomSheet().showSheet(
                           context,
@@ -2653,8 +2506,7 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                                     if (updateCode == '200') {
                                       // Ensure updateCode is compared correctly
                                       TOastNotification().showSuccesToast(
-                                          context,
-                                          'ProductsUpdated successfully');
+                                          context, 'Menu Updated successfully');
                                       Navigator.of(context)
                                           .pop(); // Close the bottom sheet
                                       Navigator.of(context)
@@ -2848,7 +2700,7 @@ class _MenuState extends State<Menu> {
                                 'No items  ',
                                 style: TextStyle(
                                     color: darkMode
-                                        ? Colors.white.withOpacity(0.7)
+                                        ? Colors.white
                                         : boxShadowColor.withOpacity(0.2),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35,
@@ -2858,7 +2710,7 @@ class _MenuState extends State<Menu> {
                                 'in menu  ',
                                 style: TextStyle(
                                     color: darkMode
-                                        ? Colors.white.withOpacity(0.7)
+                                        ? Colors.white
                                         : boxShadowColor.withOpacity(0.2),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35,
@@ -3039,43 +2891,38 @@ class _MenuState extends State<Menu> {
                                           if (widget.menuList[index]['category']
                                                   .toString() ==
                                               _controller.text)
-                                            // MenuItem(
-                                            //     storeAvailability:
-                                            //         storeAvailability,
-                                            //     data: widget.menuList[index],
-                                            //     kycStatus: widget.kycStatus,
-                                            //     scroll: widget.scroll),
-                                            if (!_iscategorySearch && _searchOn)
-                                              for (int index = 0;
-                                                  index <
-                                                      widget.menuList.length;
-                                                  index++)
-                                                if (widget.menuList[index]
-                                                        ['name']
-                                                    .toString()
-                                                    .toLowerCase()
-                                                    .contains(_controller.text
-                                                        .toLowerCase()))
-                                                  // MenuItem(
-                                                  //     storeAvailability:
-                                                  //         storeAvailability,
-                                                  //     data: widget.menuList[index],
-                                                  //     scroll: widget.scroll,
-                                                  //     kycStatus: widget.kycStatus),
-                                                  if (!_searchOn)
-                                                    for (int index = 0;
-                                                        index <
-                                                            widget.menuList
-                                                                .length;
-                                                        index++)
-                                                      // MenuItem(
-                                                      //     storeAvailability:
-                                                      //         storeAvailability,
-                                                      //     data: widget.menuList[index],
-                                                      //     scroll: widget.scroll,
-                                                      //     kycStatus: widget.kycStatus),
-                                                      const SizedBox(
-                                                          height: 150),
+                                            MenuItem(
+                                                storeAvailability:
+                                                    storeAvailability,
+                                                data: widget.menuList[index],
+                                                kycStatus: widget.kycStatus,
+                                                scroll: widget.scroll),
+                                      if (!_iscategorySearch && _searchOn)
+                                        for (int index = 0;
+                                            index < widget.menuList.length;
+                                            index++)
+                                          if (widget.menuList[index]['name']
+                                              .toString()
+                                              .toLowerCase()
+                                              .contains(_controller.text
+                                                  .toLowerCase()))
+                                            MenuItem(
+                                                storeAvailability:
+                                                    storeAvailability,
+                                                data: widget.menuList[index],
+                                                scroll: widget.scroll,
+                                                kycStatus: widget.kycStatus),
+                                      if (!_searchOn)
+                                        for (int index = 0;
+                                            index < widget.menuList.length;
+                                            index++)
+                                          MenuItem(
+                                              storeAvailability:
+                                                  storeAvailability,
+                                              data: widget.menuList[index],
+                                              scroll: widget.scroll,
+                                              kycStatus: widget.kycStatus),
+                                      const SizedBox(height: 150),
                                     ],
                                   ),
                                 ),
@@ -3128,56 +2975,7 @@ class _MenuState extends State<Menu> {
                         ),
                       ],
                     ),
-                    TouchableOpacity(
-                      onTap: () {
-                        // Provider.of<ViewCartProvider>(context, listen: false)
-                        //     .getProductList(
-                        //         Provider.of<Auth>(context, listen: false)
-                        //             .itemAdd);
-                        // Provider.of<ViewCartProvider>(context, listen: false)
-                        //     .setSellterId(widget.user);
-                        // context.read<TransitionEffect>().setBlurSigma(0);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => ViewCart(),
-                        //   ),
-                        // );
-                      },
-                      child: Container(
-                        height: 41,
-                        width: 113,
-                        decoration: ShapeDecoration(
-                          color: const Color.fromRGBO(84, 166, 193, 1),
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 12,
-                              cornerSmoothing: 1,
-                            ),
-                          ),
-                          shadows: const [
-                            BoxShadow(
-                              offset: Offset(3, 6),
-                              color: Color(0xff4F215B),
-                              blurRadius: 20,
-                            ),
-                          ],
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'View Cart',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                              letterSpacing: 0.14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                   
                   ],
                 ),
               ),
@@ -3203,16 +3001,17 @@ class FeedWidget extends StatelessWidget {
 
   final int index;
   final UserModel? userModel;
-  final bool darkMode;
+  final bool darkMode ;
   final dynamic data;
   final dynamic fulldata;
   final String userId;
   final String type;
   final String isSelfProfile;
-  // CarouselController buttonCarouselController = CarouselController();
+
 
   Color getBackgroundColor(
       String isSelfProfile, bool isVendor, String main_user_type) {
+
     var usertype = userModel?.userType;
     if (usertype == null) usertype = main_user_type;
     if (isSelfProfile == 'Yes' && isVendor && usertype == 'Vendor') {
@@ -3246,14 +3045,14 @@ class FeedWidget extends StatelessWidget {
         final Data = await Provider.of<Auth>(context, listen: false)
             .getFeed(userId) as List<dynamic>;
         // print("userId:: $userId");
-        // Navigator.of(context).pushNamed(PostsScreen.routeName, arguments: {
-        //   'data': Data,
-        //   'index': index,
-        //   "userId": userId,
-        //   "userModel": userModel,
-        //   "type": type,
-        //   "isSelfProfile": isSelfProfile
-        // });
+        Navigator.of(context).pushNamed(PostsScreen.routeName, arguments: {
+          'data': Data,
+          'index': index,
+          "userId": userId,
+          "userModel": userModel,
+          "type": type,
+          "isSelfProfile": isSelfProfile
+        });
       },
       child: Stack(
         children: [
@@ -3267,10 +3066,8 @@ class FeedWidget extends StatelessWidget {
                   BoxShadow(
                     offset: const Offset(1, 4),
                     // color: _isVendor ? const Color.fromRGBO(10, 76, 97, 0.31) :  const Color(0xBC73BC).withOpacity(0.6),
-                    color: darkMode
-                        ? Colors.black.withOpacity(0.47)
-                        : getBackgroundColor(
-                            isSelfProfile, _isVendor, main_user_type),
+                    color: darkMode?Colors.black.withOpacity(0.47): getBackgroundColor(
+                        isSelfProfile, _isVendor, main_user_type),
                     blurRadius: 12,
                   ),
                 ],

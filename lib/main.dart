@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gala_gatherings/NotificationScree.dart';
 import 'package:gala_gatherings/prefrence_helper.dart';
+import 'package:gala_gatherings/screens/Tabs/Profile/post_screen.dart';
 import 'package:gala_gatherings/screens/Tabs/tabs.dart';
 import 'package:gala_gatherings/screens/login_screen.dart';
 import 'package:gala_gatherings/welcome_screen.dart';
@@ -203,7 +204,7 @@ class MyApp extends StatelessWidget {
               // '/notifications': (context) => NotificationScreen(),
               WelcomeScreen.routeName: (context) => WelcomeScreen(),
               Tabs.routeName: (context) => Tabs(),
-              // PostsScreen.routeName: (context) => PostsScreen(),
+              PostsScreen.routeName: (context) => PostsScreen(),
               // ProfileSharePost.routeName: (context) => ProfileSharePost(),
               // GraphsScreen.routeName: (context) => GraphsScreen(),
               // ViewCart.routeName: (context) => ViewCart(),

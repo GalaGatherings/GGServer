@@ -70,6 +70,10 @@ dependencies:
   flutter_svg: ^2.0.10+1
   pull_to_refresh: ^2.0.0
   location: ^6.0.2
+  qr_flutter: ^4.1.0
+  pretty_qr_code: ^3.3.0
+  screenshot: ^2.5.0
+  flutter_file_dialog: ^3.0.2
 
 
 

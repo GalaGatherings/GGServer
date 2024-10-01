@@ -1144,3 +1144,160 @@ class SheetLabelWidget extends StatelessWidget {
     );
   }
 }
+
+class TextWidgetStoreSetup extends StatelessWidget {
+  String label;
+  Color? color;
+
+  TextWidgetStoreSetup({
+    super.key,
+    required this.label,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+     Color boxShadowColor;
+    String userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    if (userType == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xff2E0536);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+    }
+    return Text(
+      label,
+      style: Provider.of<Auth>(context, listen: false)
+          .userData?['user_type'] ==
+          UserType.Vendor.name
+          ? TextStyle(
+        color: color ?? const Color(0xFF0A4C61),
+        fontSize: 16,
+        fontFamily: 'PT Sans Black',
+        fontWeight: FontWeight.w800,
+       // letterSpacing: 1,
+      ) : TextStyle(
+        color: color ?? const Color(0xFF494949),
+        fontSize: 16,
+        fontFamily: 'Product Sans',
+        fontWeight: FontWeight.w700,
+        height: 0,
+        letterSpacing: 0.14,
+      ),
+    );
+  }
+}
+
+class StocksMayBeNeedWidget extends StatelessWidget {
+  String url;
+  String txt;
+  String icon;
+  bool darkMode;
+
+  StocksMayBeNeedWidget(
+      {super.key, this.txt = 'chicken', this.url = '', this.icon = '',this.darkMode = false});
+
+  @override
+  Widget build(BuildContext context) {
+    String newUrl = '';
+    if (url != '') {
+      String originalLink = url;
+      String fileId = originalLink.substring(
+          originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
+      newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
+    }
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 2.w),
+      child: Column(
+        children: [
+          Container(
+            height: 60,
+            width: 60,
+            decoration: ShapeDecoration(
+              shadows: const [
+                BoxShadow(
+                  offset: Offset(0, 4),
+                  color: Color.fromRGBO(124, 193, 191, 0.3),
+                  blurRadius: 20,
+                )
+              ],
+              color:darkMode?Colors.white: const Color.fromRGBO(200, 233, 233, 1),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 1,
+                ),
+              ),
+            ),
+            child: url != '' && icon == ''
+                ? ClipSmoothRect(
+                    radius: SmoothBorderRadius(
+                      cornerRadius: 10,
+                      cornerSmoothing: 1,
+                    ),
+                    child: Image(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(newUrl),
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                      errorBuilder: (BuildContext context, Object error,
+                          StackTrace? stackTrace) {
+                        return const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Error loading image'),
+                        );
+                      },
+                    ),
+                  )
+                : url == '' && icon != ''
+                    ? ClipSmoothRect(
+                        radius: SmoothBorderRadius(
+                          cornerRadius: 15,
+                          cornerSmoothing: 1,
+                        ),
+                        child: Container(
+                          child: Center(
+                            child: Container(
+                              width: 30, // Half of the container width
+                              height: 30, // Half of the container height
+                              child: Image.asset(
+                                icon,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : null,
+          ),
+          Space(1.h),
+          Text(
+            txt,
+            style:  TextStyle(
+              color:darkMode?Colors.white: Color(0xFF0A4C61),
+              fontSize: 11,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w400,
+              height: 0,
+              letterSpacing: 0.11,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
