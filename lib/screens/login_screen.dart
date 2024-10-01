@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gala_gatherings/auth_notifier.dart';
+import 'package:gala_gatherings/api_service.dart';
+
+import 'package:gala_gatherings/screens/Tabs/tabs.dart';
 import 'package:provider/provider.dart';
 import 'package:gala_gatherings/screens/signup_screen.dart';
 
@@ -125,22 +127,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (_formKey.currentState!.validate()) {
                     // Call the login method from AuthNotifier
                     try {
-                      var res = await Provider.of<AuthNotifier>(context,
+                      var res = await Provider.of<Auth>(context,
                               listen: false)
-                          .login(
+                          .login(context,
                         _emailController.text,
-                        _passwordController.text,
+                        _passwordController.text
                       );
-                      if (res['code'] != 200) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Login Failed: ${res['message']}'),
-                        ));
-                      }
-                      // Check authentication status and navigate
-                      if (Provider.of<AuthNotifier>(context, listen: false)
-                          .isAuthenticated) {
-                        Navigator.of(context).pushReplacementNamed(
-                            '/home'); // Navigate to home screen
+                     
+                      if (res=='Login successful') {
+                        Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                       }
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -197,34 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Color(0xff0E3E3E)),
                 ),
               ),
-              SizedBox(height: 10),
-              Text(
-                'Use Fingerprint To Access',
-                style: TextStyle(color: Colors.white),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Image.asset(
-                      'assets/images/Facebook.png',
-                      width: 30,
-                    ), // Ensure you have the icons in assets
-                    iconSize: 20,
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Image.asset(
-                      'assets/images/google.png',
-                      width: 30,
-                    ),
-                    iconSize: 20,
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
+             
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pushReplacementNamed('/sign-up');

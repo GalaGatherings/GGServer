@@ -12,7 +12,7 @@ import 'package:gala_gatherings/screens/Tabs/Profile/profile.dart';
 
 import 'package:gala_gatherings/screens/Tabs/coupon_screen.dart';
 import 'package:gala_gatherings/screens/Tabs/image_generation.dart';
-import 'package:gala_gatherings/screens/Tabs/order_page.dart';
+
 
 import 'package:gala_gatherings/screens/Tabs/Search/search_view.dart';
 
@@ -48,22 +48,14 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
     iconList = <IconData>[
       Icons.home,
-      userType == UserType.Vendor.name
-          ? Icons.laptop
-          : userType == UserType.Supplier.name
-              ? Icons.laptop
-              : Icons.search,
+      Icons.search,
       Icons.notifications_outlined,
       Icons.person,
       // Icons.brightness_1,
     ];
     textList = <String>[
       'Feed',
-      userType == UserType.Vendor.name
-          ? 'Dashboard'
-          : userType == UserType.Supplier.name
-              ? 'Dashboard'
-              : 'Search',
+      'Search',
       'Notifications',
       'Profile',
       // 'Account',

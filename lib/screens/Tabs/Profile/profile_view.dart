@@ -23,7 +23,7 @@ import 'package:gala_gatherings/widgets/space.dart';
 import 'package:gala_gatherings/widgets/toast_notification.dart';
 import 'package:gala_gatherings/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

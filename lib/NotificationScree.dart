@@ -7,7 +7,7 @@ import 'package:gala_gatherings/main.dart';
 // Import Lottie
 import 'package:gala_gatherings/screens/Tabs/Profile/profile_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -71,17 +71,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
     //   _scrollToSelectedTab();
     // });
     _fetchNotifications();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      Provider.of<NotificationProvider>(context, listen: false)
-          .addNotification({
-        'title': message.notification?.title,
-        'body': message.notification?.body,
-        'data': message.data,
-      });
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   Provider.of<NotificationProvider>(context, listen: false)
+    //       .addNotification({
+    //     'title': message.notification?.title,
+    //     'body': message.notification?.body,
+    //     'data': message.data,
+    //   });
 
-      _fetchNotifications();
-      print("Notification received: ${message.notification?.body}");
-    });
+    //   _fetchNotifications();
+    //   print("Notification received: ${message.notification?.body}");
+    // });
   }
 
   @override

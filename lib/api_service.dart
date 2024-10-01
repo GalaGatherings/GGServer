@@ -620,17 +620,19 @@ class Auth with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> signUp(context, email, pass, phone, type) async {
+  Future<String> signUp(context, String email, String name, String password,
+      String userType, String mobileNo, String dob) async {
     const String url = 'https://galagatherings.com/signup';
     final prefs = await SharedPreferences.getInstance();
 
     _getCurrentLocation(context);
     final Map<String, dynamic> requestBody = {
       "email": email,
-      "password": pass,
-      "phone": phone,
-      "user_type": type,
-      "fcm_token": prefs.getString('fcmToken'),
+      "password":  password,
+      "phone": mobileNo,
+      "user_type": userType,
+      "name": name,
+      "dob":dob
     };
 
     try {
@@ -648,46 +650,17 @@ class Auth with ChangeNotifier {
         'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0],
         'profile_photo': DataMap['profile_photo'] ?? '',
         'store_availability': DataMap['store_availability'] ?? false,
-        'pan_number': DataMap['pan_number'] ?? '',
-        'aadhar_number': DataMap['aadhar_number'] ?? '',
-        if (DataMap['location'] != null)
-          'location': {
-            'details': DataMap['location']['details'] ?? '',
-            'latitude': DataMap['location']['latitude'] ?? '',
-            'longitude': DataMap['location']['longitude'] ?? '',
-          },
-        if (DataMap['current_location'] != null)
-          'current_location': {
-            'area': DataMap['current_location']['area'] ?? '',
-            'latitude': DataMap['current_location']['latitude'] ?? '',
-            'longitude': DataMap['current_location']['longitude'] ?? '',
-          },
-        if (DataMap['address'] != null)
-          'address': {
-            "location": DataMap['address']['location'],
-            "latitude": DataMap['address']['latitude'],
-            "longitude": DataMap['address']['longitude'],
-            "hno": DataMap['address']['hno'],
-            "pincode": DataMap['address']['pincode'],
-            "landmark": DataMap['address']['landmark'],
-            "type": DataMap['address']['type'],
-          },
-        if (DataMap['working_hours'] != null)
-          'working_hours': {
-            'start_time': DataMap['working_hours']['start_time'] ?? '',
-            'end_time': DataMap['working_hours']['end_time'] ?? '',
-          },
-        'delivery_addresses': DataMap['delivery_addresses'] ?? [],
-        'bank_name': DataMap['bank_name'] ?? '',
-        'pincode': DataMap['pincode'] ?? '',
+       
+       
+       
         'rating': DataMap['rating'] ?? '-',
         'followers': DataMap['followers'] ?? [],
         'followings': DataMap['followings'] ?? [],
-        'cover_image': DataMap['cover_image'] ?? '',
-        'account_number': DataMap['account_number'] ?? '',
-        'ifsc_code': DataMap['ifsc_code'] ?? '',
+        
+       
+       
         'phone': DataMap['phone'] ?? '',
-        'upi_id': DataMap['upi_id'] ?? '',
+        
         'user_type': DataMap['user_type'] ?? 'Vendor',
       };
       await UserPreferences.setUser(userProfileData);
@@ -700,6 +673,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
 
   Future<void> _getCurrentLocation(context) async {
     var _currentPosition;
@@ -732,20 +706,20 @@ class Auth with ChangeNotifier {
   }
 
   Future<String> login(context, email, pass) async {
-    print("fcmToken:: $fcmToken");
-    final prefs = await SharedPreferences.getInstance();
 
-    print('nknbnkjbn');
-    _getCurrentLocation(context);
+   
+
+
+    // _getCurrentLocation(context);
     final String url = 'https://galagatherings.com/login';
 
     final Map<String, dynamic> requestBody = {
       "email": email,
       "password": pass,
-      "fcm_token": prefs.getString('fcmToken'),
+     
     };
     // Login successful
-    print("resquestbody:: $requestBody");
+    
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -753,7 +727,7 @@ class Auth with ChangeNotifier {
         body: jsonEncode(requestBody),
       );
       final DataMap = jsonDecode(response.body);
-      log("dta:: $DataMap");
+      
       Map<String, dynamic> userProfileData = {
         'user_id': DataMap['user_id'],
         'user_name': DataMap['user_name'],
@@ -761,8 +735,7 @@ class Auth with ChangeNotifier {
         'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0],
         'profile_photo': DataMap['profile_photo'] ?? '',
         'store_availability': DataMap['store_availability'] ?? false,
-        'pan_number': DataMap['pan_number'] ?? '',
-        'aadhar_number': DataMap['aadhar_number'] ?? '',
+       
         if (DataMap['address'] != null)
           'address': {
             "location": DataMap['address']['location'],
@@ -790,17 +763,13 @@ class Auth with ChangeNotifier {
             'start_time': DataMap['working_hours']['start_time'] ?? '',
             'end_time': DataMap['working_hours']['end_time'] ?? '',
           },
-        'delivery_addresses': DataMap['delivery_addresses'] ?? [],
-        'bank_name': DataMap['bank_name'] ?? '',
-        'pincode': DataMap['pincode'] ?? '',
+      
         'rating': DataMap['rating'] ?? '-',
         'followers': DataMap['followers'] ?? [],
         'followings': DataMap['followings'] ?? [],
-        'cover_image': DataMap['cover_image'] ?? '',
-        'account_number': DataMap['account_number'] ?? '',
-        'ifsc_code': DataMap['ifsc_code'] ?? '',
+       
         'phone': DataMap['phone'] ?? '',
-        'upi_id': DataMap['upi_id'] ?? '',
+        
         'user_type': DataMap['user_type'] ?? 'Vendor',
       };
 
@@ -1833,7 +1802,7 @@ class Auth with ChangeNotifier {
       "current_user_id": userData?['user_id'],
       "profile_user_id": id,
     };
-    print("requestBody ${jsonEncode(requestBody)}");
+
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -1841,6 +1810,7 @@ class Auth with ChangeNotifier {
         body: jsonEncode(requestBody),
       );
       notifyListeners();
+          print("requestBody ${jsonDecode(response.body)}");
       return {
         'body': jsonDecode((response.body)),
         'code': response.statusCode,

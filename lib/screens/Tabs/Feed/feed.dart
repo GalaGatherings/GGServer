@@ -181,7 +181,7 @@ class _FeedState extends State<Feed> {
                     padding: EdgeInsets.symmetric(horizontal: 4.w),
                     child: 
                     Container(
-          child: Image.asset('assets/images/gala_big.png',
+          child: Image.asset('assets/images/gg.png',
                height: 40),
         ),
                   ),

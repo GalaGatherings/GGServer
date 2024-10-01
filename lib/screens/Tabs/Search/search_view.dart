@@ -1,13 +1,10 @@
 import 'package:gala_gatherings/api_service.dart';
 import 'package:gala_gatherings/models/dish.dart';
 import 'package:gala_gatherings/models/restaurant.dart';
-import 'package:gala_gatherings/widgets/appwide_loading_bannner.dart';
 import 'package:gala_gatherings/widgets/dish_card.dart';
 import 'package:gala_gatherings/widgets/restaurant_card.dart';
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -68,14 +65,48 @@ class _SearchViewState extends State<SearchView> {
       isLoading = true;
     });
     if (!_locationFetched) {
-      // await _checkLocationPermission();
+      await _checkLocationPermission();
     }
     _fetchData();
     setState(() {
       isLoading = false;
     });
   }
+Future<void> _checkLocationPermission() async {
+  // Check if the location permission is already granted
+  PermissionStatus permissionStatus = await Permission.location.status;
 
+  if (permissionStatus.isGranted) {
+    // Permission is granted, you can proceed
+    _locationFetched = true;
+    print("Location permission granted.");
+  } else if (permissionStatus.isDenied || permissionStatus.isLimited ) {
+    // Permission is denied, request permission
+    permissionStatus = await Permission.location.request();
+
+    if (permissionStatus.isGranted) {
+      // Permission granted after request
+      _locationFetched = true;
+      print("Location permission granted after request.");
+    } 
+    else if (permissionStatus.isPermanentlyDenied) {
+      // Permission is permanently denied, navigate user to settings
+      // openAppSettings();
+      print("Location permission permanently denied. Open app settings.");
+    } 
+    else {
+      // Permission was denied (not permanently), handle accordingly
+      print("Location permission denied.");
+    }
+  } else if (permissionStatus.isPermanentlyDenied) {
+    // Handle permanently denied case
+    openAppSettings();
+    print("Location permission permanently denied. Open app settings.");
+  } else {
+    // Handle any other permission status
+    print("Unhandled permission status: ${permissionStatus.toString()}");
+  }
+}
   Future<void> _getCurrentLocation(context) async {
     setState(() {
       isLoading = true;

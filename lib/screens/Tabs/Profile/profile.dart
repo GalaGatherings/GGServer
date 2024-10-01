@@ -12,9 +12,8 @@ import 'package:gala_gatherings/constants/globalVaribales.dart';
 import 'package:gala_gatherings/models/model.dart';
 import 'package:gala_gatherings/prefrence_helper.dart';
 
+
 import 'package:gala_gatherings/screens/Tabs/Profile/customer_widgets_profile.dart';
-
-
 
 import 'package:gala_gatherings/widgets/appwide_banner.dart';
 import 'package:gala_gatherings/widgets/appwide_bottom_sheet.dart';
@@ -25,7 +24,7 @@ import 'package:gala_gatherings/widgets/space.dart';
 import 'package:gala_gatherings/widgets/toast_notification.dart';
 import 'package:gala_gatherings/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
@@ -175,7 +174,7 @@ class _ProfileState extends State<Profile> {
     await Provider.of<Auth>(context, listen: false)
         .getFeed(Provider.of<Auth>(context, listen: false).userData?['user_id'])
         .then((feed) {
-          print("feed  $feed ");
+      print("feed  $feed ");
       setState(() {
         feedList = [];
         feedList.addAll(feed);
@@ -427,7 +426,7 @@ class _ProfileState extends State<Profile> {
                             children: [
                               Center(
                                   child: Container(
-                                width: 90.w,
+                                width: 95.w,
                                 decoration: ShapeDecoration(
                                   shadows: [
                                     BoxShadow(
@@ -466,6 +465,7 @@ class _ProfileState extends State<Profile> {
                                   children: [
                                     // Space(3.h),
                                     Container(
+                                     
                                       padding:
                                           EdgeInsets.fromLTRB(10, 15, 10, 0),
                                       child: Row(
@@ -482,7 +482,7 @@ class _ProfileState extends State<Profile> {
                                             child: const StoreLogoWidget(),
                                           ),
                                           SizedBox(
-                                            width: 14,
+                                            width: 2.w,
                                           ),
                                           Container(
                                             width: 50.w,
@@ -548,9 +548,9 @@ class _ProfileState extends State<Profile> {
                                               }
                                             },
                                             child: Container(
-                                              padding:
+                                              margin:
                                                   const EdgeInsets.fromLTRB(
-                                                      0, 7, 12, 2),
+                                                      0, 7, 5, 2),
                                               child: Image.asset(
                                                 'assets/images/WhatsApp.png',
                                                 width: 27,
@@ -587,9 +587,9 @@ class _ProfileState extends State<Profile> {
                                                             .userData?[
                                                         'followers'] ??
                                                     [];
-
-                                            _showFollowers(
-                                                context, dynamicFollowers);
+                                            if (dynamicFollowers.length != 0)
+                                              _showFollowers(
+                                                  context, dynamicFollowers);
                                           },
                                           child: ColumnWidgetHomeScreen(
                                             data: Provider.of<Auth>(context,
@@ -618,9 +618,9 @@ class _ProfileState extends State<Profile> {
                                                             .userData?[
                                                         'followings'] ??
                                                     [];
-
-                                            _showFollowings(
-                                                context, dynamicFollowings);
+                                            if (dynamicFollowings.length != 0)
+                                              _showFollowings(
+                                                  context, dynamicFollowings);
                                           },
                                           child: ColumnWidgetHomeScreen(
                                             data: Provider.of<Auth>(context,
@@ -1301,7 +1301,7 @@ class _ProfileState extends State<Profile> {
                                               child:
                                                   CircularProgressIndicator(),
                                             )
-                                          : feedList.length == 0 
+                                          : feedList.length == 0
                                               ? Container(
                                                   height:
                                                       MediaQuery.sizeOf(context)
@@ -1319,9 +1319,13 @@ class _ProfileState extends State<Profile> {
                                                       Text(
                                                         'No items  ',
                                                         style: TextStyle(
-                                                            color:darkMode?Colors.white.withOpacity(0.7): boxShadowColor
-                                                                .withOpacity(
-                                                                    0.2),
+                                                            color: darkMode
+                                                                ? Colors.white
+                                                                    .withOpacity(
+                                                                        0.7)
+                                                                : boxShadowColor
+                                                                    .withOpacity(
+                                                                        0.2),
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 35,
@@ -1331,9 +1335,13 @@ class _ProfileState extends State<Profile> {
                                                       Text(
                                                         'in content  ',
                                                         style: TextStyle(
-                                                            color:darkMode?Colors.white.withOpacity(0.7): boxShadowColor
-                                                                .withOpacity(
-                                                                    0.2),
+                                                            color: darkMode
+                                                                ? Colors.white
+                                                                    .withOpacity(
+                                                                        0.7)
+                                                                : boxShadowColor
+                                                                    .withOpacity(
+                                                                        0.2),
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 35,
@@ -1382,7 +1390,7 @@ class _ProfileState extends State<Profile> {
                                                                 context,
                                                                 listen: false)
                                                             .userData?['user_id'],
-                                                            darkMode:darkMode,
+                                                        darkMode: darkMode,
                                                         data: feedList[index]);
                                                   },
                                                 )),
@@ -1407,8 +1415,11 @@ class _ProfileState extends State<Profile> {
                                         Text(
                                           'No reviews',
                                           style: TextStyle(
-                                              color:darkMode?Colors.white.withOpacity(0.7): boxShadowColor
-                                                  .withOpacity(0.2),
+                                              color: darkMode
+                                                  ? Colors.white
+                                                      .withOpacity(0.7)
+                                                  : boxShadowColor
+                                                      .withOpacity(0.2),
                                               fontWeight: FontWeight.bold,
                                               fontSize: 35,
                                               fontFamily: 'Product Sans'),
@@ -1741,7 +1752,8 @@ class _ManualAddModalState extends State<ManualAddModal> {
     String category = categoryController.text;
     String description = descriptionController.text;
     if (name == '' || price == '' || category == '') {
-      TOastNotification().showErrorToast(context, 'Name price and category are mandatory');
+      TOastNotification()
+          .showErrorToast(context, 'Name price and category are mandatory');
     }
     // Call the API to update the product
     else {
@@ -1751,11 +1763,10 @@ class _ManualAddModalState extends State<ManualAddModal> {
           "name": name,
           "type": selectedType,
           "category": category,
-          "description":description
+          "description": description
         }
       ]);
 
-      
       TOastNotification().showSuccesToast(context, 'Products Added');
     }
     Navigator.pop(context); // Close the modal after saving
@@ -2165,7 +2176,8 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
 
     for (int i = 0; i < list.length; i++) {
       nameControllers[i] = TextEditingController(text: list[i]['name']);
-     priceControllers[i] = TextEditingController(text: list[i]['price'].toString());
+      priceControllers[i] =
+          TextEditingController(text: list[i]['price'].toString());
 
       categoryControllers[i] = TextEditingController(text: list[i]['category']);
     }
@@ -2641,7 +2653,8 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                                     if (updateCode == '200') {
                                       // Ensure updateCode is compared correctly
                                       TOastNotification().showSuccesToast(
-                                          context, 'ProductsUpdated successfully');
+                                          context,
+                                          'ProductsUpdated successfully');
                                       Navigator.of(context)
                                           .pop(); // Close the bottom sheet
                                       Navigator.of(context)
@@ -2834,7 +2847,8 @@ class _MenuState extends State<Menu> {
                               Text(
                                 'No items  ',
                                 style: TextStyle(
-                                    color: darkMode?Colors.white.withOpacity(0.7)
+                                    color: darkMode
+                                        ? Colors.white.withOpacity(0.7)
                                         : boxShadowColor.withOpacity(0.2),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35,
@@ -2843,8 +2857,9 @@ class _MenuState extends State<Menu> {
                               Text(
                                 'in menu  ',
                                 style: TextStyle(
-                                    color: 
-                                       darkMode?Colors.white.withOpacity(0.7): boxShadowColor.withOpacity(0.2),
+                                    color: darkMode
+                                        ? Colors.white.withOpacity(0.7)
+                                        : boxShadowColor.withOpacity(0.2),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35,
                                     fontFamily: 'Product Sans'),
@@ -3030,32 +3045,37 @@ class _MenuState extends State<Menu> {
                                             //     data: widget.menuList[index],
                                             //     kycStatus: widget.kycStatus,
                                             //     scroll: widget.scroll),
-                                      if (!_iscategorySearch && _searchOn)
-                                        for (int index = 0;
-                                            index < widget.menuList.length;
-                                            index++)
-                                          if (widget.menuList[index]['name']
-                                              .toString()
-                                              .toLowerCase()
-                                              .contains(_controller.text
-                                                  .toLowerCase()))
-                                            // MenuItem(
-                                            //     storeAvailability:
-                                            //         storeAvailability,
-                                            //     data: widget.menuList[index],
-                                            //     scroll: widget.scroll,
-                                            //     kycStatus: widget.kycStatus),
-                                      if (!_searchOn)
-                                        for (int index = 0;
-                                            index < widget.menuList.length;
-                                            index++)
-                                          // MenuItem(
-                                          //     storeAvailability:
-                                          //         storeAvailability,
-                                          //     data: widget.menuList[index],
-                                          //     scroll: widget.scroll,
-                                          //     kycStatus: widget.kycStatus),
-                                      const SizedBox(height: 150),
+                                            if (!_iscategorySearch && _searchOn)
+                                              for (int index = 0;
+                                                  index <
+                                                      widget.menuList.length;
+                                                  index++)
+                                                if (widget.menuList[index]
+                                                        ['name']
+                                                    .toString()
+                                                    .toLowerCase()
+                                                    .contains(_controller.text
+                                                        .toLowerCase()))
+                                                  // MenuItem(
+                                                  //     storeAvailability:
+                                                  //         storeAvailability,
+                                                  //     data: widget.menuList[index],
+                                                  //     scroll: widget.scroll,
+                                                  //     kycStatus: widget.kycStatus),
+                                                  if (!_searchOn)
+                                                    for (int index = 0;
+                                                        index <
+                                                            widget.menuList
+                                                                .length;
+                                                        index++)
+                                                      // MenuItem(
+                                                      //     storeAvailability:
+                                                      //         storeAvailability,
+                                                      //     data: widget.menuList[index],
+                                                      //     scroll: widget.scroll,
+                                                      //     kycStatus: widget.kycStatus),
+                                                      const SizedBox(
+                                                          height: 150),
                                     ],
                                   ),
                                 ),
@@ -3183,7 +3203,7 @@ class FeedWidget extends StatelessWidget {
 
   final int index;
   final UserModel? userModel;
-  final bool darkMode ;
+  final bool darkMode;
   final dynamic data;
   final dynamic fulldata;
   final String userId;
@@ -3193,7 +3213,6 @@ class FeedWidget extends StatelessWidget {
 
   Color getBackgroundColor(
       String isSelfProfile, bool isVendor, String main_user_type) {
-
     var usertype = userModel?.userType;
     if (usertype == null) usertype = main_user_type;
     if (isSelfProfile == 'Yes' && isVendor && usertype == 'Vendor') {
@@ -3248,8 +3267,10 @@ class FeedWidget extends StatelessWidget {
                   BoxShadow(
                     offset: const Offset(1, 4),
                     // color: _isVendor ? const Color.fromRGBO(10, 76, 97, 0.31) :  const Color(0xBC73BC).withOpacity(0.6),
-                    color: darkMode?Colors.black.withOpacity(0.47): getBackgroundColor(
-                        isSelfProfile, _isVendor, main_user_type),
+                    color: darkMode
+                        ? Colors.black.withOpacity(0.47)
+                        : getBackgroundColor(
+                            isSelfProfile, _isVendor, main_user_type),
                     blurRadius: 12,
                   ),
                 ],

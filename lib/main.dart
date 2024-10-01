@@ -1,32 +1,26 @@
-import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gala_gatherings/NotificationScree.dart';
-import 'package:gala_gatherings/notification_service.dart';
 import 'package:gala_gatherings/prefrence_helper.dart';
 import 'package:gala_gatherings/screens/Tabs/tabs.dart';
 import 'package:gala_gatherings/screens/login_screen.dart';
 import 'package:gala_gatherings/welcome_screen.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:gala_gatherings/api_service.dart';
 
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 
 @pragma('vm:entry-point')
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-   await Firebase.initializeApp();
-  showNotification(message);
-  print("Handling a background message: ${message.notification!.body}");
-}
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//    await Firebase.initializeApp();
+//   showNotification(message);
+//   print("Handling a background message: ${message.notification!.body}");
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -165,7 +159,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // _checkLocationPermission(context);
+  
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -180,9 +174,9 @@ class MyApp extends StatelessWidget {
           //   create: (ctx) => ViewCartProvider(),
           // ),
           // ChangeNotifierProvider(create: (ctx) => CartProvider()),
-          // ChangeNotifierProvider(
-          //   create: (ctx) => TransitionEffect(),
-          // ),
+          ChangeNotifierProvider(
+            create: (ctx) => TransitionEffect(),
+          ),
         ],
         child: Consumer<Auth>(
           builder: (ctx, auth, _) => MaterialApp(
@@ -230,42 +224,4 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-// Future<void> _checkLocationPermission(context) async {
-//   PermissionStatus permission = await Permission.locationWhenInUse.status;
-//   if (permission != PermissionStatus.granted) {
-//     permission = await Permission.locationWhenInUse.request();
-//   }
-//   if (permission == PermissionStatus.granted) {
-//     await _getCurrentLocation(context);
-//   }
-// }
 
-Future<void> _getCurrentLocation(context) async {
-  var _currentPosition;
-  var address;
-  var area;
-  try {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    _currentPosition = position;
-
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-        _currentPosition?.latitude ?? 22.88689073443092,
-        _currentPosition?.longitude ?? 79.5086424934095);
-    if (placemarks.isNotEmpty) {
-      Placemark placemark = placemarks.first;
-
-      address =
-          '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
-      area = '${placemark.administrativeArea}';
-    } else {
-      address = 'Address not found';
-    }
-
-    await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
-        _currentPosition?.latitude, _currentPosition?.longitude, area);
-    print("locLogmain.dart $_currentPosition  $area");
-  } catch (e) {
-    print('Error: $e');
-  }
-}

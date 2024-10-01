@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gala_gatherings/auth_notifier.dart';
-import 'package:gala_gatherings/main_layout.dart';
+import 'package:gala_gatherings/api_service.dart';
+import 'package:gala_gatherings/screens/Tabs/tabs.dart';
+
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -211,10 +212,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           if (_formKey.currentState!
                                               .validate()) {
                                             try {
-                                              await Provider.of<AuthNotifier>(
+                                              await Provider.of<Auth>(
                                                       context,
                                                       listen: false)
-                                                  .signUp(
+                                                  .signUp(context,
                                                 _emailController.text,
                                                 _fullNameController.text,
                                                 _passwordController.text,
@@ -222,12 +223,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 _mobileController.text,
                                                 _dobController.text,
                                               );
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                builder: (context) => MainLayout(
-                                                    initialIndex:
-                                                        0), // Navigates to ProfilePage
-                                              ));
+                                             
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
@@ -266,10 +262,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           if (_formKey.currentState!
                                               .validate()) {
                                             try {
-                                              await Provider.of<AuthNotifier>(
+                                             String mes= await Provider.of<Auth>(
                                                       context,
                                                       listen: false)
-                                                  .signUp(
+                                                  .signUp(context,
                                                 _emailController.text,
                                                 _fullNameController.text,
                                                 _passwordController.text,
@@ -277,12 +273,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 _mobileController.text,
                                                 _dobController.text,
                                               );
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                builder: (context) => MainLayout(
-                                                    initialIndex:
-                                                        3), // Navigates to ProfilePage
-                                              ));
+                                              if(mes=='Registration Succesful'){
+                                                Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+                                              }
+                                             
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(

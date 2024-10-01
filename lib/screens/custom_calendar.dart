@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_gatherings/api_service.dart';
 import 'package:gala_gatherings/screens/login_screen.dart';
 import 'package:gala_gatherings/screens/signup_screen.dart';
 import 'package:http/http.dart' as http;
-import 'package:gala_gatherings/auth_notifier.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -51,34 +52,34 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    fetchAllTasks(); // Fetch all tasks for the user when the dependencies change
+    // fetchAllTasks(); // Fetch all tasks for the user when the dependencies change
   }
 
-  Future<void> fetchAllTasks() async {
-    var userID = context
-        .read<AuthNotifier>()
-        .userId; // Use `read` here to get the user ID without listening
-    setState(() => {user_id: userID});
-    try {
-      // Fetch all tasks for the user
-      var tasksData =
-          await Provider.of<AuthNotifier>(context, listen: false).getTaskData();
+  // Future<void> fetchAllTasks() async {
+  //   var userID = context
+  //       .read<Auth>()
+  //       .userId; // Use `read` here to get the user ID without listening
+  //   setState(() => {user_id: userID});
+  //   try {
+  //     // Fetch all tasks for the user
+  //     var tasksData =
+  //         await Provider.of<Auth>(context, listen: false).getTaskData();
 
-      if (tasksData != null && tasksData is List) {
-        setState(() {
-          // Store all tasks fetched from the backend
-          allTasks = tasksData
-              .map<Map<String, dynamic>>((task) => task as Map<String, dynamic>)
-              .toList();
-        });
-      }
+  //     if (tasksData != null && tasksData is List) {
+  //       setState(() {
+  //         // Store all tasks fetched from the backend
+  //         allTasks = tasksData
+  //             .map<Map<String, dynamic>>((task) => task as Map<String, dynamic>)
+  //             .toList();
+  //       });
+  //     }
 
-      // After fetching all tasks, filter them for the current date
-      fetchTaskData();
-    } catch (error) {
-      print("Error fetching task data: $error");
-    }
-  }
+  //     // After fetching all tasks, filter them for the current date
+  //     fetchTaskData();
+  //   } catch (error) {
+  //     print("Error fetching task data: $error");
+  //   }
+  // }
 
   void fetchTaskData() {
     setState(() {
@@ -117,13 +118,13 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
     print("Availabilty Events Submitted: $availability");
     //  _isGalaPanelOpen = !_isGalaPanelOpen;
 
-    Provider.of<AuthNotifier>(context, listen: false)
-        .user_update(availability)
-        .then((value) => {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(value),
-              ))
-            });
+    // Provider.of<Auth>(context, listen: false)
+    //     .user_update(availability)
+    //     .then((value) => {
+    //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //             content: Text(value),
+    //           ))
+    //         });
     
     //for availabilty
   }
@@ -159,14 +160,14 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
         };
 
         // Send each task to the API for individual processing
-        Provider.of<AuthNotifier>(context, listen: false)
-            .updateTask(taskData)
-            .then((value) {
-          fetchAllTasks();
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(value),
-          ));
-        });
+        // Provider.of<Auth>(context, listen: false)
+        //     .updateTask(taskData)
+        //     .then((value) {
+        //   fetchAllTasks();
+        //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //     content: Text(value),
+        //   ));
+        // });
       }
     });
 
@@ -203,13 +204,13 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
     print("Gala Events Submitted: $gala");
     //  _isGalaPanelOpen = !_isGalaPanelOpen;
 
-    Provider.of<AuthNotifier>(context, listen: false)
-        .user_update(gala)
-        .then((value) => {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(value),
-              ))
-            });
+    // Provider.of<Auth>(context, listen: false)
+    //     .user_update(gala)
+    //     .then((value) => {
+    //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //             content: Text(value),
+    //           ))
+    //         });
     
   }
 
@@ -233,7 +234,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user_type = context.read<AuthNotifier>().user_type;
+    final user_type = "Vendor";
     print("user_typeiss $user_type");
     return Scaffold(
       backgroundColor: Colors.black,
@@ -271,7 +272,7 @@ class _CustomCalendarScreenState extends State<CustomCalendarScreen> {
             ),
             GestureDetector(
               onTap: () => {
-                Provider.of<AuthNotifier>(context, listen: false).logout().then(
+                Provider.of<Auth>(context, listen: false).logout().then(
                     (value) =>
                         Navigator.pushReplacementNamed(context, '/login'))
               },

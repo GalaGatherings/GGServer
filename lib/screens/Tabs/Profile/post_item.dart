@@ -27,7 +27,7 @@ import 'package:gala_gatherings/widgets/space.dart';
 import 'package:gala_gatherings/widgets/toast_notification.dart';
 import 'package:gala_gatherings/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
@@ -1160,17 +1160,17 @@ class _PostItemState extends State<PostItem> {
                         onPressed: () async {
                           try {
                             // 1. Generate the Dynamic Link
-                            final DynamicLinkParameters parameters =
-                                DynamicLinkParameters(
-                              uriPrefix: 'https://app.cloudbelly.in',
-                              link: Uri.parse(
-                                  'https://galagatherings.com/profile?profileId=${widget.data['user_id'] ?? widget.userId}'),
-                              androidParameters: const AndroidParameters(
-                                packageName: 'com.app.cloudbelly_app',
-                              ),
-                            );
+                            // final DynamicLinkParameters parameters =
+                            //     DynamicLinkParameters(
+                            //   uriPrefix: 'https://app.cloudbelly.in',
+                            //   link: Uri.parse(
+                            //       'https://galagatherings.com/profile?profileId=${widget.data['user_id'] ?? widget.userId}'),
+                            //   androidParameters: const AndroidParameters(
+                            //     packageName: 'com.app.cloudbelly_app',
+                            //   ),
+                            // );
           
-                            final Uri shortUrl = parameters.link;
+                            // final Uri shortUrl = parameters.link;
           
                             // 2. Download the image
                             final imageUrl = widget.data['file_path'];
