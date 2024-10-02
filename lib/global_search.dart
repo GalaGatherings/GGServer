@@ -241,7 +241,7 @@ class _GlobalSearchViewState extends State<GlobalSearchView> {
                     // Button to clear filters
                     ElevatedButton(
                       onPressed: _clearFilters,
-                      child: Text("Clear Filters"),
+                      child: Text("Clear Filters",style: TextStyle(color: Colors.white,fontFamily: 'Product Sans',fontWeight: FontWeight.bold),),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: darkMode ? Color(0xffFA6E00) : Color(0xff7B358D), // Button color
                         shape: RoundedRectangleBorder(
@@ -256,6 +256,7 @@ class _GlobalSearchViewState extends State<GlobalSearchView> {
           ),
           // Content Body
           Expanded(
+            flex: 1,
             child: restaurantItems.isEmpty && !isLoading
                 ? Center(
                     child: Text(
@@ -268,6 +269,8 @@ class _GlobalSearchViewState extends State<GlobalSearchView> {
                     ),
                   )
                 : ListView.builder(
+                  padding: EdgeInsets.zero, // Remove default padding
+          shrinkWrap: true, 
                     itemCount: restaurantItems.length + (hasMoreData ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == restaurantItems.length) {
