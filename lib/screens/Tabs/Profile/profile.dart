@@ -201,6 +201,7 @@ class _ProfileState extends State<Profile> {
       'working_hours'
     ]);
     print(" resssp ${json.encode(res)}");
+   
     setState(() {
       _switchValue = res['store_availability'] ?? true;
     });
@@ -237,7 +238,7 @@ class _ProfileState extends State<Profile> {
     try {
       final res = await Provider.of<Auth>(context, listen: false)
           .getUserDataByKey(userId, projectKey);
-      print(res);
+  
       return res;
     } catch (e) {
       print('Error: $e');

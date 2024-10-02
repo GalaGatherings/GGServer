@@ -59,6 +59,23 @@ class _ProfileViewState extends State<ProfileView> {
   String kycStatus = 'not verified';
   var locationDet = {};
   bool darkMode = true;
+  String category = '';
+  // ignore: non_constant_identifier_names
+  String sub_category = '';
+  // ignore: non_constant_identifier_names
+  var working_hours = {};
+  Future<Map<String, dynamic>> getUserDetailsbyKey(
+      String userId, List<String> projectKey) async {
+    try {
+      final res = await Provider.of<Auth>(context, listen: false)
+          .getUserDataByKey(userId, projectKey);
+
+      return res;
+    } catch (e) {
+      print('Error: $e');
+      return {};
+    }
+  }
 
   bool checkFollow() {
     String id = widget.userIdList.first;
@@ -113,18 +130,38 @@ class _ProfileViewState extends State<ProfileView> {
 
     userList =
         await Provider.of<Auth>(context, listen: false).getUserDetails(userIds);
-    // print(" viewProfi ${userList.first.followers?.length}  followers ${userList.first.followings?.length}  followings  ");
-    // _isLoad = false;
-    List<dynamic> fetchedUserDetails =
-        await Provider.of<Auth>(context, listen: false).getUserInfo(userIds);
-    if (fetchedUserDetails[0] != null) {
-      kycStatus = fetchedUserDetails[0]!['kyc_status'];
-      locationDet = fetchedUserDetails[0]!['address'];
+
+    // List<dynamic> fetchedUserDetails =
+    //     await Provider.of<Auth>(context, listen: false).getUserInfo(userIds);
+    final res = await getUserDetailsbyKey(userIds[0], [
+      'store_availability',
+      'followings',
+      'followers',
+      'description',
+      'category',
+      'sub_category',
+      'current_location',
+      'working_hours'
+    ]);
+    print("ressssss $res");
+    if (res != {}) {
+     
+      locationDet = res['current_location'] ?? {};
+      working_hours = res['working_hours'] ?? {};
+      sub_category = res['sub_category'];
+      category = res['category'];
+      setState(() {
+        locationDet = res['current_location'] ?? {};
+        working_hours = res['working_hours'] ?? {};
+        sub_category = res['sub_category'];
+        category = res['category'];
+      });
     }
 
     //Navigator.pop(context);
   }
-Future<String?> getDarkModeStatus() async {
+
+  Future<String?> getDarkModeStatus() async {
     final prefs = await SharedPreferences.getInstance();
 
     setState(() {
@@ -133,7 +170,7 @@ Future<String?> getDarkModeStatus() async {
 
     return prefs.getString('dark_mode');
   }
- 
+
   Future<void> _loading() async {
     getUserInfo(widget.userIdList);
     final prefs = await SharedPreferences.getInstance();
@@ -273,11 +310,11 @@ Future<String?> getDarkModeStatus() async {
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
+
     return Scaffold(
-      backgroundColor:
-      darkMode
-                ? Color(0xff000000).withOpacity(0.45):
-          Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+      backgroundColor: darkMode
+          ? Color(0xff000000).withOpacity(0.45)
+          : Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
                   UserType.Vendor.name
               ? const Color.fromRGBO(234, 245, 247, 1)
               : userType == UserType.Supplier.name
@@ -312,16 +349,18 @@ Future<String?> getDarkModeStatus() async {
                                       width: 100.w,
                                       height: 23.3.h,
                                       decoration: ShapeDecoration(
-                                        color: darkMode?Color(0xff1D1D1D):userList.first.userType ==
-                                                UserType.Vendor.name
-                                            ? const Color.fromRGBO(
-                                                165, 200, 199, 0.6)
+                                        color: darkMode
+                                            ? Color(0xff1D1D1D)
                                             : userList.first.userType ==
-                                                    UserType.Supplier.name
+                                                    UserType.Vendor.name
                                                 ? const Color.fromRGBO(
-                                                    77, 191, 74, 0.6)
-                                                : const Color(0xBC73BC)
-                                                    .withOpacity(0.5),
+                                                    165, 200, 199, 0.6)
+                                                : userList.first.userType ==
+                                                        UserType.Supplier.name
+                                                    ? const Color.fromRGBO(
+                                                        77, 191, 74, 0.6)
+                                                    : const Color(0xBC73BC)
+                                                        .withOpacity(0.5),
                                         shape: const SmoothRectangleBorder(
                                           borderRadius: SmoothBorderRadius.only(
                                               bottomLeft: SmoothRadius(
@@ -360,10 +399,13 @@ Future<String?> getDarkModeStatus() async {
                                                   onTap: () {
                                                     Navigator.pop(context);
                                                   },
-                                                  color:darkMode?Colors.black.withOpacity(0.45): sharedProfileColour(
-                                                          userList
-                                                              .first.userType)
-                                                      .withOpacity(0.4)),
+                                                  color: darkMode
+                                                      ? Colors.black
+                                                          .withOpacity(0.45)
+                                                      : sharedProfileColour(
+                                                              userList.first
+                                                                  .userType)
+                                                          .withOpacity(0.4)),
                                             ],
                                           ),
                                         ),
@@ -386,26 +428,36 @@ Future<String?> getDarkModeStatus() async {
                                                 shadows: [
                                                   BoxShadow(
                                                     offset: const Offset(0, 4),
-                                                    color: darkMode?Color(0xff030303): userList.first
-                                                                .userType ==
-                                                            UserType.Vendor.name
-                                                        ? const Color.fromRGBO(
-                                                            165, 200, 199, 0.6)
-                                                        : userList.first
-                                                                    .userType ==
+                                                    color: darkMode
+                                                        ? Color(0xff030303)
+                                                        : userList.first.userType ==
                                                                 UserType
-                                                                    .Supplier
-                                                                    .name
-                                                            ? const Color
-                                                                .fromRGBO(77,
-                                                                191, 74, 0.6)
-                                                            : const Color
-                                                                .fromRGBO(188,
-                                                                115, 188, 0.6),
+                                                                    .Vendor.name
+                                                            ? const Color.fromRGBO(
+                                                                165, 200, 199, 0.6)
+                                                            : userList.first
+                                                                        .userType ==
+                                                                    UserType
+                                                                        .Supplier
+                                                                        .name
+                                                                ? const Color
+                                                                    .fromRGBO(
+                                                                    77,
+                                                                    191,
+                                                                    74,
+                                                                    0.6)
+                                                                : const Color
+                                                                    .fromRGBO(
+                                                                    188,
+                                                                    115,
+                                                                    188,
+                                                                    0.6),
                                                     blurRadius: 25,
                                                   )
                                                 ],
-                                                color:darkMode?Color(0xff313030): Colors.white,
+                                                color: darkMode
+                                                    ? Color(0xff313030)
+                                                    : Colors.white,
                                                 shape: SmoothRectangleBorder(
                                                   borderRadius:
                                                       SmoothBorderRadius(
@@ -452,12 +504,13 @@ Future<String?> getDarkModeStatus() async {
                                                                         offset: Offset(
                                                                             1,
                                                                             4),
-                                                                        color:darkMode?Color(0xff000000).withOpacity(0.47): userList.first.userType ==
-                                                                                UserType.Vendor.name
-                                                                            ? const Color.fromRGBO(165, 200, 199, 0.6)
-                                                                            : userList.first.userType == UserType.Supplier.name
-                                                                                ? const Color.fromRGBO(77, 191, 74, 0.6)
-                                                                                : const Color.fromRGBO(188, 115, 188, 0.6),
+                                                                        color: darkMode
+                                                                            ? Color(0xff000000).withOpacity(0.47)
+                                                                            : userList.first.userType == UserType.Vendor.name
+                                                                                ? const Color.fromRGBO(165, 200, 199, 0.6)
+                                                                                : userList.first.userType == UserType.Supplier.name
+                                                                                    ? const Color.fromRGBO(77, 191, 74, 0.6)
+                                                                                    : const Color.fromRGBO(188, 115, 188, 0.6),
                                                                         blurRadius:
                                                                             20,
                                                                       )
@@ -580,8 +633,10 @@ Future<String?> getDarkModeStatus() async {
                                                                       .storeName ??
                                                                   'Unknown', // Provide a default value
                                                               style: TextStyle(
-                                                                  color:darkMode?Colors.white: sharedProfileColour(
-                                                                      userList
+                                                                  color: darkMode
+                                                                      ? Colors
+                                                                          .white
+                                                                      : sharedProfileColour(userList
                                                                           .first
                                                                           .userType),
                                                                   fontFamily:
@@ -595,20 +650,31 @@ Future<String?> getDarkModeStatus() async {
                                                                           .bold),
                                                             ),
                                                             Text(
-                                                              userList.first
-                                                                      .userType ??
-                                                                  'Unknown', // Provide a default value
+                                                              "Working hours: ${working_hours['start_time']} - ${working_hours['end_time']}",
+                                                             
                                                               style: TextStyle(
-                                                                color:darkMode?Colors.white: sharedProfileColour(
-                                                                    userList
-                                                                        .first
-                                                                        .userType),
-                                                                fontFamily:
-                                                                    'Product Sans',
-                                                                fontSize: 12,
-                                                                letterSpacing:
-                                                                    1,
-                                                              ),
+                                                                  color: darkMode
+                                                                      ? Colors
+                                                                          .white
+                                                                      : boxShadowColor,
+                                                                  fontFamily:
+                                                                      'Product Sans',
+                                                                  fontSize: 12,
+                                                                  letterSpacing:
+                                                                      1),
+                                                            ),
+                                                            Text(
+                                                              "${category} - ${sub_category}  ",
+                                                              style: TextStyle(
+                                                                  color: darkMode
+                                                                      ? Color(
+                                                                          0xffB1F0EF)
+                                                                      : boxShadowColor,
+                                                                  fontFamily:
+                                                                      'Product Sans',
+                                                                  fontSize: 12,
+                                                                  letterSpacing:
+                                                                      1),
                                                             ),
                                                           ],
                                                         ),
@@ -634,8 +700,7 @@ Future<String?> getDarkModeStatus() async {
                                                             // Check if the URL can be launched
                                                             _launchURL(
                                                                 whatsappUrl);
-                                                          } 
-                                                          else if (phoneNumber
+                                                          } else if (phoneNumber
                                                                   .length ==
                                                               11) {
                                                             final whatsappUrl =
@@ -646,8 +711,7 @@ Future<String?> getDarkModeStatus() async {
                                                             // Check if the URL can be launched
                                                             _launchURL(
                                                                 whatsappUrl);
-                                                          } 
-                                                           else if (phoneNumber
+                                                          } else if (phoneNumber
                                                                   .length ==
                                                               12) {
                                                             final whatsappUrl =
@@ -658,8 +722,7 @@ Future<String?> getDarkModeStatus() async {
                                                             // Check if the URL can be launched
                                                             _launchURL(
                                                                 whatsappUrl);
-                                                          } 
-                                                          else {
+                                                          } else {
                                                             ScaffoldMessenger
                                                                     .of(context)
                                                                 .showSnackBar(
@@ -675,8 +738,13 @@ Future<String?> getDarkModeStatus() async {
                                                                   .fromLTRB(
                                                                   0, 7, 12, 2),
                                                           child: Image.asset(
-                                                              'assets/images/WhatsApp.png',
-                                                              width: 27,color: darkMode?Colors.white:Colors.transparent,),
+                                                            'assets/images/WhatsApp.png',
+                                                            width: 27,
+                                                            color: darkMode
+                                                                ? Colors.white
+                                                                : Colors
+                                                                    .transparent,
+                                                          ),
                                                         ),
                                                       ),
                                                     ],
@@ -688,12 +756,16 @@ Future<String?> getDarkModeStatus() async {
                                                     children: [
                                                       ColumnWidgetHomeScreen(
                                                         data: Provider.of<Auth>(
-                                                                context,
-                                                                listen: false)
-                                                            .userData?['rating'] ?? '-',
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .userData?[
+                                                                'rating'] ??
+                                                            '-',
                                                         txt: 'Rating',
-                                                        color:darkMode?Colors.white:
-                                                            sharedProfileColour(
+                                                        color: darkMode
+                                                            ? Colors.white
+                                                            : sharedProfileColour(
                                                                 userList.first
                                                                     .userType),
                                                       ),
@@ -705,8 +777,9 @@ Future<String?> getDarkModeStatus() async {
                                                                   .toString() ??
                                                               "0",
                                                           txt: 'Followers',
-                                                          color:
-                                                             darkMode?Colors.white: sharedProfileColour(
+                                                          color: darkMode
+                                                              ? Colors.white
+                                                              : sharedProfileColour(
                                                                   userList.first
                                                                       .userType)),
                                                       ColumnWidgetHomeScreen(
@@ -717,8 +790,9 @@ Future<String?> getDarkModeStatus() async {
                                                                   .toString() ??
                                                               "0",
                                                           txt: 'Following',
-                                                          color:
-                                                            darkMode?Colors.white:  sharedProfileColour(
+                                                          color: darkMode
+                                                              ? Colors.white
+                                                              : sharedProfileColour(
                                                                   userList.first
                                                                       .userType))
                                                     ],
@@ -859,20 +933,29 @@ Future<String?> getDarkModeStatus() async {
                                           shadows: [
                                             BoxShadow(
                                               offset: const Offset(0, 4),
-                                              color: darkMode?Color(0xff000000).withOpacity(0.47):userList.first.userType ==
-                                                      UserType.Vendor.name
-                                                  ? const Color.fromRGBO(
-                                                      165, 200, 199, 0.6)
+                                              color: darkMode
+                                                  ? Color(0xff000000)
+                                                      .withOpacity(0.47)
                                                   : userList.first.userType ==
-                                                          UserType.Supplier.name
+                                                          UserType.Vendor.name
                                                       ? const Color.fromRGBO(
-                                                          77, 191, 74, 0.6)
-                                                      : const Color.fromRGBO(
-                                                          188, 115, 188, 0.6),
+                                                          165, 200, 199, 0.6)
+                                                      : userList.first
+                                                                  .userType ==
+                                                              UserType
+                                                                  .Supplier.name
+                                                          ? const Color
+                                                              .fromRGBO(
+                                                              77, 191, 74, 0.6)
+                                                          : const Color
+                                                              .fromRGBO(188,
+                                                              115, 188, 0.6),
                                               blurRadius: 30,
                                             )
                                           ],
-                                          color:darkMode? Color(0xff313030): Colors.white,
+                                          color: darkMode
+                                              ? Color(0xff313030)
+                                              : Colors.white,
                                           shape: SmoothRectangleBorder(
                                             borderRadius: SmoothBorderRadius(
                                               cornerRadius: 30,
@@ -885,23 +968,20 @@ Future<String?> getDarkModeStatus() async {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               // if (_isVendor)
-                                                Container(
-                                                  margin: EdgeInsets.fromLTRB(
-                                                   3.w,0,0,0),
-                                                  width: 30,
-                                                  height: 6,
-                                                  decoration: ShapeDecoration(
-                                                    color:
-                                                        const Color(0xFFFA6E00)
-                                                            .withOpacity(0.5),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        6)),
-                                                  ),
+                                              Container(
+                                                margin: EdgeInsets.fromLTRB(
+                                                    3.w, 0, 0, 0),
+                                                width: 30,
+                                                height: 6,
+                                                decoration: ShapeDecoration(
+                                                  color: const Color(0xFFFA6E00)
+                                                      .withOpacity(0.5),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6)),
                                                 ),
+                                              ),
                                               Space(2.h),
                                               userList.first.userType ==
                                                       UserType.Supplier.name
@@ -926,8 +1006,10 @@ Future<String?> getDarkModeStatus() async {
                                                                   txt:
                                                                       'Content',
                                                                   width: 52,
-                                                                  color:darkMode?Colors.white: sharedProfileColour(
-                                                                      userList
+                                                                  color: darkMode
+                                                                      ? Colors
+                                                                          .white
+                                                                      : sharedProfileColour(userList
                                                                           .first
                                                                           .userType)),
                                                             ),
@@ -946,10 +1028,13 @@ Future<String?> getDarkModeStatus() async {
                                                                   isActive:
                                                                       _activeButtonIndex ==
                                                                           2,
-                                                                  txt: 'Products',
+                                                                  txt:
+                                                                      'Products',
                                                                   width: 52,
-                                                                  color:darkMode?Colors.white:sharedProfileColour(
-                                                                      userList
+                                                                  color: darkMode
+                                                                      ? Colors
+                                                                          .white
+                                                                      : sharedProfileColour(userList
                                                                           .first
                                                                           .userType)),
                                                             ),
@@ -966,8 +1051,10 @@ Future<String?> getDarkModeStatus() async {
                                                                           3,
                                                                   txt: 'About',
                                                                   width: 52,
-                                                                  color:darkMode?Colors.white: sharedProfileColour(
-                                                                      userList
+                                                                  color: darkMode
+                                                                      ? Colors
+                                                                          .white
+                                                                      : sharedProfileColour(userList
                                                                           .first
                                                                           .userType)),
                                                             ),
@@ -985,8 +1072,10 @@ Future<String?> getDarkModeStatus() async {
                                                                   txt:
                                                                       'Reviews',
                                                                   width: 52,
-                                                                  color:darkMode?Colors.white: sharedProfileColour(
-                                                                      userList
+                                                                  color: darkMode
+                                                                      ? Colors
+                                                                          .white
+                                                                      : sharedProfileColour(userList
                                                                           .first
                                                                           .userType)),
                                                             ),
@@ -1016,9 +1105,12 @@ Future<String?> getDarkModeStatus() async {
                                                                       txt:
                                                                           'Content',
                                                                       width: 52,
-                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
-                                                                          .first
-                                                                          .userType)),
+                                                                      color: darkMode
+                                                                          ? Colors
+                                                                              .white
+                                                                          : sharedProfileColour(userList
+                                                                              .first
+                                                                              .userType)),
                                                                 ),
                                                                 TouchableOpacity(
                                                                   onTap: () {
@@ -1035,9 +1127,12 @@ Future<String?> getDarkModeStatus() async {
                                                                       txt:
                                                                           'Reviews',
                                                                       width: 52,
-                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
-                                                                          .first
-                                                                          .userType)),
+                                                                      color: darkMode
+                                                                          ? Colors
+                                                                              .white
+                                                                          : sharedProfileColour(userList
+                                                                              .first
+                                                                              .userType)),
                                                                 ),
                                                               ]),
                                                         )
@@ -1063,9 +1158,12 @@ Future<String?> getDarkModeStatus() async {
                                                                       txt:
                                                                           'Content',
                                                                       width: 52,
-                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
-                                                                          .first
-                                                                          .userType)),
+                                                                      color: darkMode
+                                                                          ? Colors
+                                                                              .white
+                                                                          : sharedProfileColour(userList
+                                                                              .first
+                                                                              .userType)),
                                                                 ),
                                                                 TouchableOpacity(
                                                                   onTap: () {
@@ -1086,9 +1184,12 @@ Future<String?> getDarkModeStatus() async {
                                                                       txt:
                                                                           'Products',
                                                                       width: 40,
-                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
-                                                                          .first
-                                                                          .userType)),
+                                                                      color: darkMode
+                                                                          ? Colors
+                                                                              .white
+                                                                          : sharedProfileColour(userList
+                                                                              .first
+                                                                              .userType)),
                                                                 ),
                                                                 TouchableOpacity(
                                                                   onTap: () {
@@ -1105,9 +1206,12 @@ Future<String?> getDarkModeStatus() async {
                                                                       txt:
                                                                           'About',
                                                                       width: 52,
-                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
-                                                                          .first
-                                                                          .userType)),
+                                                                      color: darkMode
+                                                                          ? Colors
+                                                                              .white
+                                                                          : sharedProfileColour(userList
+                                                                              .first
+                                                                              .userType)),
                                                                 ),
                                                               ]),
                                                         ),
@@ -1141,8 +1245,11 @@ Future<String?> getDarkModeStatus() async {
                                                                     Text(
                                                                       'No items  ',
                                                                       style: TextStyle(
-                                                                          color:darkMode?Colors.white54: boxShadowColor.withOpacity(
-                                                                              0.2),
+                                                                          color: darkMode
+                                                                              ? Colors
+                                                                                  .white54
+                                                                              : boxShadowColor.withOpacity(
+                                                                                  0.2),
                                                                           fontWeight: FontWeight
                                                                               .bold,
                                                                           fontSize:
@@ -1153,8 +1260,11 @@ Future<String?> getDarkModeStatus() async {
                                                                     Text(
                                                                       'in content  ',
                                                                       style: TextStyle(
-                                                                          color:darkMode?Colors.white54: boxShadowColor.withOpacity(
-                                                                              0.2),
+                                                                          color: darkMode
+                                                                              ? Colors
+                                                                                  .white54
+                                                                              : boxShadowColor.withOpacity(
+                                                                                  0.2),
                                                                           fontWeight: FontWeight
                                                                               .bold,
                                                                           fontSize:
@@ -1229,7 +1339,8 @@ Future<String?> getDarkModeStatus() async {
                                                                             .first,
                                                                         fulldata:
                                                                             feedList,
-                                                                            darkMode: darkMode,
+                                                                        darkMode:
+                                                                            darkMode,
                                                                         data: feedList[
                                                                             index]);
                                                                   },
@@ -1300,8 +1411,10 @@ Future<String?> getDarkModeStatus() async {
                                                           Text(
                                                             'Vendor Info',
                                                             style: TextStyle(
-                                                                color:darkMode?Colors.white:
-                                                                    boxShadowColor,
+                                                                color: darkMode
+                                                                    ? Colors
+                                                                        .white
+                                                                    : boxShadowColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w800,
@@ -1373,12 +1486,17 @@ Future<String?> getDarkModeStatus() async {
                                                               Text(
                                                                 (locationDet !=
                                                                         {})
-                                                                    ?locationDet['hno'] == null?'No location found':
-                                                                     "${locationDet['hno']} ${locationDet['location']} ${locationDet['landmark']}"
+                                                                    ? locationDet['area'] ==
+                                                                            null
+                                                                        ? 'No location found'
+                                                                        : "${locationDet['area']}"
                                                                     : 'No location found',
                                                                 style: TextStyle(
-                                                                    color:darkMode?Colors.white: Color(
-                                                                        0xff1B7997),
+                                                                    color: darkMode
+                                                                        ? Colors
+                                                                            .white
+                                                                        : Color(
+                                                                            0xff1B7997),
                                                                     fontSize:
                                                                         13,
                                                                     fontFamily:
@@ -1432,8 +1550,11 @@ Future<String?> getDarkModeStatus() async {
                                                               Text(
                                                                 "${userList.first.phone}",
                                                                 style: TextStyle(
-                                                                    color:darkMode?Colors.white: Color(
-                                                                        0xff1B7997),
+                                                                    color: darkMode
+                                                                        ? Colors
+                                                                            .white
+                                                                        : Color(
+                                                                            0xff1B7997),
                                                                     fontSize:
                                                                         12,
                                                                     fontFamily:
@@ -1441,15 +1562,12 @@ Future<String?> getDarkModeStatus() async {
                                                               ),
                                                             ],
                                                           ),
-                                                         
                                                           const SizedBox(
                                                             height: 200,
                                                           )
                                                         ],
                                                       )),
                                                 )
-                                          
-                                          
                                             ]),
                                       ),
                                     ),
