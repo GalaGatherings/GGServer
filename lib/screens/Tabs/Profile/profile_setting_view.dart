@@ -1390,6 +1390,10 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
               Space(
                 3.h,
               ),
+              if(Provider.of<Auth>(context, listen: false)
+                                              .userData?['user_type'] ==
+                                          UserType.Vendor.name)...[
+                                            
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextWidgetStoreSetup(
@@ -1484,8 +1488,6 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
               Space(
                 3.h,
               ),
-
-              //seelct jonour
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 1),
                 child: GlobalJobSelection(), // Use the job selection widget
@@ -1655,6 +1657,9 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
               const Space(
                 42,
               ),
+                                          ],
+
+              //seelct jonour
 
               // Add terms and condition and privacy policy
 

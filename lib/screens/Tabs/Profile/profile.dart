@@ -201,7 +201,7 @@ class _ProfileState extends State<Profile> {
       'working_hours'
     ]);
     print(" resssp ${json.encode(res)}");
-   
+
     setState(() {
       _switchValue = res['store_availability'] ?? true;
     });
@@ -238,7 +238,7 @@ class _ProfileState extends State<Profile> {
     try {
       final res = await Provider.of<Auth>(context, listen: false)
           .getUserDataByKey(userId, projectKey);
-  
+
       return res;
     } catch (e) {
       print('Error: $e');
@@ -508,7 +508,9 @@ class _ProfileState extends State<Profile> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  height: 10,
+                                                  height:  (Provider.of<Auth>(context, listen: false)
+                                              .userData?['user_type'] ==
+                                          UserType.Vendor.name)? 10:20,
                                                 ),
                                                 Text(
                                                   Provider.of<Auth>(context,
@@ -524,29 +526,34 @@ class _ProfileState extends State<Profile> {
                                                           FontWeight.bold,
                                                       letterSpacing: 1),
                                                 ),
-                                                Text(
-                                                  "Working hours: ${Provider.of<Auth>(context, listen: false).userData?['working_hours']['start_time']} - ${Provider.of<Auth>(context, listen: false).userData?['working_hours']['end_time']}",
-                                                  style: TextStyle(
-                                                      color: darkMode
-                                                          ? Colors.white
-                                                          : boxShadowColor,
-                                                      fontFamily:
-                                                          'Product Sans',
-                                                      fontSize: 12,
-                                                      letterSpacing: 1),
-                                                ),
-                                                Text(
-                                                  "${Provider.of<Auth>(context, listen: true).userData?['category'] ?? ''} - ${Provider.of<Auth>(context, listen: true).userData?['sub_category'] ?? ''}  ",
-                                                  style: TextStyle(
-                                                      color: darkMode
-                                                          ? Color(0xffB1F0EF)
-                                                          : boxShadowColor,
-                                                      fontFamily:
-                                                          'Product Sans',
-                                                      fontSize: 12,
-                                                      letterSpacing: 1),
-                                                ),
-                                             
+                                                if (Provider.of<Auth>(context,
+                                                                listen: true)
+                                                            .userData?[
+                                                        'user_type'] ==
+                                                    'Vendor') ...[
+                                                  Text(
+                                                    "Working hours: ${Provider.of<Auth>(context, listen: false).userData?['working_hours']?['start_time'] ?? ''} - ${Provider.of<Auth>(context, listen: false).userData?['working_hours']?['end_time'] ?? ''}",
+                                                    style: TextStyle(
+                                                        color: darkMode
+                                                            ? Colors.white
+                                                            : boxShadowColor,
+                                                        fontFamily:
+                                                            'Product Sans',
+                                                        fontSize: 12,
+                                                        letterSpacing: 1),
+                                                  ),
+                                                  Text(
+                                                    "${Provider.of<Auth>(context, listen: true).userData?['category'] ?? ''} - ${Provider.of<Auth>(context, listen: true).userData?['sub_category'] ?? ''}  ",
+                                                    style: TextStyle(
+                                                        color: darkMode
+                                                            ? Color(0xffB1F0EF)
+                                                            : boxShadowColor,
+                                                        fontFamily:
+                                                            'Product Sans',
+                                                        fontSize: 12,
+                                                        letterSpacing: 1),
+                                                  ),
+                                                ]
                                               ],
                                             ),
                                           ),
