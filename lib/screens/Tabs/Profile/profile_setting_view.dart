@@ -6,6 +6,8 @@ import 'package:gala_gatherings/constants/assets.dart';
 import 'package:gala_gatherings/constants/enums.dart';
 import 'package:gala_gatherings/constants/globalVaribales.dart';
 import 'package:gala_gatherings/prefrence_helper.dart';
+import 'package:gala_gatherings/screens/Tabs/Profile/profile.dart';
+import 'package:gala_gatherings/screens/Tabs/tabs.dart';
 
 import 'package:gala_gatherings/widgets/appwide_loading_bannner.dart';
 import 'package:gala_gatherings/widgets/dashboard.dart';
@@ -72,24 +74,21 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   Future<void> submitStoreName() async {
     // final prefs = await SharedPreferences.getInstance();
     if (nameController.text != '') {
-
       AppWideLoadingBanner().loadingBanner(context);
-userDetails = UserPreferences.getUser();
+      userDetails = UserPreferences.getUser();
       String msg = await Provider.of<Auth>(context, listen: false)
           .storeName(nameController.text);
       if (msg == 'User information updated successfully.') {
         Provider.of<Auth>(context, listen: false).userData?['store_name'] =
             nameController.text;
-        Map<String, dynamic>? userData = {...userDetails!,
-
+        Map<String, dynamic>? userData = {
+          ...userDetails!,
           'user_id':
               Provider.of<Auth>(context, listen: false).userData?['user_id'],
-         
           'store_name': nameController.text,
-          
         };
         await UserPreferences.setUser(userData);
-        
+
         print(
             'name: ${Provider.of<Auth>(context, listen: false).userData?['store_name']}');
         TOastNotification().showSuccesToast(
@@ -120,16 +119,15 @@ userDetails = UserPreferences.getUser();
       Navigator.of(context).pop();
       Provider.of<Auth>(context, listen: false).userData?['profile_photo'] =
           userImage;
-          userDetails = UserPreferences.getUser();
-      Map<String, dynamic>? userData = {...userDetails!,
+      userDetails = UserPreferences.getUser();
+      Map<String, dynamic>? userData = {
+        ...userDetails!,
         'user_id':
             Provider.of<Auth>(context, listen: false).userData?['user_id'],
-       
         'profile_photo': userImage ?? '',
-        
       };
       await UserPreferences.setUser(userData);
-      
+
       print(
           'profile_photo: ${Provider.of<Auth>(context, listen: false).userData?['profile_photo']}');
       TOastNotification()
@@ -147,21 +145,19 @@ userDetails = UserPreferences.getUser();
     // final prefs = await SharedPreferences.getInstance();
     if (emailController.text != '') {
       AppWideLoadingBanner().loadingBanner(context);
- userDetails = UserPreferences.getUser();
+      userDetails = UserPreferences.getUser();
       String msg = await Provider.of<Auth>(context, listen: false)
           .email(emailController.text);
       if (msg == 'User information updated successfully.') {
         Provider.of<Auth>(context, listen: false).userData?['email'] =
             emailController.text;
-        Map<String, dynamic>? userData = {...userDetails!,
+        Map<String, dynamic>? userData = {
+          ...userDetails!,
           'user_id':
               Provider.of<Auth>(context, listen: false).userData?['user_id'],
-          
           'email': emailController.text,
-          
         };
         await UserPreferences.setUser(userData);
-       
 
         //  print('pin: ${pan_number}');
         TOastNotification()
@@ -211,6 +207,54 @@ userDetails = UserPreferences.getUser();
     }
   }
 
+  Future<void> submitStoreWorkingHours() async {
+    // final prefs = await SharedPreferences.getInstance();
+    if (fromTime != null && tillTime != null) {
+      workingHours = {
+        "start_time": "${fromTime?.hour}:${fromTime?.minute}",
+        "end_time": "${tillTime?.hour}:${tillTime?.minute}"
+      };
+      AppWideLoadingBanner().loadingBanner(context);
+
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .workingHours(workingHours);
+      if (msg == 'User information updated successfully.') {
+        Provider.of<Auth>(context, listen: false).userData?['working_hours'] =
+            workingHours;
+        // Get the current userData from UserPreferences
+        Map<String, dynamic>? userData = UserPreferences.getUser() ?? {};
+
+// Check if the working_hours field exists and update only necessary fields
+        if (Provider.of<Auth>(context, listen: false)
+                .userData?['working_hours'] !=
+            null) {
+          userData['working_hours'] = {
+            'start_time': "${fromTime?.hour}:${fromTime?.minute}" ?? '',
+            'end_time': "${tillTime?.hour}:${tillTime?.minute}" ?? '',
+          };
+        }
+
+// Save the updated userData back to UserPreferences
+        await UserPreferences.setUser(userData);
+
+// Retrieve updated user details
+        userDetails = UserPreferences.getUser();
+
+        //  print('pin: ${pan_number}');
+        TOastNotification()
+            .showSuccesToast(context, 'working hours update successfully');
+        Navigator.of(context).pop();
+        // prefs.setInt('counter', 3);
+      } else {
+        TOastNotification().showErrorToast(context, msg);
+        Navigator.of(context).pop();
+      }
+      print(msg);
+    } else {
+      TOastNotification().showErrorToast(context, 'Please select Both Time');
+    }
+  }
+
   Future<void> submitContactNumber() async {
     print("contactNUmber:: ${numberController.text}");
 
@@ -221,16 +265,17 @@ userDetails = UserPreferences.getUser();
       String msg = await Provider.of<Auth>(context, listen: false)
           .contactNumber(numberController.text);
       if (msg == 'User information updated successfully.') {
-       userDetails = UserPreferences.getUser();
+        userDetails = UserPreferences.getUser();
         Provider.of<Auth>(context, listen: false).userData?['phone'] =
             numberController.text;
-        Map<String, dynamic>? userData = {...userDetails!,
+        Map<String, dynamic>? userData = {
+          ...userDetails!,
           'user_id':
               Provider.of<Auth>(context, listen: false).userData?['user_id'],
           'phone': numberController.text ?? '',
         };
         await UserPreferences.setUser(userData);
-        
+
         print(
             "contactNUmber:: ${Provider.of<Auth>(context, listen: false).userData?['phone']}");
         //  print('pin: ${pan_number}');
@@ -247,7 +292,6 @@ userDetails = UserPreferences.getUser();
       TOastNotification().showErrorToast(context, 'Please fill all fields');
     }
   }
-
 
   Future<void> logout() async {
     AppWideLoadingBanner().loadingBanner(context);
@@ -716,7 +760,7 @@ userDetails = UserPreferences.getUser();
                     height: 24,
                   ),
                   onPressed: () {
-                    Navigator.of(context).pop();
+Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                   },
                 ),
               ),
@@ -1249,101 +1293,7 @@ userDetails = UserPreferences.getUser();
               Space(
                 3.h,
               ),
-              // if (userDetails?['user_type'] == UserType.Customer.name) ...[
-              //   Padding(
-              //     padding: const EdgeInsets.symmetric(horizontal: 10),
-              //     child: TextWidgetStoreSetup(label: 'Enter email'),
-              //   ),
-              //   Space(1.h),
-              //   Container(
-              //     // rgba(165, 200, 199, 1),
-              //     decoration: ShapeDecoration(
-              //       shadows: [
-              //         BoxShadow(
-              //           offset: const Offset(0, 4),
-              //           color: Provider.of<Auth>(context, listen: false)
-              //                       .userData?['user_type'] ==
-              //                   UserType.Vendor.name
-              //               ? const Color.fromRGBO(165, 200, 199, 0.6)
-              //               : Provider.of<Auth>(context, listen: false)
-              //                           .userData?['user_type'] ==
-              //                       UserType.Supplier.name
-              //                   ? const Color.fromRGBO(77, 191, 74, 0.3)
-              //                   : const Color.fromRGBO(188, 115, 188, 0.2),
-              //           blurRadius: 20,
-              //         )
-              //       ],
-              //       color: Colors.white,
-              //       shape: const SmoothRectangleBorder(
-              //         borderRadius: SmoothBorderRadius.all(
-              //             SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
-              //       ),
-              //     ),
-              //     //  height: 6.h,
-              //     child: TextField(
-              //       onChanged: (value) {
-              //         emailController.text = value;
-              //         setState(() {});
-              //       },
-              //       style: Provider.of<Auth>(context, listen: false)
-              //                   .userData?['user_type'] ==
-              //               UserType.Vendor.name
-              //           ? const TextStyle(
-              //               color: Color(0xFF0A4C61),
-              //             )
-              //           : const TextStyle(
-              //               fontSize: 14,
-              //               fontFamily: 'Product Sans',
-              //               fontWeight: FontWeight.w400,
-              //               color: Color(0xFF2E0536)),
-              //       controller: emailController,
-              //       decoration: InputDecoration(
-              //         fillColor: Colors.white,
-              //         suffixIcon: emailController.text.isEmpty
-              //             ? Padding(
-              //                 padding: const EdgeInsets.all(15.0),
-              //                 child: Image.asset(
-              //                   Assets.editIcon,
-              //                   height: 15,
-              //                   width: 15,
-              //                 ),
-              //               )
-              //             : IconButton(
-              //                 onPressed: () {
-              //                   submitEmail();
-              //                 },
-              //                 icon: const Icon(Icons.done),
-              //                 color: const Color(0xFFFA6E00),
-              //               ),
-              //         hintText: "Enter your email here",
-              //         contentPadding: const EdgeInsets.only(left: 14, top: 10),
-              //         hintStyle: const TextStyle(
-              //             fontSize: 12,
-              //             color: Color(0xFF0A4C61),
-              //             fontFamily: 'Product Sans',
-              //             fontWeight: FontWeight.w400),
-              //         border: InputBorder.none,
-              //         // suffixIcon:
-              //       ),
-              //       /*decoration: const InputDecoration(
-              //             fillColor: Colors.white,
-              //             hintText: "Enter your  brand name here",
-              //             contentPadding: EdgeInsets.only(left: 14),
-              //             hintStyle: TextStyle(
-              //                 fontSize: 12,
-              //                 color: Color(0xFF0A4C61),
-              //                 fontFamily: 'Product Sans',
-              //                 fontWeight: FontWeight.w400),
-              //             border: InputBorder.none,
-              //             // suffixIcon:
-              //           ),*/
-              //       // onChanged: onChanged,
-              //     ),
-              //   ),
-              //   Space(
-              //     3.h,
-              //   ),
-              // ],
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextWidgetStoreSetup(
@@ -1542,6 +1492,157 @@ userDetails = UserPreferences.getUser();
 
               Space(
                 3.h,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        final TimeOfDay? pickedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+
+                        if (pickedTime != null && pickedTime != fromTime) {
+                          setState(() {
+                            fromTime = pickedTime;
+                            print("fromTime:: ${fromTime}");
+                          });
+                        }
+                      },
+                      child: Container(
+                        decoration: ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                              offset: const Offset(0, 4),
+                              color: darkMode
+                                  ? Colors.black.withOpacity(0.47)
+                                  : Provider.of<Auth>(context, listen: false)
+                                              .userData?['user_type'] ==
+                                          UserType.Vendor.name
+                                      ? const Color.fromRGBO(165, 200, 199, 0.3)
+                                      : Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Supplier.name
+                                          ? const Color.fromRGBO(
+                                              77, 191, 74, 0.3)
+                                          : const Color.fromRGBO(
+                                              130, 47, 130, 0.3),
+                              blurRadius: 20,
+                            )
+                          ],
+                          color: Colors.white,
+                          shape: const SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                                cornerRadius: 10, cornerSmoothing: 1)),
+                          ),
+                        ),
+                        height: 45,
+                        // width: 40.w,
+                        child: Center(
+                          child: Text(
+                            fromTime != null
+                                ? "${fromTime?.hour}:${fromTime?.minute}"
+                                : fromTiming ?? "From",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Provider.of<Auth>(context, listen: false)
+                                            .userData?['user_type'] ==
+                                        UserType.Vendor.name
+                                    ? const Color(0xFF0A4C61)
+                                    : const Color(0xFF2E0536),
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Space(
+                    21,
+                    isHorizontal: true,
+                  ),
+                  const Text(
+                    "-",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFFFA6E00),
+                        fontFamily: 'Kavoon',
+                        fontWeight: FontWeight.w400),
+                  ),
+                  const Space(
+                    21,
+                    isHorizontal: true,
+                  ),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        final TimeOfDay? pickedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+
+                        if (pickedTime != null && pickedTime != tillTime) {
+                          setState(() {
+                            tillTime = pickedTime;
+                          });
+                          submitStoreWorkingHours();
+                        }
+                      },
+                      child: Container(
+                        height: 45,
+                        decoration: ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                              offset: const Offset(0, 4),
+                              color: darkMode
+                                  ? Colors.black.withOpacity(0.47)
+                                  : Provider.of<Auth>(context, listen: false)
+                                              .userData?['user_type'] ==
+                                          UserType.Vendor.name
+                                      ? const Color.fromRGBO(165, 200, 199, 0.3)
+                                      : Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Supplier.name
+                                          ? const Color.fromRGBO(
+                                              77, 191, 74, 0.3)
+                                          : const Color.fromRGBO(
+                                              130, 47, 130, 0.3),
+                              blurRadius: 20,
+                            )
+                          ],
+                          color: Colors.white,
+                          shape: const SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                                cornerRadius: 10, cornerSmoothing: 1)),
+                          ),
+                        ),
+                        //width: 40.w,
+                        child: Center(
+                          child: Text(
+                            tillTime != null
+                                ? "${tillTime?.hour}:${tillTime?.minute}"
+                                : tillTiming ?? "Till",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Provider.of<Auth>(context, listen: false)
+                                            .userData?['user_type'] ==
+                                        UserType.Vendor.name
+                                    ? const Color(0xFF0A4C61)
+                                    : const Color(0xFF2E0536),
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Space(
+                42,
               ),
 
               // Add terms and condition and privacy policy
@@ -1826,7 +1927,6 @@ userDetails = UserPreferences.getUser();
 
   Future<void> showOrderDetailsBottomSheet(
       BuildContext context, var order) async {
-   
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,

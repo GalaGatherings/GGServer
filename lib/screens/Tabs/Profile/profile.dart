@@ -85,6 +85,7 @@ class _ProfileState extends State<Profile> {
     t1.dispose();
     super.dispose();
     getDarkModeStatus();
+    fetchUserDetailsbyKey();
   }
 
   Future<void> _loading() async {
@@ -122,7 +123,6 @@ class _ProfileState extends State<Profile> {
 
   Future<void> getUserDataFromPref() async {
     userData = UserPreferences.getUser();
-    
   }
 
   Future<void> _getMenu() async {
@@ -184,7 +184,6 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-
   void fetchUserDetailsbyKey() async {
     final res = await getUserDetailsbyKey(
         Provider.of<Auth>(context, listen: false).userData?['user_id'], [
@@ -197,7 +196,9 @@ class _ProfileState extends State<Profile> {
       'description',
       'category',
       'sub_category',
-      'store_name'
+      'store_name',
+      'current_location',
+      'working_hours'
     ]);
     print(" resssp ${json.encode(res)}");
     setState(() {
@@ -205,27 +206,28 @@ class _ProfileState extends State<Profile> {
     });
     Map<String, dynamic>? userData = UserPreferences.getUser();
     if (userData != null) {
-     
       userData['store_availability'] = _switchValue;
       userData['user_type'] = res['user_type'];
       userData['description'] = res['description'];
+      userData['current_location'] = res['current_location'];
+      userData['working_hours'] = res['working_hours'];
       userData['category'] = res['category'];
       userData['sub_category'] = res['sub_category'];
       userData['store_name'] = res['store_name'];
-      userData['fssai'] = res['fssai'];
-      userData['kyc_status'] = res['kyc_status'] ?? 'not verified';
       await UserPreferences.setUser(userData);
-      kycStatus = userData['kyc_status'];
+      // kycStatus = userData['kyc_status'] ?? ;
 
       setState(() {
-        Provider.of<Auth>(context, listen: false).userData?['kyc_status'] =
-            res['kyc_status'] ?? 'verified';
         Provider.of<Auth>(context, listen: false).userData?['followers'] =
             res['followers'] ?? [];
         Provider.of<Auth>(context, listen: false).userData?['followings'] =
             res['followings'] ?? [];
-        Provider.of<Auth>(context, listen: false).userData?['fssai'] =
-            res['fssai'] ?? "";
+        Provider.of<Auth>(context, listen: false).userData?['category'] =
+            res['category'] ?? '';
+        Provider.of<Auth>(context, listen: false).userData?['sub_category'] =
+            res['sub_category'] ?? '';
+        Provider.of<Auth>(context, listen: false)
+            .userData?['current_location'] = res['current_location'] ?? {};
       });
     }
   }
@@ -249,13 +251,13 @@ class _ProfileState extends State<Profile> {
     getDarkModeStatus();
     Provider.of<Auth>(context, listen: false).userData =
         UserPreferences.getUser();
-    // _switchValue = Provider.of<Auth>(context, listen: false)
-    //         .userData?['store_availability'] ??
+
     fetchUserDetailsbyKey();
-    false;
     _getFeed();
     _getMenu();
-    userType = Provider.of<Auth>(context, listen: false).userData?['user_type'] ?? 'vendor';
+    userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'] ??
+            'vendor';
   }
 
   @override
@@ -522,9 +524,7 @@ class _ProfileState extends State<Profile> {
                                                       letterSpacing: 1),
                                                 ),
                                                 Text(
-                                                  Provider.of<Auth>(context,
-                                                          listen: true)
-                                                      .userData?['category'] ?? '' ,
+                                                  "${Provider.of<Auth>(context, listen: true).userData?['category'] ?? ''} - ${Provider.of<Auth>(context, listen: true).userData?['sub_category'] ?? ''}  ",
                                                   style: TextStyle(
                                                       color: darkMode
                                                           ? Colors.white
@@ -534,19 +534,19 @@ class _ProfileState extends State<Profile> {
                                                       fontSize: 12,
                                                       letterSpacing: 1),
                                                 ),
-                                                 Text(
-                                                  Provider.of<Auth>(context,
-                                                          listen: true)
-                                                      .userData?['description'] ?? '' ,
-                                                  style: TextStyle(
-                                                      color: darkMode
-                                                          ? Color(0xffB1F0EF)
-                                                          : boxShadowColor,
-                                                      fontFamily:
-                                                          'Product Sans',
-                                                      fontSize: 12,
-                                                      letterSpacing: 1),
-                                                ),
+                                                //  Text(
+                                                //   Provider.of<Auth>(context,
+                                                //           listen: true)
+                                                //       .userData?['description'] ?? '' ,
+                                                //   style: TextStyle(
+                                                //       color: darkMode
+                                                //           ? Color(0xffB1F0EF)
+                                                //           : boxShadowColor,
+                                                //       fontFamily:
+                                                //           'Product Sans',
+                                                //       fontSize: 12,
+                                                //       letterSpacing: 1),
+                                                // ),
                                               ],
                                             ),
                                           ),
@@ -562,18 +562,17 @@ class _ProfileState extends State<Profile> {
                                                 final whatsappUrl =
                                                     'https://wa.me/91$phoneNumber';
                                                 _launchURL(whatsappUrl);
-                                              } 
-                                              else if (phoneNumber.length == 11) {
+                                              } else if (phoneNumber.length ==
+                                                  11) {
                                                 final whatsappUrl =
                                                     'https://wa.me/$phoneNumber';
                                                 _launchURL(whatsappUrl);
-                                              } 
-                                              else if (phoneNumber.length == 12) {
+                                              } else if (phoneNumber.length ==
+                                                  12) {
                                                 final whatsappUrl =
                                                     'https://wa.me/$phoneNumber';
                                                 _launchURL(whatsappUrl);
-                                              } 
-                                              else {
+                                              } else {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
@@ -599,6 +598,8 @@ class _ProfileState extends State<Profile> {
                                         ],
                                       ),
                                     ),
+                                   
+                                   
 
                                     Row(
                                       mainAxisAlignment:
@@ -1481,7 +1482,7 @@ class _ProfileState extends State<Profile> {
                                                     final locationDet = Provider
                                                             .of<Auth>(context,
                                                                 listen: false)
-                                                        .userData!['address'];
+                                                        .userData!['current_location'];
                                                     print(
                                                         "locationDet  $locationDet");
                                                     if (locationDet[
@@ -1535,9 +1536,9 @@ class _ProfileState extends State<Profile> {
                                                                         listen:
                                                                             false)
                                                                     .userData![
-                                                                'address'] !=
+                                                                'current_location'] !=
                                                             null)
-                                                        ? "${Provider.of<Auth>(context, listen: false).userData!['address']['hno']} ${Provider.of<Auth>(context, listen: false).userData!['address']['location']} ${Provider.of<Auth>(context, listen: false).userData!['address']['landmark']}"
+                                                        ? "${Provider.of<Auth>(context, listen: false).userData!['current_location']['area']} "
                                                         : 'No location found',
                                                     style: TextStyle(
                                                         color: darkMode
@@ -1651,28 +1652,25 @@ class _ProfileState extends State<Profile> {
 
   Future<void> submitStoreAvailability() async {
     // Fetch the kyc_status safely
-    
 
-   
-      // Check for true value explicitly
-      String msg = await Provider.of<Auth>(context, listen: false)
-          .storeAvailability(_switchValue);
-      if (msg == 'User information updated successfully.') {
-        Map<String, dynamic>? userData = UserPreferences.getUser();
-        if (userData != null) {
-          userData['store_availability'] = _switchValue;
-          await UserPreferences.setUser(userData);
-          setState(() {
-            Provider.of<Auth>(context, listen: false)
-                .userData?['store_availability'] = _switchValue;
-          });
-          TOastNotification()
-              .showSuccesToast(context, 'Store status updated successfully');
-        }
-      } else {
-        TOastNotification().showErrorToast(context, msg);
+    // Check for true value explicitly
+    String msg = await Provider.of<Auth>(context, listen: false)
+        .storeAvailability(_switchValue);
+    if (msg == 'User information updated successfully.') {
+      Map<String, dynamic>? userData = UserPreferences.getUser();
+      if (userData != null) {
+        userData['store_availability'] = _switchValue;
+        await UserPreferences.setUser(userData);
+        setState(() {
+          Provider.of<Auth>(context, listen: false)
+              .userData?['store_availability'] = _switchValue;
+        });
+        TOastNotification()
+            .showSuccesToast(context, 'Store status updated successfully');
       }
-     
+    } else {
+      TOastNotification().showErrorToast(context, msg);
+    }
   }
 
   void _showFollowers(BuildContext context, List<dynamic> followers) {

@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, unused_field
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:gala_gatherings/NotificationScree.dart';
 
 import 'package:gala_gatherings/api_service.dart';
 import 'package:gala_gatherings/belly_gpt.dart';
