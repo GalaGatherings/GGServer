@@ -1303,6 +1303,7 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                       : boxShadowColor,
                 ),
               ),
+              
               Space(1.h),
               Container(
                 // rgba(165, 200, 199, 1),
@@ -1493,6 +1494,16 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
               Space(
                 3.h,
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextWidgetStoreSetup(
+                  label: 'Select your working hours',
+                  color: darkMode
+                      ? Color.fromARGB(255, 229, 227, 227)
+                      : boxShadowColor,
+                ),
+              ),
+              Space(1.h),
               Row(
                 children: [
                   Expanded(
@@ -2495,7 +2506,7 @@ class _GlobalJobSelectionState extends State<GlobalJobSelection> {
           child: Text(
             'Select your business type / category from the below list',
             style: TextStyle(
-              color: darkMode ? Colors.white : const Color(0xFF0A4C61),
+              color: darkMode ?   Color.fromARGB(255, 229, 227, 227) : const Color(0xFF0A4C61),
               fontSize: 14,
               fontFamily: 'Product Sans',
               fontWeight: FontWeight.w900,

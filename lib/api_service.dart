@@ -2506,7 +2506,7 @@ Future<void> updateBusinessType(String category, String subCategory) async {
 
       List<UserModel> userList =
           jsonResponse.map((json) => UserModel.fromJson(json)).toList();
-      print("ucidi: ${userList[0]}  ${userList[0].followings?.length}");
+  
       notifyListeners();
       return userList;
     } catch (error) {

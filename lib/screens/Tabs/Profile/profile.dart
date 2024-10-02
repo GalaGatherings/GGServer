@@ -524,7 +524,7 @@ class _ProfileState extends State<Profile> {
                                                       letterSpacing: 1),
                                                 ),
                                                 Text(
-                                                  "${Provider.of<Auth>(context, listen: true).userData?['category'] ?? ''} - ${Provider.of<Auth>(context, listen: true).userData?['sub_category'] ?? ''}  ",
+                                                  "Working hours: ${Provider.of<Auth>(context, listen: false).userData?['working_hours']['start_time']} - ${Provider.of<Auth>(context, listen: false).userData?['working_hours']['end_time']}",
                                                   style: TextStyle(
                                                       color: darkMode
                                                           ? Colors.white
@@ -534,19 +534,18 @@ class _ProfileState extends State<Profile> {
                                                       fontSize: 12,
                                                       letterSpacing: 1),
                                                 ),
-                                                //  Text(
-                                                //   Provider.of<Auth>(context,
-                                                //           listen: true)
-                                                //       .userData?['description'] ?? '' ,
-                                                //   style: TextStyle(
-                                                //       color: darkMode
-                                                //           ? Color(0xffB1F0EF)
-                                                //           : boxShadowColor,
-                                                //       fontFamily:
-                                                //           'Product Sans',
-                                                //       fontSize: 12,
-                                                //       letterSpacing: 1),
-                                                // ),
+                                                Text(
+                                                  "${Provider.of<Auth>(context, listen: true).userData?['category'] ?? ''} - ${Provider.of<Auth>(context, listen: true).userData?['sub_category'] ?? ''}  ",
+                                                  style: TextStyle(
+                                                      color: darkMode
+                                                          ? Color(0xffB1F0EF)
+                                                          : boxShadowColor,
+                                                      fontFamily:
+                                                          'Product Sans',
+                                                      fontSize: 12,
+                                                      letterSpacing: 1),
+                                                ),
+                                             
                                               ],
                                             ),
                                           ),
@@ -598,8 +597,6 @@ class _ProfileState extends State<Profile> {
                                         ],
                                       ),
                                     ),
-                                   
-                                   
 
                                     Row(
                                       mainAxisAlignment:
@@ -1479,10 +1476,12 @@ class _ProfileState extends State<Profile> {
                                               children: [
                                                 GestureDetector(
                                                   onTap: () async {
-                                                    final locationDet = Provider
-                                                            .of<Auth>(context,
-                                                                listen: false)
-                                                        .userData!['current_location'];
+                                                    final locationDet =
+                                                        Provider.of<Auth>(
+                                                                    context,
+                                                                    listen: false)
+                                                                .userData![
+                                                            'current_location'];
                                                     print(
                                                         "locationDet  $locationDet");
                                                     if (locationDet[
@@ -1551,6 +1550,7 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                               ],
                                             ),
+
                                             SizedBox(
                                               height: 5,
                                             ),
