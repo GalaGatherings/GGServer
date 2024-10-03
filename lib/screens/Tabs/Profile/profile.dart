@@ -1366,7 +1366,7 @@ class _ProfileState extends State<Profile> {
                                                       Text(
                                                         'No items  ',
                                                         style: TextStyle(
-                                                            color: boxShadowColor
+                                                            color:darkMode?Colors.white54: boxShadowColor
                                                                 .withOpacity(
                                                                     0.2),
                                                             fontWeight:
@@ -1454,7 +1454,7 @@ class _ProfileState extends State<Profile> {
                                         Text(
                                           'No reviews',
                                           style: TextStyle(
-                                              color: boxShadowColor
+                                              color:darkMode?Colors.white54: boxShadowColor
                                                   .withOpacity(0.2),
                                               fontWeight: FontWeight.bold,
                                               fontSize: 35,

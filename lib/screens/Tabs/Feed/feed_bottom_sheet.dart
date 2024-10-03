@@ -381,23 +381,25 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                   ],
                                 ),
                                 const Space(6),
-                                SizedBox(
-                                  width: 188,
-                                  child: Text(
-                                    widget.productList[index].description ?? "",
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: Color(0xFF2E0536),
-                                      fontSize: 12,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0,
-                                      letterSpacing: 0.12,
-                                    ),
-                                  ),
-                                )
+                                // SizedBox(
+                                //   width: 90.w,
+                                //   child: Text(
+                                //     widget.productList[index].description ?? "",
+                                //     maxLines: 3,
+                                //     overflow: TextOverflow.ellipsis,
+                                //     style: const TextStyle(
+                                //       color: Color(0xFF2E0536),
+                                //       fontSize: 12,
+                                //       fontFamily: 'Product Sans',
+                                //       fontWeight: FontWeight.w400,
+                                //       height: 0,
+                                //       letterSpacing: 0.12,
+                                //     ),
+                                //   ),
+                                // )
+                              
                               ],
+                              
                             ),
                           ),
                           Column(
@@ -432,182 +434,202 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                   ),
                                 ),
                               ),
-                              const Space(11),
-                              widget.productList[index].isAddToCart == true
-                                  ? Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              if (product.quantity! > 1) {
-                                                product.quantity =
-                                                    product.quantity! - 1;
-                                                updateTotalPrice(product);
-                                                tempPriceCalculation();
-                                              } else {
-                                                widget.productList[index]
-                                                    .isAddToCart = false;
-                                                tempList.remove(
-                                                    widget.productList[index]);
-                                                tempPriceCalculation();
-                                              }
-                                            });
-                                          },
-                                          child: Container(
-                                            height: 33,
-                                            width: 33,
-                                            decoration: ShapeDecoration(
-                                                color: const Color(0xFFFA6E00),
-                                                shape: SmoothRectangleBorder(
-                                                  borderRadius:
-                                                      SmoothBorderRadius(
-                                                    cornerRadius: 12,
-                                                    cornerSmoothing: 1,
-                                                  ),
-                                                ),
-                                                shadows: [
-                                                  BoxShadow(
-                                                      offset: Offset(0, 4),
-                                                      spreadRadius: 0.1,
-                                                      color: Color.fromRGBO(
-                                                          232, 128, 55, 0.5),
-                                                      blurRadius: 10)
-                                                ]),
-                                            child: const Center(
-                                              child: Text(
-                                                '-',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0,
-                                                  letterSpacing: 0.14,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const Space(
-                                          16,
-                                          isHorizontal: true,
-                                        ),
-                                        Text(
-                                          "${widget.productList[index].quantity}",
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 20,
-                                            fontFamily: 'Product Sans',
-                                            fontWeight: FontWeight.w700,
-                                            height: 0,
-                                            letterSpacing: 0.14,
-                                          ),
-                                        ),
-                                        const Space(
-                                          16,
-                                          isHorizontal: true,
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              if (product.quantity! < 10) {
-                                                product.quantity =
-                                                    product.quantity! + 1;
-                                                updateTotalPrice(product);
-                                                tempPriceCalculation();
-                                              }
-                                            });
-                                          },
-                                          child: Container(
-                                            height: 33,
-                                            width: 33,
-                                            decoration: ShapeDecoration(
-                                                color: const Color(0xFFFA6E00),
-                                                shape: SmoothRectangleBorder(
-                                                  borderRadius:
-                                                      SmoothBorderRadius(
-                                                    cornerRadius: 12,
-                                                    cornerSmoothing: 1,
-                                                  ),
-                                                ),
-                                                shadows: [
-                                                  BoxShadow(
-                                                      offset: Offset(0, 4),
-                                                      spreadRadius: 0.1,
-                                                      color: Color.fromRGBO(
-                                                          232, 128, 55, 0.5),
-                                                      blurRadius: 10)
-                                                ]),
-                                            child: const Center(
-                                              child: Text(
-                                                '+',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 25,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0,
-                                                  letterSpacing: 0.14,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  : InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          widget.productList[index]
-                                              .isAddToCart = true;
-                                          isAddToCart = widget
-                                              .productList[index].isAddToCart;
-                                          widget.productList[index].quantity =
-                                              1;
-                                          tempList
-                                              .add(widget.productList[index]);
-                                          tempPriceCalculation();
-                                        });
-                                      },
-                                      child: Container(
-                                        height: 41,
-                                        width: 113,
-                                        decoration: ShapeDecoration(
-                                            color: const Color(0xFFFA6E00),
-                                            shape: SmoothRectangleBorder(
-                                              borderRadius: SmoothBorderRadius(
-                                                cornerRadius: 12,
-                                                cornerSmoothing: 1,
-                                              ),
-                                            ),
-                                            shadows: [
-                                              BoxShadow(
-                                                  offset: Offset(0, 4),
-                                                  spreadRadius: 0.1,
-                                                  color: Color.fromRGBO(
-                                                      232, 128, 55, 0.5),
-                                                  blurRadius: 10)
-                                            ]),
-                                        child: const Center(
-                                          child: Text(
-                                            'Add to Cart',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                              fontFamily: 'Product Sans',
-                                              fontWeight: FontWeight.w700,
-                                              height: 0,
-                                              letterSpacing: 0.14,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                              
+                              // const Space(11),
+                              // widget.productList[index].isAddToCart == true
+                              //     ? Row(
+                              //         children: [
+                              //           InkWell(
+                              //             onTap: () {
+                              //               setState(() {
+                              //                 if (product.quantity! > 1) {
+                              //                   product.quantity =
+                              //                       product.quantity! - 1;
+                              //                   updateTotalPrice(product);
+                              //                   tempPriceCalculation();
+                              //                 } else {
+                              //                   widget.productList[index]
+                              //                       .isAddToCart = false;
+                              //                   tempList.remove(
+                              //                       widget.productList[index]);
+                              //                   tempPriceCalculation();
+                              //                 }
+                              //               });
+                              //             },
+                              //             child: Container(
+                              //               height: 33,
+                              //               width: 33,
+                              //               decoration: ShapeDecoration(
+                              //                   color: const Color(0xFFFA6E00),
+                              //                   shape: SmoothRectangleBorder(
+                              //                     borderRadius:
+                              //                         SmoothBorderRadius(
+                              //                       cornerRadius: 12,
+                              //                       cornerSmoothing: 1,
+                              //                     ),
+                              //                   ),
+                              //                   shadows: [
+                              //                     BoxShadow(
+                              //                         offset: Offset(0, 4),
+                              //                         spreadRadius: 0.1,
+                              //                         color: Color.fromRGBO(
+                              //                             232, 128, 55, 0.5),
+                              //                         blurRadius: 10)
+                              //                   ]),
+                              //               child: const Center(
+                              //                 child: Text(
+                              //                   '-',
+                              //                   textAlign: TextAlign.center,
+                              //                   style: TextStyle(
+                              //                     color: Colors.white,
+                              //                     fontSize: 20,
+                              //                     fontFamily: 'Product Sans',
+                              //                     fontWeight: FontWeight.w700,
+                              //                     height: 0,
+                              //                     letterSpacing: 0.14,
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //           ),
+                              //           const Space(
+                              //             16,
+                              //             isHorizontal: true,
+                              //           ),
+                              //           Text(
+                              //             "${widget.productList[index].quantity}",
+                              //             style: const TextStyle(
+                              //               color: Colors.black,
+                              //               fontSize: 20,
+                              //               fontFamily: 'Product Sans',
+                              //               fontWeight: FontWeight.w700,
+                              //               height: 0,
+                              //               letterSpacing: 0.14,
+                              //             ),
+                              //           ),
+                              //           const Space(
+                              //             16,
+                              //             isHorizontal: true,
+                              //           ),
+                              //           InkWell(
+                              //             onTap: () {
+                              //               setState(() {
+                              //                 if (product.quantity! < 10) {
+                              //                   product.quantity =
+                              //                       product.quantity! + 1;
+                              //                   updateTotalPrice(product);
+                              //                   tempPriceCalculation();
+                              //                 }
+                              //               });
+                              //             },
+                              //             child: Container(
+                              //               height: 33,
+                              //               width: 33,
+                              //               decoration: ShapeDecoration(
+                              //                   color: const Color(0xFFFA6E00),
+                              //                   shape: SmoothRectangleBorder(
+                              //                     borderRadius:
+                              //                         SmoothBorderRadius(
+                              //                       cornerRadius: 12,
+                              //                       cornerSmoothing: 1,
+                              //                     ),
+                              //                   ),
+                              //                   shadows: [
+                              //                     BoxShadow(
+                              //                         offset: Offset(0, 4),
+                              //                         spreadRadius: 0.1,
+                              //                         color: Color.fromRGBO(
+                              //                             232, 128, 55, 0.5),
+                              //                         blurRadius: 10)
+                              //                   ]),
+                              //               child: const Center(
+                              //                 child: Text(
+                              //                   '+',
+                              //                   style: TextStyle(
+                              //                     color: Colors.white,
+                              //                     fontSize: 25,
+                              //                     fontFamily: 'Product Sans',
+                              //                     fontWeight: FontWeight.w700,
+                              //                     height: 0,
+                              //                     letterSpacing: 0.14,
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //           )
+                              //         ],
+                              //       )
+                              //     : InkWell(
+                              //         onTap: () {
+                              //           setState(() {
+                              //             widget.productList[index]
+                              //                 .isAddToCart = true;
+                              //             isAddToCart = widget
+                              //                 .productList[index].isAddToCart;
+                              //             widget.productList[index].quantity =
+                              //                 1;
+                              //             tempList
+                              //                 .add(widget.productList[index]);
+                              //             tempPriceCalculation();
+                              //           });
+                              //         },
+                              //         child: Container(
+                              //           height: 41,
+                              //           width: 113,
+                              //           decoration: ShapeDecoration(
+                              //               color: const Color(0xFFFA6E00),
+                              //               shape: SmoothRectangleBorder(
+                              //                 borderRadius: SmoothBorderRadius(
+                              //                   cornerRadius: 12,
+                              //                   cornerSmoothing: 1,
+                              //                 ),
+                              //               ),
+                              //               shadows: [
+                              //                 BoxShadow(
+                              //                     offset: Offset(0, 4),
+                              //                     spreadRadius: 0.1,
+                              //                     color: Color.fromRGBO(
+                              //                         232, 128, 55, 0.5),
+                              //                     blurRadius: 10)
+                              //               ]),
+                              //           child: const Center(
+                              //             child: Text(
+                              //               'Add to Cart',
+                              //               style: TextStyle(
+                              //                 color: Colors.white,
+                              //                 fontSize: 14,
+                              //                 fontFamily: 'Product Sans',
+                              //                 fontWeight: FontWeight.w700,
+                              //                 height: 0,
+                              //                 letterSpacing: 0.14,
+                              //               ),
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                          
                             ],
                           ),
+                          
                         ],
                       ),
+                       SizedBox(
+                                  width: 90.w,
+                                  child: Text(
+                                    widget.productList[index].description ?? "",
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Color(0xFF2E0536),
+                                      fontSize: 12,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w400,
+                                      height: 0,
+                                      letterSpacing: 0.12,
+                                    ),
+                                  ),
+                                )
+                              ,
                       const Space(25),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
