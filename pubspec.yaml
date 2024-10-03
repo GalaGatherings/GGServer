@@ -107,6 +107,9 @@ flutter:
     - assets/images/Phone.png
     - assets/images/Heart.png
     - assets/images/back_double_arrow.png
+    - assets/Animation - waiting.json
+    - assets/Animation - 1727950634187.json
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

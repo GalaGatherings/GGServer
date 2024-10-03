@@ -451,13 +451,13 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   SizedBox(height: 30),
-                                  Container(
-                                    child: Lottie.asset(
-                                      'assets/Animation - panda.json',
-                                      width:
-                                          MediaQuery.of(context).size.width * 0.5,
-                                    ),
-                                  ),
+                                  // Container(
+                                  //   child: Lottie.asset(
+                                  //     'assets/Animation - 1727950634187.json.json',
+                                  //     width:
+                                  //         MediaQuery.of(context).size.width * 0.5,
+                                  //   ),
+                                  // ),
                                   Text(
                                     'Loading ...',
                                     style: TextStyle(
@@ -604,15 +604,15 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                                     child: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Container(
-                                            child: Lottie.asset(
-                                              'assets/Animation - panda.json',
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.5,
-                                            ),
-                                          ),
+                                          // Container(
+                                          //   child: Lottie.asset(
+                                          //     'assets/Animation - 1727950634187.json.json',
+                                          //     width: MediaQuery.of(context)
+                                          //             .size
+                                          //             .width *
+                                          //         0.5,
+                                          //   ),
+                                          // ),
                                           SizedBox(height: 16),
                                           Center(
                                             child: Text(

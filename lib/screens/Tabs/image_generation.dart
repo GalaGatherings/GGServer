@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:gala_gatherings/api_service.dart';
@@ -45,7 +46,8 @@ class _ImageGenerationState extends State<ImageGeneration> {
     final prefs = await SharedPreferences.getInstance();
 
     // Get the existing list of prompts from SharedPreferences
-    List<String> promptsList = prefs.getStringList('bellyIMAGING_prompts') ?? [];
+    List<String> promptsList =
+        prefs.getStringList('bellyIMAGING_prompts') ?? [];
 
     // Check if the prompt already exists in the list
     if (!promptsList.contains(prompt)) {
@@ -134,15 +136,22 @@ class _ImageGenerationState extends State<ImageGeneration> {
     if (_imageData == null) return;
 
     try {
-      final directory = await getApplicationDocumentsDirectory();
+      final directory = await getTemporaryDirectory();
       final filePath = '${directory.path}/generated_image.jpg';
-      final file = File(filePath);
+      final File imageFile = File(filePath);
+      await imageFile.writeAsBytes(_imageData!);
+      final params = SaveFileDialogParams(sourceFilePath: filePath);
+      final finalPath = await FlutterFileDialog.saveFile(params: params);
 
-      await file.writeAsBytes(_imageData!);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Image saved to $filePath')),
-      );
+      if (finalPath != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Image saved to $filePath')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Image not saved ')),
+        );
+      }
     } catch (e) {
       print('Error saving image: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -380,14 +389,14 @@ class _ImageGenerationState extends State<ImageGeneration> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(height: 30.h),
-                                Container(
-                                  constraints: BoxConstraints(maxWidth: 100.w),
-                                  child: Lottie.asset(
-                                    'assets/Animation - panda.json',
-                                    width: 100.w,
-                                  ),
-                                ),
+                                SizedBox(height: 50.h),
+                                // Container(
+                                //   constraints: BoxConstraints(maxWidth: 100.w),
+                                //   child: Lottie.asset(
+                                //     'assets/Animation - 1727950634187.json.json',
+                                //     width: 100.w,
+                                //   ),
+                                // ),
                                 Text(
                                   'Loading ...',
                                   style: TextStyle(
@@ -581,34 +590,41 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                       Container(
                                         child: SingleChildScrollView(
                                           child: Column(
-                                            children: _recentPrompts.map((prompt) {
+                                            children:
+                                                _recentPrompts.map((prompt) {
                                               return Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    vertical: 5.0, horizontal: 10),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5.0,
+                                                        horizontal: 10),
                                                 child: GestureDetector(
                                                   onTap: () {
                                                     // Set loading state regardless of keyboard status
                                                     setState(() {
                                                       _isLoading = true;
                                                     });
-                                          
-                                                    _askBellyAIForRecent(prompt);
+
+                                                    _askBellyAIForRecent(
+                                                        prompt);
                                                   },
                                                   child: Row(
                                                     children: [
                                                       Container(
                                                         width: 30,
                                                         height: 30,
-                                                        decoration: BoxDecoration(
-                                                          color: Color(0xffD1EBEE),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xffD1EBEE),
                                                           borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8),
+                                                              BorderRadius
+                                                                  .circular(8),
                                                         ),
                                                         child: Icon(
                                                           Icons
                                                               .refresh, // Use any suitable icon
-                                                          color: Color(0xff0A4C61),
+                                                          color:
+                                                              Color(0xff0A4C61),
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -623,8 +639,8 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                                                 'Product Sans',
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            color:
-                                                                Color(0xff0A4C61),
+                                                            color: Color(
+                                                                0xff0A4C61),
                                                           ),
                                                         ),
                                                       ),
@@ -639,19 +655,22 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                     ],
                                   )
                                 : Container(
-                                   constraints: BoxConstraints(minHeight: 60.h),
-                                  child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                    // constraints:
+                                    //     BoxConstraints(minHeight: 60.h),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Container(
-                                          child: Lottie.asset(
-                                            'assets/Animation - panda.json',
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.5,
-                                          ),
-                                        ),
+                                        // Container(
+                                        //   child: Lottie.asset(
+                                        //     'assets/Animation - 1727950634187.json.json',
+                                        //     width: MediaQuery.of(context)
+                                        //             .size
+                                        //             .width *
+                                        //         1,
+                                        //         height: 10.h
+                                        //   ),
+                                        // ),
                                         SizedBox(height: 16),
                                         Center(
                                           child: Text(
@@ -666,7 +685,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                         ),
                                       ],
                                     ),
-                                ),
+                                  ),
                           )
                       ],
                     ),
