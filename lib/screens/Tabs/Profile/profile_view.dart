@@ -61,6 +61,7 @@ class _ProfileViewState extends State<ProfileView> {
   bool darkMode = true;
   String category = '';
   String description = '';
+  String instagram_user_id = '';
   // ignore: non_constant_identifier_names
   String sub_category = '';
   // ignore: non_constant_identifier_names
@@ -142,7 +143,8 @@ class _ProfileViewState extends State<ProfileView> {
       'category',
       'sub_category',
       'current_location',
-      'working_hours'
+      'working_hours',
+      'instagram_user_id'
     ]);
     print("ressssss $res");
     if (res != {}) {
@@ -151,12 +153,14 @@ class _ProfileViewState extends State<ProfileView> {
       sub_category = res['sub_category'] ?? '';
       category = res['category'] ?? '';
       description = res['description'] ?? '';
+      instagram_user_id = res['instagram_user_id'] ?? '';
       setState(() {
         locationDet = res['current_location'] ?? {};
         working_hours = res['working_hours'] ?? {};
         sub_category = res['sub_category'];
         category = res['category'];
         description = res['description'] ?? '';
+        instagram_user_id = res['instagram_user_id'] ?? '';
       });
     }
 
@@ -628,7 +632,14 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   .start,
                                                           children: [
                                                             SizedBox(
-                                                              height: 5,
+                                                              height: (Provider.of<Auth>(context, listen: false)
+                                                                              .userData?[
+                                                                          'user_type'] ==
+                                                                      UserType
+                                                                          .Vendor
+                                                                          .name)
+                                                                  ? 1
+                                                                  : 1,
                                                             ),
                                                             Text(
                                                               userList.first
@@ -651,6 +662,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                       FontWeight
                                                                           .bold),
                                                             ),
+                                                            SizedBox(height: 4,),
                                                             Text(
                                                               "Working hours: ${working_hours['start_time']} - ${working_hours['end_time']}",
                                                               style: TextStyle(
@@ -664,6 +676,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   letterSpacing:
                                                                       1),
                                                             ),
+                                                            SizedBox(height: 2,),
                                                             Text(
                                                               "${category} - ${sub_category}  ",
                                                               style: TextStyle(
@@ -680,56 +693,95 @@ class _ProfileViewState extends State<ProfileView> {
                                                           ],
                                                         ),
                                                       ),
+                                                      // GestureDetector(
+                                                      //   onTap: () async {
+                                                      //     final phoneNumber =
+                                                      //         userList.first
+                                                      //                 .phone ??
+                                                      //             '';
+                                                      //     print(
+                                                      //         "Phone number length: $phoneNumber (${phoneNumber.length})");
+
+                                                      //     // Check if the phone number is a 10-digit number
+                                                      //     if (phoneNumber
+                                                      //             .length ==
+                                                      //         10) {
+                                                      //       final whatsappUrl =
+                                                      //           'https://wa.me/91$phoneNumber';
+                                                      //       print(
+                                                      //           "Launching WhatsApp URL: $whatsappUrl");
+
+                                                      //       // Check if the URL can be launched
+                                                      //       _launchURL(
+                                                      //           whatsappUrl);
+                                                      //     } else if (phoneNumber
+                                                      //             .length ==
+                                                      //         11) {
+                                                      //       final whatsappUrl =
+                                                      //           'https://wa.me/$phoneNumber';
+                                                      //       print(
+                                                      //           "Launching WhatsApp URL: $whatsappUrl");
+
+                                                      //       // Check if the URL can be launched
+                                                      //       _launchURL(
+                                                      //           whatsappUrl);
+                                                      //     } else if (phoneNumber
+                                                      //             .length ==
+                                                      //         12) {
+                                                      //       final whatsappUrl =
+                                                      //           'https://wa.me/$phoneNumber';
+                                                      //       print(
+                                                      //           "Launching WhatsApp URL: $whatsappUrl");
+
+                                                      //       // Check if the URL can be launched
+                                                      //       _launchURL(
+                                                      //           whatsappUrl);
+                                                      //     } else {
+                                                      //       ScaffoldMessenger
+                                                      //               .of(context)
+                                                      //           .showSnackBar(
+                                                      //         const SnackBar(
+                                                      //             content: Text(
+                                                      //                 'WhatsApp number is incorrect. It is not a 10-digit number.')),
+                                                      //       );
+                                                      //     }
+                                                      //   },
+                                                      //   child: Container(
+                                                      //     padding:
+                                                      //         const EdgeInsets
+                                                      //             .fromLTRB(
+                                                      //             0, 7, 12, 2),
+                                                      //     child: Image.asset(
+                                                      //       'assets/images/WhatsApp.png',
+                                                      //       width: 27,
+                                                      //       color: darkMode
+                                                      //           ? Colors.white
+                                                      //           : Colors
+                                                      //               .transparent,
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
+
+                                                      //instagram
+                                                      if(instagram_user_id !=
+                                                              '')
                                                       GestureDetector(
                                                         onTap: () async {
-                                                          final phoneNumber =
-                                                              userList.first
-                                                                      .phone ??
-                                                                  '';
-                                                          print(
-                                                              "Phone number length: $phoneNumber (${phoneNumber.length})");
-
-                                                          // Check if the phone number is a 10-digit number
-                                                          if (phoneNumber
-                                                                  .length ==
-                                                              10) {
-                                                            final whatsappUrl =
-                                                                'https://wa.me/91$phoneNumber';
-                                                            print(
-                                                                "Launching WhatsApp URL: $whatsappUrl");
-
-                                                            // Check if the URL can be launched
+                                                          if (instagram_user_id !=
+                                                              '') {
+                                                            final instagramUrl =
+                                                                'https://instagram.com/$instagram_user_id';
+                                                            print(instagramUrl);
                                                             _launchURL(
-                                                                whatsappUrl);
-                                                          } else if (phoneNumber
-                                                                  .length ==
-                                                              11) {
-                                                            final whatsappUrl =
-                                                                'https://wa.me/$phoneNumber';
-                                                            print(
-                                                                "Launching WhatsApp URL: $whatsappUrl");
-
-                                                            // Check if the URL can be launched
-                                                            _launchURL(
-                                                                whatsappUrl);
-                                                          } else if (phoneNumber
-                                                                  .length ==
-                                                              12) {
-                                                            final whatsappUrl =
-                                                                'https://wa.me/$phoneNumber';
-                                                            print(
-                                                                "Launching WhatsApp URL: $whatsappUrl");
-
-                                                            // Check if the URL can be launched
-                                                            _launchURL(
-                                                                whatsappUrl);
+                                                                instagramUrl);
                                                           } else {
                                                             ScaffoldMessenger
                                                                     .of(context)
                                                                 .showSnackBar(
                                                               const SnackBar(
-                                                                  content: Text(
-                                                                      'WhatsApp number is incorrect. It is not a 10-digit number.')),
+                                                                content: Text(
+                                                                    'instagram_user_id  is required. Fill it in settings.'),
+                                                              ),
                                                             );
                                                           }
                                                         },
@@ -737,16 +789,18 @@ class _ProfileViewState extends State<ProfileView> {
                                                           padding:
                                                               const EdgeInsets
                                                                   .fromLTRB(
-                                                                  0, 7, 12, 2),
+                                                                  0, 1, 5, 2),
                                                           child: Image.asset(
-                                                            'assets/images/WhatsApp.png',
-                                                            width: 27,
-                                                            color: darkMode
-                                                                ? Colors.white
-                                                                : Colors
-                                                                    .transparent,
+                                                            'assets/images/instagram.png',
+                                                            width: 30,
+                                                            // color: darkMode
+                                                            //     ? Colors.white
+                                                            //     : Colors.transparent,
                                                           ),
                                                         ),
+                                                      )
+                                                  , SizedBox(
+                                                        width: 5,
                                                       ),
                                                     ],
                                                   ),
@@ -1442,7 +1496,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     final String
                                                                         appleMapsUrl =
                                                                         'http://maps.apple.com/?q=${locationDet['latitude']},${locationDet['longitude']}';
-                                                                    
+
                                                                     _launchURL(
                                                                         appleMapsUrl);
                                                                   }

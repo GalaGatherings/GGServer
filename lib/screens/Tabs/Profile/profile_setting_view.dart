@@ -39,6 +39,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   TextEditingController numberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController instagramController = TextEditingController();
   String profilePhoto = '';
   bool _switchValue = false;
   bool kycVerified = false;
@@ -281,6 +282,42 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
         //  print('pin: ${pan_number}');
         TOastNotification()
             .showSuccesToast(context, 'Contact Number update successfully');
+        Navigator.of(context).pop();
+        // prefs.setInt('counter', 3);
+      } else {
+        TOastNotification().showErrorToast(context, msg);
+        Navigator.of(context).pop();
+      }
+      print(msg);
+    } else {
+      TOastNotification().showErrorToast(context, 'Please fill all fields');
+    }
+  }
+
+  Future<void> submitInstagramUserId() async {
+    print("contactNUmber:: ${instagramController.text}");
+
+    // final prefs = await SharedPreferences.getInstance();
+    if (numberController.text != '') {
+      AppWideLoadingBanner().loadingBanner(context);
+
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .instagramUserId(instagramController.text);
+      if (msg == 'User information updated successfully.') {
+        userDetails = UserPreferences.getUser();
+        Provider.of<Auth>(context, listen: false)
+            .userData?['instagram_user_id'] = instagramController.text;
+        Map<String, dynamic>? userData = {
+          ...userDetails!,
+          'user_id':
+              Provider.of<Auth>(context, listen: false).userData?['user_id'],
+          'instagram_user_id': instagramController.text ?? '',
+        };
+        await UserPreferences.setUser(userData);
+
+        //  print('pin: ${pan_number}');
+        TOastNotification()
+            .showSuccesToast(context, 'Instgram Linked successfully');
         Navigator.of(context).pop();
         // prefs.setInt('counter', 3);
       } else {
@@ -760,7 +797,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     height: 24,
                   ),
                   onPressed: () {
-Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+                    Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                   },
                 ),
               ),
@@ -935,29 +972,29 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                                         Space(3.h),
                                         Row(
                                           children: [
-                                            Container(
-                                              height: 25,
-                                              width: 25,
-                                              decoration: ShapeDecoration(
-                                                shadows: [
-                                                  BoxShadow(
-                                                    offset: Offset(0, 4),
-                                                    color: Color(0xffD3EEEE)
-                                                        .withOpacity(0.5),
-                                                    blurRadius: 20,
-                                                  )
-                                                ],
-                                                color: Color(0xffD3EEEE),
-                                                shape: SmoothRectangleBorder(
-                                                  borderRadius:
-                                                      SmoothBorderRadius.all(
-                                                          SmoothRadius(
-                                                              cornerRadius: 10,
-                                                              cornerSmoothing:
-                                                                  1)),
-                                                ),
-                                              ),
-                                            ),
+                                            // Container(
+                                            //   height: 25,
+                                            //   width: 25,
+                                            //   decoration: ShapeDecoration(
+                                            //     shadows: [
+                                            //       BoxShadow(
+                                            //         offset: Offset(0, 4),
+                                            //         color: Color(0xffD3EEEE)
+                                            //             .withOpacity(0.5),
+                                            //         blurRadius: 20,
+                                            //       )
+                                            //     ],
+                                            //     color: Color(0xffD3EEEE),
+                                            //     shape: SmoothRectangleBorder(
+                                            //       borderRadius:
+                                            //           SmoothBorderRadius.all(
+                                            //               SmoothRadius(
+                                            //                   cornerRadius: 10,
+                                            //                   cornerSmoothing:
+                                            //                       1)),
+                                            //     ),
+                                            //   ),
+                                            // ),
                                             const Space(
                                               16,
                                               isHorizontal: true,
@@ -987,29 +1024,29 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                                         Space(1.h),
                                         Row(
                                           children: [
-                                            Container(
-                                              height: 25,
-                                              width: 25,
-                                              decoration: ShapeDecoration(
-                                                shadows: [
-                                                  BoxShadow(
-                                                    offset: Offset(0, 4),
-                                                    color: Color(0xffD3EEEE)
-                                                        .withOpacity(0.5),
-                                                    blurRadius: 20,
-                                                  )
-                                                ],
-                                                color: Color(0xffD3EEEE),
-                                                shape: SmoothRectangleBorder(
-                                                  borderRadius:
-                                                      SmoothBorderRadius.all(
-                                                          SmoothRadius(
-                                                              cornerRadius: 10,
-                                                              cornerSmoothing:
-                                                                  1)),
-                                                ),
-                                              ),
-                                            ),
+                                            // Container(
+                                            //   height: 25,
+                                            //   width: 25,
+                                            //   decoration: ShapeDecoration(
+                                            //     shadows: [
+                                            //       BoxShadow(
+                                            //         offset: Offset(0, 4),
+                                            //         color: Color(0xffD3EEEE)
+                                            //             .withOpacity(0.5),
+                                            //         blurRadius: 20,
+                                            //       )
+                                            //     ],
+                                            //     color: Color(0xffD3EEEE),
+                                            //     shape: const SmoothRectangleBorder(
+                                            //       borderRadius:
+                                            //           SmoothBorderRadius.all(
+                                            //               SmoothRadius(
+                                            //                   cornerRadius: 10,
+                                            //                   cornerSmoothing:
+                                            //                       1)),
+                                            //     ),
+                                            //   ),
+                                            // ),
                                             const Space(
                                               16,
                                               isHorizontal: true,
@@ -1036,45 +1073,45 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                                           ],
                                         ),
                                         Space(1.h),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              height: 25,
-                                              width: 25,
-                                              decoration: ShapeDecoration(
-                                                shadows: [
-                                                  BoxShadow(
-                                                    offset: Offset(0, 4),
-                                                    color: Color(0xffD3EEEE)
-                                                        .withOpacity(0.5),
-                                                    blurRadius: 20,
-                                                  )
-                                                ],
-                                                color: Color(0xffD3EEEE),
-                                                shape: SmoothRectangleBorder(
-                                                  borderRadius:
-                                                      SmoothBorderRadius.all(
-                                                          SmoothRadius(
-                                                              cornerRadius: 10,
-                                                              cornerSmoothing:
-                                                                  1)),
-                                                ),
-                                              ),
-                                            ),
-                                            const Space(
-                                              16,
-                                              isHorizontal: true,
-                                            ),
-                                            Text(
-                                              "Remove cover image",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: boxShadowColor,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w700),
-                                            ),
-                                          ],
-                                        ),
+                                        // Row(
+                                        //   children: [
+                                        //     Container(
+                                        //       height: 25,
+                                        //       width: 25,
+                                        //       decoration: ShapeDecoration(
+                                        //         shadows: [
+                                        //           BoxShadow(
+                                        //             offset: Offset(0, 4),
+                                        //             color: Color(0xffD3EEEE)
+                                        //                 .withOpacity(0.5),
+                                        //             blurRadius: 20,
+                                        //           )
+                                        //         ],
+                                        //         color: Color(0xffD3EEEE),
+                                        //         shape: SmoothRectangleBorder(
+                                        //           borderRadius:
+                                        //               SmoothBorderRadius.all(
+                                        //                   SmoothRadius(
+                                        //                       cornerRadius: 10,
+                                        //                       cornerSmoothing:
+                                        //                           1)),
+                                        //         ),
+                                        //       ),
+                                        //     ),
+                                        //     const Space(
+                                        //       16,
+                                        //       isHorizontal: true,
+                                        //     ),
+                                        //     Text(
+                                        //       "Remove cover image",
+                                        //       style: TextStyle(
+                                        //           fontSize: 14,
+                                        //           color: boxShadowColor,
+                                        //           fontFamily: 'Product Sans',
+                                        //           fontWeight: FontWeight.w700),
+                                        //     ),
+                                        //   ],
+                                        // ),
                                       ],
                                     ),
                                   ),
@@ -1303,7 +1340,7 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                       : boxShadowColor,
                 ),
               ),
-              
+
               Space(1.h),
               Container(
                 // rgba(165, 200, 199, 1),
@@ -1387,17 +1424,12 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                   // onChanged: onChanged,
                 ),
               ),
-              Space(
-                3.h,
-              ),
-              if(Provider.of<Auth>(context, listen: false)
-                                              .userData?['user_type'] ==
-                                          UserType.Vendor.name)...[
-                                            
+
+              Space(2.h),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextWidgetStoreSetup(
-                  label: 'Write your description',
+                  label: 'Enter your instagram user id',
                   color: darkMode
                       ? Color.fromARGB(255, 229, 227, 227)
                       : boxShadowColor,
@@ -1433,7 +1465,7 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                 // height: 6.h,
                 child: TextField(
                   onChanged: (value) {
-                    descriptionController.text = value;
+                    instagramController.text = value;
                     setState(() {});
                   },
                   style: Provider.of<Auth>(context, listen: false)
@@ -1450,14 +1482,14 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF2E0536)),
-
-                  // inputFormatters: <TextInputFormatter>[
-                  //   FilteringTextInputFormatter.digitsOnly
-                  // ],
-                  controller: descriptionController,
+                  keyboardType: TextInputType.text,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.singleLineFormatter
+                  ],
+                  controller: instagramController,
                   decoration: InputDecoration(
                     fillColor: Colors.white,
-                    suffixIcon: descriptionController.text.isEmpty
+                    suffixIcon: instagramController.text.isEmpty
                         ? Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Image.asset(
@@ -1468,12 +1500,12 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                           )
                         : IconButton(
                             onPressed: () {
-                              submitDescription();
+                              submitInstagramUserId();
                             },
                             icon: const Icon(Icons.done),
                             color: const Color(0xFFFA6E00),
                           ),
-                    hintText: "Enter your description here",
+                    hintText: "Enter your instagram user id here",
                     contentPadding: const EdgeInsets.only(left: 14, top: 10),
                     hintStyle: const TextStyle(
                         fontSize: 12,
@@ -1483,181 +1515,283 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                     border: InputBorder.none,
                     // suffixIcon:
                   ),
+                  // onChanged: onChanged,
                 ),
-              ),
-              Space(
-                3.h,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 1),
-                child: GlobalJobSelection(), // Use the job selection widget
               ),
 
               Space(
                 3.h,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextWidgetStoreSetup(
-                  label: 'Select your working hours',
-                  color: darkMode
-                      ? Color.fromARGB(255, 229, 227, 227)
-                      : boxShadowColor,
+              if (Provider.of<Auth>(context, listen: false)
+                      .userData?['user_type'] ==
+                  UserType.Vendor.name) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextWidgetStoreSetup(
+                    label: 'Write your description',
+                    color: darkMode
+                        ? Color.fromARGB(255, 229, 227, 227)
+                        : boxShadowColor,
+                  ),
                 ),
-              ),
-              Space(1.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        final TimeOfDay? pickedTime = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
-
-                        if (pickedTime != null && pickedTime != fromTime) {
-                          setState(() {
-                            fromTime = pickedTime;
-                            print("fromTime:: ${fromTime}");
-                          });
-                        }
-                      },
-                      child: Container(
-                        decoration: ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              offset: const Offset(0, 4),
-                              color: darkMode
-                                  ? Colors.black.withOpacity(0.47)
-                                  : Provider.of<Auth>(context, listen: false)
-                                              .userData?['user_type'] ==
-                                          UserType.Vendor.name
-                                      ? const Color.fromRGBO(165, 200, 199, 0.3)
-                                      : Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .userData?['user_type'] ==
-                                              UserType.Supplier.name
-                                          ? const Color.fromRGBO(
-                                              77, 191, 74, 0.3)
-                                          : const Color.fromRGBO(
-                                              130, 47, 130, 0.3),
-                              blurRadius: 20,
-                            )
-                          ],
-                          color: Colors.white,
-                          shape: const SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                                cornerRadius: 10, cornerSmoothing: 1)),
-                          ),
-                        ),
-                        height: 45,
-                        // width: 40.w,
-                        child: Center(
-                          child: Text(
-                            fromTime != null
-                                ? "${fromTime?.hour}:${fromTime?.minute}"
-                                : fromTiming ?? "From",
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Provider.of<Auth>(context, listen: false)
+                Space(1.h),
+                Container(
+                  // rgba(165, 200, 199, 1),
+                  decoration: ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        offset: const Offset(0, 4),
+                        color: darkMode
+                            ? Colors.black.withOpacity(0.47)
+                            : Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_type'] ==
+                                    UserType.Vendor.name
+                                ? const Color.fromRGBO(165, 200, 199, 0.3)
+                                : Provider.of<Auth>(context, listen: false)
                                             .userData?['user_type'] ==
-                                        UserType.Vendor.name
-                                    ? const Color(0xFF0A4C61)
-                                    : const Color(0xFF2E0536),
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.w400),
+                                        UserType.Supplier.name
+                                    ? const Color.fromRGBO(77, 191, 74, 0.3)
+                                    : const Color.fromRGBO(188, 115, 188, 0.3),
+                        blurRadius: 20,
+                      ),
+                    ],
+                    color: Colors.white,
+                    shape: const SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.all(
+                          SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                    ),
+                  ),
+                  // height: 6.h,
+                  child: TextField(
+                    onChanged: (value) {
+                      descriptionController.text = value;
+                      setState(() {});
+                    },
+                    style: Provider.of<Auth>(context, listen: false)
+                                .userData?['user_type'] ==
+                            UserType.Vendor.name
+                        ? const TextStyle(
+                            color: Color(0xFF0A4C61),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                          )
+                        : const TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF2E0536)),
+
+                    // inputFormatters: <TextInputFormatter>[
+                    //   FilteringTextInputFormatter.digitsOnly
+                    // ],
+                    controller: descriptionController,
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      suffixIcon: descriptionController.text.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Image.asset(
+                                Assets.editIcon,
+                                height: 15,
+                                width: 15,
+                              ),
+                            )
+                          : IconButton(
+                              onPressed: () {
+                                submitDescription();
+                              },
+                              icon: const Icon(Icons.done),
+                              color: const Color(0xFFFA6E00),
+                            ),
+                      hintText: "Enter your description here",
+                      contentPadding: const EdgeInsets.only(left: 14, top: 10),
+                      hintStyle: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF0A4C61),
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400),
+                      border: InputBorder.none,
+                      // suffixIcon:
+                    ),
+                  ),
+                ),
+                Space(
+                  3.h,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1),
+                  child: GlobalJobSelection(), // Use the job selection widget
+                ),
+                Space(
+                  3.h,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextWidgetStoreSetup(
+                    label: 'Select your working hours',
+                    color: darkMode
+                        ? Color.fromARGB(255, 229, 227, 227)
+                        : boxShadowColor,
+                  ),
+                ),
+                Space(1.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          final TimeOfDay? pickedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+
+                          if (pickedTime != null && pickedTime != fromTime) {
+                            setState(() {
+                              fromTime = pickedTime;
+                              print("fromTime:: ${fromTime}");
+                            });
+                          }
+                        },
+                        child: Container(
+                          decoration: ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                offset: const Offset(0, 4),
+                                color: darkMode
+                                    ? Colors.black.withOpacity(0.47)
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Vendor.name
+                                        ? const Color.fromRGBO(
+                                            165, 200, 199, 0.3)
+                                        : Provider.of<Auth>(context,
+                                                        listen: false)
+                                                    .userData?['user_type'] ==
+                                                UserType.Supplier.name
+                                            ? const Color.fromRGBO(
+                                                77, 191, 74, 0.3)
+                                            : const Color.fromRGBO(
+                                                130, 47, 130, 0.3),
+                                blurRadius: 20,
+                              )
+                            ],
+                            color: Colors.white,
+                            shape: const SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                                  cornerRadius: 10, cornerSmoothing: 1)),
+                            ),
+                          ),
+                          height: 45,
+                          // width: 40.w,
+                          child: Center(
+                            child: Text(
+                              fromTime != null
+                                  ? "${fromTime?.hour}:${fromTime?.minute}"
+                                  : fromTiming ?? "From",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color:
+                                      Provider.of<Auth>(context, listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Vendor.name
+                                          ? const Color(0xFF0A4C61)
+                                          : const Color(0xFF2E0536),
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w400),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const Space(
-                    21,
-                    isHorizontal: true,
-                  ),
-                  const Text(
-                    "-",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFFFA6E00),
-                        fontFamily: 'Kavoon',
-                        fontWeight: FontWeight.w400),
-                  ),
-                  const Space(
-                    21,
-                    isHorizontal: true,
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        final TimeOfDay? pickedTime = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
+                    const Space(
+                      21,
+                      isHorizontal: true,
+                    ),
+                    const Text(
+                      "-",
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Color(0xFFFA6E00),
+                          fontFamily: 'Kavoon',
+                          fontWeight: FontWeight.w400),
+                    ),
+                    const Space(
+                      21,
+                      isHorizontal: true,
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          final TimeOfDay? pickedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
 
-                        if (pickedTime != null && pickedTime != tillTime) {
-                          setState(() {
-                            tillTime = pickedTime;
-                          });
-                          submitStoreWorkingHours();
-                        }
-                      },
-                      child: Container(
-                        height: 45,
-                        decoration: ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              offset: const Offset(0, 4),
-                              color: darkMode
-                                  ? Colors.black.withOpacity(0.47)
-                                  : Provider.of<Auth>(context, listen: false)
-                                              .userData?['user_type'] ==
-                                          UserType.Vendor.name
-                                      ? const Color.fromRGBO(165, 200, 199, 0.3)
-                                      : Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .userData?['user_type'] ==
-                                              UserType.Supplier.name
-                                          ? const Color.fromRGBO(
-                                              77, 191, 74, 0.3)
-                                          : const Color.fromRGBO(
-                                              130, 47, 130, 0.3),
-                              blurRadius: 20,
-                            )
-                          ],
-                          color: Colors.white,
-                          shape: const SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                                cornerRadius: 10, cornerSmoothing: 1)),
+                          if (pickedTime != null && pickedTime != tillTime) {
+                            setState(() {
+                              tillTime = pickedTime;
+                            });
+                            submitStoreWorkingHours();
+                          }
+                        },
+                        child: Container(
+                          height: 45,
+                          decoration: ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                offset: const Offset(0, 4),
+                                color: darkMode
+                                    ? Colors.black.withOpacity(0.47)
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Vendor.name
+                                        ? const Color.fromRGBO(
+                                            165, 200, 199, 0.3)
+                                        : Provider.of<Auth>(context,
+                                                        listen: false)
+                                                    .userData?['user_type'] ==
+                                                UserType.Supplier.name
+                                            ? const Color.fromRGBO(
+                                                77, 191, 74, 0.3)
+                                            : const Color.fromRGBO(
+                                                130, 47, 130, 0.3),
+                                blurRadius: 20,
+                              )
+                            ],
+                            color: Colors.white,
+                            shape: const SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                                  cornerRadius: 10, cornerSmoothing: 1)),
+                            ),
                           ),
-                        ),
-                        //width: 40.w,
-                        child: Center(
-                          child: Text(
-                            tillTime != null
-                                ? "${tillTime?.hour}:${tillTime?.minute}"
-                                : tillTiming ?? "Till",
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Provider.of<Auth>(context, listen: false)
-                                            .userData?['user_type'] ==
-                                        UserType.Vendor.name
-                                    ? const Color(0xFF0A4C61)
-                                    : const Color(0xFF2E0536),
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.w400),
+                          //width: 40.w,
+                          child: Center(
+                            child: Text(
+                              tillTime != null
+                                  ? "${tillTime?.hour}:${tillTime?.minute}"
+                                  : tillTiming ?? "Till",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color:
+                                      Provider.of<Auth>(context, listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Vendor.name
+                                          ? const Color(0xFF0A4C61)
+                                          : const Color(0xFF2E0536),
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w400),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const Space(
-                42,
-              ),
-                                          ],
+                  ],
+                ),
+                const Space(
+                  42,
+                ),
+              ],
 
               //seelct jonour
 
@@ -1893,6 +2027,7 @@ Navigator.of(context).pushReplacementNamed(Tabs.routeName);
       nameController.text = userDetails!['store_name'] ?? '';
       emailController.text = userDetails!['email'] ?? '';
       descriptionController.text = userDetails!['description'] ?? '';
+      instagramController.text = userDetails!['instagram_user_id'] ?? '';
 
       profilePhoto = userDetails!['profile_photo'] ?? '';
       numberController.text = userDetails!['phone'] ?? '';
@@ -2511,7 +2646,9 @@ class _GlobalJobSelectionState extends State<GlobalJobSelection> {
           child: Text(
             'Select your business type / category from the below list',
             style: TextStyle(
-              color: darkMode ?   Color.fromARGB(255, 229, 227, 227) : const Color(0xFF0A4C61),
+              color: darkMode
+                  ? Color.fromARGB(255, 229, 227, 227)
+                  : const Color(0xFF0A4C61),
               fontSize: 14,
               fontFamily: 'Product Sans',
               fontWeight: FontWeight.w900,

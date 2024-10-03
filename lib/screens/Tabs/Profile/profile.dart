@@ -202,7 +202,8 @@ class _ProfileState extends State<Profile> {
         'sub_category',
         'store_name',
         'current_location',
-        'working_hours'
+        'working_hours',
+        'instagram_user_id'
       ]);
 
       print(" resssp ${json.encode(res)}");
@@ -224,6 +225,7 @@ class _ProfileState extends State<Profile> {
         userData['category'] = res['category'];
         userData['sub_category'] = res['sub_category'];
         userData['store_name'] = res['store_name'];
+        userData['instagram_user_id'] = res['instagram_user_id'];
         await UserPreferences.setUser(userData);
 
         // Check if the widget is still mounted before updating state
@@ -235,6 +237,9 @@ class _ProfileState extends State<Profile> {
                 res['followings'] ?? [];
             Provider.of<Auth>(context, listen: false).userData?['category'] =
                 res['category'] ?? '';
+            Provider.of<Auth>(context, listen: false)
+                    .userData?['instagram_user_id'] =
+                res['instagram_user_id'] ?? '';
             Provider.of<Auth>(context, listen: false)
                 .userData?['sub_category'] = res['sub_category'] ?? '';
             Provider.of<Auth>(context, listen: false)
@@ -576,51 +581,96 @@ class _ProfileState extends State<Profile> {
                                               ],
                                             ),
                                           ),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              final phoneNumber =
-                                                  Provider.of<Auth>(context,
-                                                              listen: false)
-                                                          .userData?['phone'] ??
-                                                      '';
+                                          // GestureDetector(
+                                          //   onTap: () async {
+                                          //     final phoneNumber =
+                                          //         Provider.of<Auth>(context,
+                                          //                     listen: false)
+                                          //                 .userData?['phone'] ??
+                                          //             '';
 
-                                              if (phoneNumber.length == 10) {
-                                                final whatsappUrl =
-                                                    'https://wa.me/91$phoneNumber';
-                                                _launchURL(whatsappUrl);
-                                              } else if (phoneNumber.length ==
-                                                  11) {
-                                                final whatsappUrl =
-                                                    'https://wa.me/$phoneNumber';
-                                                _launchURL(whatsappUrl);
-                                              } else if (phoneNumber.length ==
-                                                  12) {
-                                                final whatsappUrl =
-                                                    'https://wa.me/$phoneNumber';
-                                                _launchURL(whatsappUrl);
-                                              } else {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  const SnackBar(
-                                                    content: Text(
-                                                        'WhatsApp number is incorrect. It is not a 10-digit number.'),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      0, 5, 5, 2),
-                                              child: Image.asset(
-                                                'assets/images/WhatsApp.png',
-                                                width: 27,
-                                                color: darkMode
-                                                    ? Colors.white
-                                                    : Colors.transparent,
+                                          //     if (phoneNumber.length == 10) {
+                                          //       final whatsappUrl =
+                                          //           'https://wa.me/91$phoneNumber';
+                                          //       _launchURL(whatsappUrl);
+                                          //     } else if (phoneNumber.length ==
+                                          //         11) {
+                                          //       final whatsappUrl =
+                                          //           'https://wa.me/$phoneNumber';
+                                          //       _launchURL(whatsappUrl);
+                                          //     } else if (phoneNumber.length ==
+                                          //         12) {
+                                          //       final whatsappUrl =
+                                          //           'https://wa.me/$phoneNumber';
+                                          //       _launchURL(whatsappUrl);
+                                          //     } else {
+                                          //       ScaffoldMessenger.of(context)
+                                          //           .showSnackBar(
+                                          //         const SnackBar(
+                                          //           content: Text(
+                                          //               'WhatsApp number is incorrect. It is not a 10-digit number.'),
+                                          //         ),
+                                          //       );
+                                          //     }
+                                          //   },
+                                          //   child: Container(
+                                          //     padding:
+                                          //         const EdgeInsets.fromLTRB(
+                                          //             0, 5, 5, 2),
+                                          //     child: Image.asset(
+                                          //       'assets/images/WhatsApp.png',
+                                          //       width: 27,
+                                          //       color: darkMode
+                                          //           ? Colors.white
+                                          //           : Colors.transparent,
+                                          //     ),
+                                          //   ),
+                                          // )
+
+                                          // instagram
+                                          if (Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .userData?[
+                                                  'instagram_user_id'] !=
+                                              '')
+                                            GestureDetector(
+                                              onTap: () async {
+                                                final instagram_user_id = Provider
+                                                                .of<Auth>(
+                                                                    context,
+                                                                    listen: false)
+                                                            .userData?[
+                                                        'instagram_user_id'] ??
+                                                    '';
+
+                                                if (instagram_user_id != '') {
+                                                  final instagram_url =
+                                                      'https://instagram.com/$instagram_user_id';
+                                                  print(instagram_url);
+                                                  _launchURL(instagram_url);
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'instagram_user_id  is incorrect. Check your user_id.'),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 5, 5, 2),
+                                                child: Image.asset(
+                                                  'assets/images/instagram.png',
+                                                  width: 30,
+                                                  // color: darkMode
+                                                  //     ? Colors.white
+                                                  //     : Colors.transparent,
+                                                ),
                                               ),
-                                            ),
-                                          )
+                                            )
                                         ],
                                       ),
                                     ),
@@ -1366,9 +1416,11 @@ class _ProfileState extends State<Profile> {
                                                       Text(
                                                         'No items  ',
                                                         style: TextStyle(
-                                                            color:darkMode?Colors.white54: boxShadowColor
-                                                                .withOpacity(
-                                                                    0.2),
+                                                            color: darkMode
+                                                                ? Colors.white54
+                                                                : boxShadowColor
+                                                                    .withOpacity(
+                                                                        0.2),
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 35,
@@ -1454,8 +1506,10 @@ class _ProfileState extends State<Profile> {
                                         Text(
                                           'No reviews',
                                           style: TextStyle(
-                                              color:darkMode?Colors.white54: boxShadowColor
-                                                  .withOpacity(0.2),
+                                              color: darkMode
+                                                  ? Colors.white54
+                                                  : boxShadowColor
+                                                      .withOpacity(0.2),
                                               fontWeight: FontWeight.bold,
                                               fontSize: 35,
                                               fontFamily: 'Product Sans'),
@@ -1520,7 +1574,7 @@ class _ProfileState extends State<Profile> {
                                                       final String
                                                           appleMapsUrl =
                                                           'http://maps.apple.com/?q=${locationDet['latitude']},${locationDet['longitude']}';
-                                                      
+
                                                       _launchURL(appleMapsUrl);
                                                     }
                                                   },

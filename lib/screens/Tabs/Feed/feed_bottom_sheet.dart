@@ -32,62 +32,58 @@ class FeedBottomSheet {
             Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
                 'Vendor';
         // print(data);
-        return WillPopScope(
-          onWillPop: () async {
-            context.read<TransitionEffect>().setBlurSigma(0);
-            return true;
-          },
+        return PopScope(
+          canPop: true,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              return SingleChildScrollView(
-                child: Container(
-                  decoration: const ShapeDecoration(
-                    color: Colors.white,
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius.only(
-                          topLeft: SmoothRadius(
-                              cornerRadius: 35, cornerSmoothing: 1),
-                          topRight: SmoothRadius(
-                              cornerRadius: 35, cornerSmoothing: 1)),
-                    ),
+              return Container(
+                decoration: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                        topLeft: SmoothRadius(
+                            cornerRadius: 35, cornerSmoothing: 1),
+                        topRight: SmoothRadius(
+                            cornerRadius: 35, cornerSmoothing: 1)),
                   ),
-                  height: MediaQuery.of(context).size.height * 0.9,
-                  width: double.infinity,
-                  padding: EdgeInsets.only(
-                      top: 2.h,
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TouchableOpacity(
-                          onTap: () {
-                            return Navigator.of(context).pop();
-                          },
-                          child: Center(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 1.h, horizontal: 3.w),
-                              width: 55,
-                              height: 5,
-                              decoration: ShapeDecoration(
-                                color: const Color(0xFFFA6E00),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6)),
-                              ),
+                ),
+                height: MediaQuery.of(context).size.height * 0.9,
+                width: double.infinity,
+                padding: EdgeInsets.only(
+                    top: 2.h,
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TouchableOpacity(
+                        onTap: () {
+                          return Navigator.of(context).pop();
+                        },
+                        child: Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 1.h, horizontal: 3.w),
+                            width: 55,
+                            height: 5,
+                            decoration: ShapeDecoration(
+                              color: const Color(0xFFFA6E00),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6)),
                             ),
                           ),
                         ),
-                        ProductInPostSheetWidget(
-                          isVendor: _isVendor,
-                          data: data,
-                          isLiked: isLiked,
-                          productList: productList,
-                          isProfile: false,
-                        )
-                      ],
-                    ),
+                      ),
+                      
+                      ProductInPostSheetWidget(
+                        isVendor: _isVendor,
+                        data: data,
+                        isLiked: isLiked,
+                        productList: productList,
+                        isProfile: false,
+                      )
+                    ],
                   ),
                 ),
               );

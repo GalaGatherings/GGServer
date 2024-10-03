@@ -1323,6 +1323,30 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+Future<String> instagramUserId(instagramUserId) async {
+    final String url = 'https://galagatherings.com/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "instagram_user_id": instagramUserId
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
 
   Future<String> storeAvailability(store_availability) async {
     final String url = 'https://galagatherings.com/update-user';
