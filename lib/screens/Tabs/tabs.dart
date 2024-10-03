@@ -233,7 +233,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                               Expanded(
                                 child: _buildShortcutButton(
                                   context,
-                                  'BellyIMAGING',
+                                  'GG IMAGING',
                                   'assets/images/imageFile.png',
                                   _imageGeneration,
                                 ),

@@ -60,6 +60,7 @@ class _ProfileViewState extends State<ProfileView> {
   var locationDet = {};
   bool darkMode = true;
   String category = '';
+  String description = '';
   // ignore: non_constant_identifier_names
   String sub_category = '';
   // ignore: non_constant_identifier_names
@@ -145,16 +146,17 @@ class _ProfileViewState extends State<ProfileView> {
     ]);
     print("ressssss $res");
     if (res != {}) {
-     
       locationDet = res['current_location'] ?? {};
       working_hours = res['working_hours'] ?? {};
-      sub_category = res['sub_category'];
-      category = res['category'];
+      sub_category = res['sub_category'] ?? '';
+      category = res['category'] ?? '';
+      description = res['description'] ?? '';
       setState(() {
         locationDet = res['current_location'] ?? {};
         working_hours = res['working_hours'] ?? {};
         sub_category = res['sub_category'];
         category = res['category'];
+        description = res['description'] ?? '';
       });
     }
 
@@ -651,7 +653,6 @@ class _ProfileViewState extends State<ProfileView> {
                                                             ),
                                                             Text(
                                                               "Working hours: ${working_hours['start_time']} - ${working_hours['end_time']}",
-                                                             
                                                               style: TextStyle(
                                                                   color: darkMode
                                                                       ? Colors
@@ -1409,7 +1410,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                            'Vendor Info',
+                                                            'Business Info',
                                                             style: TextStyle(
                                                                 color: darkMode
                                                                     ? Colors
@@ -1425,7 +1426,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     'Product Sans Black'),
                                                           ),
                                                           SizedBox(
-                                                            height: 5,
+                                                            height: 10,
                                                           ),
                                                           Row(
                                                             children: [
@@ -1439,12 +1440,11 @@ class _ProfileViewState extends State<ProfileView> {
                                                                               'latitude'] !=
                                                                           null) {
                                                                     final String
-                                                                        googleMapsUrl =
-                                                                        'https://www.google.com/maps/search/?api=1&query=${locationDet['latitude']},${locationDet['longitude']}';
-                                                                    print(
-                                                                        "googleMapsUrl  $googleMapsUrl");
+                                                                        appleMapsUrl =
+                                                                        'http://maps.apple.com/?q=${locationDet['latitude']},${locationDet['longitude']}';
+                                                                    
                                                                     _launchURL(
-                                                                        googleMapsUrl);
+                                                                        appleMapsUrl);
                                                                   }
                                                                 },
                                                                 child:
@@ -1505,7 +1505,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                             ],
                                                           ),
                                                           SizedBox(
-                                                            height: 5,
+                                                            height: 10,
                                                           ),
                                                           Row(
                                                             children: [
@@ -1561,6 +1561,22 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         'Product Sans'),
                                                               ),
                                                             ],
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Text(
+                                                            description,
+                                                            style: TextStyle(
+                                                                color: darkMode
+                                                                    ? Color(
+                                                                        0xffB1F0EF)
+                                                                    : boxShadowColor,
+                                                                fontFamily:
+                                                                    'Product Sans',
+                                                                fontSize: 14,
+                                                                letterSpacing:
+                                                                    1),
                                                           ),
                                                           const SizedBox(
                                                             height: 200,

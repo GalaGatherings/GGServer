@@ -382,7 +382,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     ),
                     SizedBox(height: 16),
                     Text(
-                      'To proceed with deleting your Cloudbelly account, please verify your WhatsApp number. \nThis will permanently remove your profile and all associated data from Cloudbelly.',
+                      'To proceed with deleting your GG account, please verify your WhatsApp number. \nThis will permanently remove your profile and all associated data from Cloudbelly.',
                       style: TextStyle(
                         height: 1.2,
                         color: Color(0xFF094B60),

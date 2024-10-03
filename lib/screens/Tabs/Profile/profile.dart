@@ -185,51 +185,65 @@ class _ProfileState extends State<Profile> {
   }
 
   void fetchUserDetailsbyKey() async {
-    final res = await getUserDetailsbyKey(
-        Provider.of<Auth>(context, listen: false).userData?['user_id'], [
-      'store_availability',
-      'kyc_status',
-      'followings',
-      'followers',
-      'fssai',
-      'user_type',
-      'description',
-      'category',
-      'sub_category',
-      'store_name',
-      'current_location',
-      'working_hours'
-    ]);
-    print(" resssp ${json.encode(res)}");
+    // Check if the widget is still mounted before calling setState
+    if (!mounted) return;
 
-    setState(() {
-      _switchValue = res['store_availability'] ?? true;
-    });
-    Map<String, dynamic>? userData = UserPreferences.getUser();
-    if (userData != null) {
-      userData['store_availability'] = _switchValue;
-      userData['user_type'] = res['user_type'];
-      userData['description'] = res['description'];
-      userData['current_location'] = res['current_location'];
-      userData['working_hours'] = res['working_hours'];
-      userData['category'] = res['category'];
-      userData['sub_category'] = res['sub_category'];
-      userData['store_name'] = res['store_name'];
-      await UserPreferences.setUser(userData);
-      // kycStatus = userData['kyc_status'] ?? ;
+    try {
+      final res = await getUserDetailsbyKey(
+          Provider.of<Auth>(context, listen: false).userData?['user_id'], [
+        'store_availability',
+        'kyc_status',
+        'followings',
+        'followers',
+        'fssai',
+        'user_type',
+        'description',
+        'category',
+        'sub_category',
+        'store_name',
+        'current_location',
+        'working_hours'
+      ]);
 
-      setState(() {
-        Provider.of<Auth>(context, listen: false).userData?['followers'] =
-            res['followers'] ?? [];
-        Provider.of<Auth>(context, listen: false).userData?['followings'] =
-            res['followings'] ?? [];
-        Provider.of<Auth>(context, listen: false).userData?['category'] =
-            res['category'] ?? '';
-        Provider.of<Auth>(context, listen: false).userData?['sub_category'] =
-            res['sub_category'] ?? '';
-        Provider.of<Auth>(context, listen: false)
-            .userData?['current_location'] = res['current_location'] ?? {};
-      });
+      print(" resssp ${json.encode(res)}");
+
+      // Set state only if the widget is mounted
+      if (mounted) {
+        setState(() {
+          _switchValue = res['store_availability'] ?? true;
+        });
+      }
+
+      Map<String, dynamic>? userData = UserPreferences.getUser();
+      if (userData != null) {
+        userData['store_availability'] = _switchValue;
+        userData['user_type'] = res['user_type'];
+        userData['description'] = res['description'];
+        userData['current_location'] = res['current_location'];
+        userData['working_hours'] = res['working_hours'];
+        userData['category'] = res['category'];
+        userData['sub_category'] = res['sub_category'];
+        userData['store_name'] = res['store_name'];
+        await UserPreferences.setUser(userData);
+
+        // Check if the widget is still mounted before updating state
+        if (mounted) {
+          setState(() {
+            Provider.of<Auth>(context, listen: false).userData?['followers'] =
+                res['followers'] ?? [];
+            Provider.of<Auth>(context, listen: false).userData?['followings'] =
+                res['followings'] ?? [];
+            Provider.of<Auth>(context, listen: false).userData?['category'] =
+                res['category'] ?? '';
+            Provider.of<Auth>(context, listen: false)
+                .userData?['sub_category'] = res['sub_category'] ?? '';
+            Provider.of<Auth>(context, listen: false)
+                .userData?['current_location'] = res['current_location'] ?? {};
+          });
+        }
+      }
+    } catch (error) {
+      print("Error fetching user details: $error");
     }
   }
 
@@ -508,9 +522,14 @@ class _ProfileState extends State<Profile> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  height:  (Provider.of<Auth>(context, listen: false)
-                                              .userData?['user_type'] ==
-                                          UserType.Vendor.name)? 10:20,
+                                                  height: (Provider.of<Auth>(
+                                                                      context,
+                                                                      listen: false)
+                                                                  .userData?[
+                                                              'user_type'] ==
+                                                          UserType.Vendor.name)
+                                                      ? 10
+                                                      : 20,
                                                 ),
                                                 Text(
                                                   Provider.of<Auth>(context,
@@ -1466,7 +1485,7 @@ class _ProfileState extends State<Profile> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Store Info',
+                                              'Business Info',
                                               style: TextStyle(
                                                   color: darkMode
                                                       ? Colors.white
@@ -1478,7 +1497,7 @@ class _ProfileState extends State<Profile> {
                                                       'Product Sans Black'),
                                             ),
                                             SizedBox(
-                                              height: 5,
+                                              height: 10,
                                             ),
                                             Row(
                                               children: [
@@ -1499,11 +1518,10 @@ class _ProfileState extends State<Profile> {
                                                                 'latitude'] !=
                                                             null) {
                                                       final String
-                                                          googleMapsUrl =
-                                                          'https://www.google.com/maps/search/?api=1&query=${locationDet['latitude']},${locationDet['longitude']}';
-                                                      print(
-                                                          "googleMapsUrl  $googleMapsUrl");
-                                                      _launchURL(googleMapsUrl);
+                                                          appleMapsUrl =
+                                                          'http://maps.apple.com/?q=${locationDet['latitude']},${locationDet['longitude']}';
+                                                      
+                                                      _launchURL(appleMapsUrl);
                                                     }
                                                   },
                                                   child: Container(
@@ -1558,9 +1576,8 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                               ],
                                             ),
-
                                             SizedBox(
-                                              height: 5,
+                                              height: 10,
                                             ),
                                             Row(
                                               children: [
@@ -1608,34 +1625,19 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                               ],
                                             ),
-                                            // Container(
-                                            //   color: Colors.white,
-                                            //   child: ClipSmoothRect(
-                                            //     radius: SmoothBorderRadius(
-                                            //       cornerRadius: 22,
-                                            //       cornerSmoothing: 1,
-                                            //     ),
-                                            //     child: CachedNetworkImage(
-                                            //       imageUrl: Provider.of<Auth>(
-                                            //               context,
-                                            //               listen: false)
-                                            //           .userData?['fssai'],
-                                            //       fit: BoxFit.cover,
-                                            //       placeholder: (context, url) =>
-                                            //           Center(
-                                            //         child:
-                                            //             CircularProgressIndicator(
-                                            //           color: Color.fromARGB(
-                                            //               255, 33, 229, 243),
-                                            //         ),
-                                            //       ),
-                                            //       errorWidget:
-                                            //           (context, url, error) =>
-                                            //               Icon(Icons.error),
-                                            //     ),
-                                            //   ),
-                                            // ),
-
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              "${Provider.of<Auth>(context, listen: false).userData!['description']}",
+                                              style: TextStyle(
+                                                  color: darkMode
+                                                      ? Color(0xffB1F0EF)
+                                                      : boxShadowColor,
+                                                  fontFamily: 'Product Sans',
+                                                  fontSize: 14,
+                                                  letterSpacing: 1),
+                                            ),
                                             const SizedBox(
                                               height: 100,
                                             ),
@@ -2228,7 +2230,7 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                     ),
                   ),
                   const Text(
-                    'Powered by BellyAI',
+                    'Powered by GG AI',
                     style: TextStyle(
                       color: Color(0xFFFA6E00),
                       fontSize: 13,
@@ -2516,7 +2518,7 @@ class _ScannedMenuBottomSheetState extends State<ScannedMenuBottomSheet> {
                                   padding: const EdgeInsets.all(
                                       8.0), // Add padding for better readability
                                   child: const Text(
-                                    'Do you want to generate description and type using AI',
+                                    'Do you want to generate description for all products using AI',
                                     style: TextStyle(
                                       color: Color(0xFF094B60),
                                       fontSize: 24,
