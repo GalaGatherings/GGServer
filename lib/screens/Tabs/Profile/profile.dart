@@ -1103,7 +1103,6 @@ class _ProfileState extends State<Profile> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                // if (userType == UserType.Vendor.name)
                                 Center(
                                   child: Container(
                                     // padding: EdgeInsets.only(
@@ -1119,13 +1118,10 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                 ),
-
                                 Space(2.h),
-                                userType == UserType.Supplier.name
+                                userType == UserType.Customer.name
                                     ? Container(
-                                        // height: 6.5.h,
                                         width: 95.w,
-
                                         child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceAround,
@@ -1160,22 +1156,57 @@ class _ProfileState extends State<Profile> {
                                                 child: TouchableOpacity(
                                                   onTap: () {
                                                     setState(() {
-                                                      _activeButtonIndex = 2;
-                                                      print(
-                                                          "menuList.length ${menuList.length}");
-                                                      if (menuList.length != 0)
-                                                        _scrollToTop();
+                                                      _activeButtonIndex = 4;
                                                     });
                                                   },
                                                   child: CommonButtonProfile(
                                                     isActive:
-                                                        _activeButtonIndex == 2,
-                                                    txt: 'Menu ',
+                                                        _activeButtonIndex == 4,
+                                                    txt: 'About',
                                                     width: 52,
                                                     color: darkMode
                                                         ? Colors.white
                                                         : boxShadowColor,
                                                   ),
+                                                ),
+                                              ),
+                                            ]),
+                                      )
+                                    : Container(
+                                        // height: 6.5.h,
+                                        width: 100.w,
+
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3.33,
+                                                child: TouchableOpacity(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _activeButtonIndex = 1;
+                                                    });
+                                                  },
+                                                  child: !_isVendor
+                                                      ? CommomButtonProfileCustomer(
+                                                          isActive:
+                                                              _activeButtonIndex ==
+                                                                  1,
+                                                          text: 'Content')
+                                                      : CommonButtonProfile(
+                                                          isActive:
+                                                              _activeButtonIndex ==
+                                                                  1,
+                                                          txt: 'Content',
+                                                          width: 52,
+                                                          color: darkMode
+                                                              ? Colors.white
+                                                              : boxShadowColor,
+                                                        ),
                                                 ),
                                               ),
                                               Container(
@@ -1186,14 +1217,22 @@ class _ProfileState extends State<Profile> {
                                                 child: TouchableOpacity(
                                                   onTap: () {
                                                     setState(() {
-                                                      _activeButtonIndex = 3;
+                                                      _activeButtonIndex = 2;
+
+                                                      if (menuList.length != 0)
+                                                        _scrollToTop();
                                                     });
+
+                                                    // Ensure the scroll happens after the frame is built
+                                                    //                                                   WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    //   t1.jumpTo(500.0); // Scroll to the top
+                                                    // });
                                                   },
                                                   child: CommonButtonProfile(
                                                     isActive:
-                                                        _activeButtonIndex == 3,
-                                                    txt: 'About',
-                                                    width: 52,
+                                                        _activeButtonIndex == 2,
+                                                    txt: 'Menu ',
+                                                    width: 40,
                                                     color: darkMode
                                                         ? Colors.white
                                                         : boxShadowColor,
@@ -1214,7 +1253,7 @@ class _ProfileState extends State<Profile> {
                                                   child: CommonButtonProfile(
                                                     isActive:
                                                         _activeButtonIndex == 4,
-                                                    txt: 'Reviews',
+                                                    txt: 'About',
                                                     width: 52,
                                                     color: darkMode
                                                         ? Colors.white
@@ -1223,172 +1262,7 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                               ),
                                             ]),
-                                      )
-                                    : userType == UserType.Customer.name
-                                        ? Container(
-                                            width: 95.w,
-                                            child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: [
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3.33,
-                                                    child: TouchableOpacity(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          _activeButtonIndex =
-                                                              1;
-                                                        });
-                                                      },
-                                                      child:
-                                                          CommonButtonProfile(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                1,
-                                                        txt: 'Content',
-                                                        width: 52,
-                                                        color: darkMode
-                                                            ? Colors.white
-                                                            : boxShadowColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3.33,
-                                                    child: TouchableOpacity(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          _activeButtonIndex =
-                                                              3;
-                                                        });
-                                                      },
-                                                      child:
-                                                          CommonButtonProfile(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                3,
-                                                        txt: 'Reviews',
-                                                        width: 52,
-                                                        color: darkMode
-                                                            ? Colors.white
-                                                            : boxShadowColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ]),
-                                          )
-                                        : Container(
-                                            // height: 6.5.h,
-                                            width: 100.w,
-
-                                            child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: [
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3.33,
-                                                    child: TouchableOpacity(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          _activeButtonIndex =
-                                                              1;
-                                                        });
-                                                      },
-                                                      child: !_isVendor
-                                                          ? CommomButtonProfileCustomer(
-                                                              isActive:
-                                                                  _activeButtonIndex ==
-                                                                      1,
-                                                              text: 'Content')
-                                                          : CommonButtonProfile(
-                                                              isActive:
-                                                                  _activeButtonIndex ==
-                                                                      1,
-                                                              txt: 'Content',
-                                                              width: 52,
-                                                              color: darkMode
-                                                                  ? Colors.white
-                                                                  : boxShadowColor,
-                                                            ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3.33,
-                                                    child: TouchableOpacity(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          _activeButtonIndex =
-                                                              2;
-
-                                                          if (menuList.length !=
-                                                              0) _scrollToTop();
-                                                        });
-
-                                                        // Ensure the scroll happens after the frame is built
-                                                        //                                                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                        //   t1.jumpTo(500.0); // Scroll to the top
-                                                        // });
-                                                      },
-                                                      child:
-                                                          CommonButtonProfile(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                2,
-                                                        txt: 'Menu ',
-                                                        width: 40,
-                                                        color: darkMode
-                                                            ? Colors.white
-                                                            : boxShadowColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3.33,
-                                                    child: TouchableOpacity(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          _activeButtonIndex =
-                                                              4;
-                                                        });
-                                                      },
-                                                      child:
-                                                          CommonButtonProfile(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                4,
-                                                        txt: 'About',
-                                                        width: 52,
-                                                        color: darkMode
-                                                            ? Colors.white
-                                                            : boxShadowColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ]),
-                                          ),
-                                //  _isVendor ? Space(1.h) : Space(0.h),
+                                      ),
                                 const Space(20),
                                 if (_activeButtonIndex == 1)
                                   Center(
@@ -1520,7 +1394,6 @@ class _ProfileState extends State<Profile> {
                                       ],
                                     )),
                                   ),
-
                                 if (_activeButtonIndex == 4)
                                   Container(
                                     constraints: BoxConstraints(
@@ -1682,16 +1555,20 @@ class _ProfileState extends State<Profile> {
                                             SizedBox(
                                               height: 10,
                                             ),
-                                            Text(
-                                              "${Provider.of<Auth>(context, listen: false).userData!['description']}",
-                                              style: TextStyle(
-                                                  color: darkMode
-                                                      ? Color(0xffB1F0EF)
-                                                      : boxShadowColor,
-                                                  fontFamily: 'Product Sans',
-                                                  fontSize: 14,
-                                                  letterSpacing: 1),
-                                            ),
+                                            if ( Provider.of<Auth>(context,
+                                                        listen: false)
+                                                    .userData!['description'] !=
+                                                null )
+                                              Text(
+                                                "${Provider.of<Auth>(context, listen: false).userData!['description']}",
+                                                style: TextStyle(
+                                                    color: darkMode
+                                                        ? const Color(0xffB1F0EF)
+                                                        : boxShadowColor,
+                                                    fontFamily: 'Product Sans',
+                                                    fontSize: 14,
+                                                    letterSpacing: 1),
+                                              ),
                                             const SizedBox(
                                               height: 100,
                                             ),
