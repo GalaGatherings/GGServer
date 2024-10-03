@@ -5,6 +5,7 @@ import 'package:gala_gatherings/constants/globalVaribales.dart';
 // import 'package:gala_gatherings/screens/Tabs/Profile/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:gala_gatherings/screens/Tabs/Profile/profile_view.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -171,18 +172,18 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                         return ListTile(
                           leading: GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => ProfileView(
-                              //       userIdList: [
-                              //         user['_id']
-                              //       ], // Adjust this according to your ProfileView constructor
-                              //     ),
-                              //   ),
-                              // ).then((value) {
-                              //   // You can clear the userId or perform any other actions here if needed
-                              // });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileView(
+                                    userIdList: [
+                                      user['_id']
+                                    ], // Adjust this according to your ProfileView constructor
+                                  ),
+                                ),
+                              ).then((value) {
+                                // You can clear the userId or perform any other actions here if needed
+                              });
                             },
                             child: Container(
                               width: 50, // Set width for the avatar
@@ -535,18 +536,18 @@ Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
                           ),
                           title: InkWell(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => ProfileView(
-                              //       userIdList: [
-                              //         user['id']
-                              //       ], // Adjust this according to your ProfileView constructor
-                              //     ),
-                              //   ),
-                              // ).then((value) {
-                              //   // You can clear the userId or perform any other actions here if needed
-                              // });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileView(
+                                    userIdList: [
+                                      user['id']
+                                    ], // Adjust this according to your ProfileView constructor
+                                  ),
+                                ),
+                              ).then((value) {
+                                // You can clear the userId or perform any other actions here if needed
+                              });
                             },
                             child: Text(
                               user['name'],

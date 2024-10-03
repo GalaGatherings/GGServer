@@ -62,17 +62,23 @@ class FeedBottomSheet {
                           return Navigator.of(context).pop();
                         },
                         child: Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 1.h, horizontal: 3.w),
-                            width: 55,
-                            height: 5,
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFFFA6E00),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6)),
-                            ),
-                          ),
+                          child:
+                          //  Container(
+                          //   padding: EdgeInsets.symmetric(
+                          //       vertical: 1.h, horizontal: 3.w),
+                          //   width: 55,
+                          //   height: 5,
+                          //   decoration: ShapeDecoration(
+                          //     color: const Color(0xFFFA6E00),
+                          //     shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(6)),
+                          //   ),
+                          // ),
+                       
+                       Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
                         ),
                       ),
                       

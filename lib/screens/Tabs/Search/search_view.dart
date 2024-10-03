@@ -5,6 +5,7 @@ import 'package:gala_gatherings/widgets/dish_card.dart';
 import 'package:gala_gatherings/widgets/restaurant_card.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:gala_gatherings/widgets/vendors_card.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -72,41 +73,41 @@ class _SearchViewState extends State<SearchView> {
       isLoading = false;
     });
   }
-Future<void> _checkLocationPermission() async {
-  // Check if the location permission is already granted
-  PermissionStatus permissionStatus = await Permission.location.status;
 
-  if (permissionStatus.isGranted) {
-    // Permission is granted, you can proceed
-    _locationFetched = true;
-    print("Location permission granted.");
-  } else if (permissionStatus.isDenied || permissionStatus.isLimited ) {
-    // Permission is denied, request permission
-    permissionStatus = await Permission.location.request();
+  Future<void> _checkLocationPermission() async {
+    // Check if the location permission is already granted
+    PermissionStatus permissionStatus = await Permission.location.status;
 
     if (permissionStatus.isGranted) {
-      // Permission granted after request
+      // Permission is granted, you can proceed
       _locationFetched = true;
-      print("Location permission granted after request.");
-    } 
-    else if (permissionStatus.isPermanentlyDenied) {
-      // Permission is permanently denied, navigate user to settings
+      print("Location permission granted.");
+    } else if (permissionStatus.isDenied || permissionStatus.isLimited) {
+      // Permission is denied, request permission
+      permissionStatus = await Permission.location.request();
+
+      if (permissionStatus.isGranted) {
+        // Permission granted after request
+        _locationFetched = true;
+        print("Location permission granted after request.");
+      } else if (permissionStatus.isPermanentlyDenied) {
+        // Permission is permanently denied, navigate user to settings
+        // openAppSettings();
+        print("Location permission permanently denied. Open app settings.");
+      } else {
+        // Permission was denied (not permanently), handle accordingly
+        print("Location permission denied.");
+      }
+    } else if (permissionStatus.isPermanentlyDenied) {
+      // Handle permanently denied case
       // openAppSettings();
       print("Location permission permanently denied. Open app settings.");
-    } 
-    else {
-      // Permission was denied (not permanently), handle accordingly
-      print("Location permission denied.");
+    } else {
+      // Handle any other permission status
+      print("Unhandled permission status: ${permissionStatus.toString()}");
     }
-  } else if (permissionStatus.isPermanentlyDenied) {
-    // Handle permanently denied case
-    openAppSettings();
-    print("Location permission permanently denied. Open app settings.");
-  } else {
-    // Handle any other permission status
-    print("Unhandled permission status: ${permissionStatus.toString()}");
   }
-}
+
   Future<void> _getCurrentLocation(context) async {
     setState(() {
       isLoading = true;
@@ -132,6 +133,7 @@ Future<void> _checkLocationPermission() async {
         address = 'Address not found';
       }
 
+
       await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
           _currentPosition?.latitude, _currentPosition?.longitude, area);
       print("locLogmain.dart $_currentPosition  $area");
@@ -143,62 +145,63 @@ Future<void> _checkLocationPermission() async {
     });
   }
 
-Future<void> _fetchData() async {
-  if (!hasMoreData) return; // Stop if there's no more data to fetch
+  Future<void> _fetchData() async {
+    if (!hasMoreData) return; // Stop if there's no more data to fetch
 
-  setState(() {
-    isLoading = true;
-  });
-
-  final currentLocation = Provider.of<Auth>(context, listen: false)
-      .userData?['current_location'];
-
-  if (currentLocation == null) {
-    await _getCurrentLocation(context); // Ensure location is fetched first
-  }
-
-  String function = isDishesSelected ? 'products' : 'vendors';
-
-  var response = await http.post(
-    Uri.parse('https://galagatherings.com/search/$function'),
-    headers: headers,
-    body: jsonEncode({
-      'page': page,
-      'limit': limit,
-      'latitude': currentLocation?['latitude'],
-      'longitude': currentLocation?['longitude'],
-      'query': _searchController.text,
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    List<dynamic> data = json.decode(response.body);
-    
     setState(() {
-      if (isDishesSelected) {
-        print("datadata  $data");
-        dishItems.addAll(data.map((item) => Dish.fromJson(item)).toList());
-      } else {
-        if(page ==1 ) {
-          restaurantItems.clear();
-        }
-        restaurantItems.addAll(data.map((item) => Restaurant.fromJson(item)).toList());
-      }
-
-      if (data.length < limit) {
-        hasMoreData = false; // End of data
-      } else {
-        page++; // Increment page if more data exists
-      }
+      isLoading = true;
     });
-  } else {
-    print("Failed to load data");
-  }
 
-  setState(() {
-    isLoading = false;
-  });
-}
+    final currentLocation =
+        Provider.of<Auth>(context, listen: false).userData?['current_location'];
+
+    if (currentLocation == null) {
+      await _getCurrentLocation(context); // Ensure location is fetched first
+    }
+
+    String function = isDishesSelected ? 'products' : 'vendors';
+
+    var response = await http.post(
+      Uri.parse('https://galagatherings.com/search/$function'),
+      headers: headers,
+      body: jsonEncode({
+        'page': page,
+        'limit': limit,
+        'latitude': currentLocation?['latitude'],
+        'longitude': currentLocation?['longitude'],
+        'query': _searchController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+
+      setState(() {
+        if (isDishesSelected) {
+          dishItems.addAll(data.map((item) => Dish.fromJson(item)).toList());
+        } else {
+          if (page == 1) {
+            restaurantItems.clear();
+          }
+
+          restaurantItems
+              .addAll(data.map((item) => Restaurant.fromJson(item)).toList());
+        }
+
+        if (data.length < limit) {
+          hasMoreData = false; // End of data
+        } else {
+          page++; // Increment page if more data exists
+        }
+      });
+    } else {
+      print("Failed to load data");
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   void _onSearchChanged() {
     setState(() {
@@ -226,31 +229,26 @@ Future<void> _fetchData() async {
     });
   }
 
- void _changeTab(bool dishesSelected) {
-  
-  setState(() {
-    isDishesSelected = dishesSelected;
-    page = 1;
-    hasMoreData = true;
-   
-   
+  void _changeTab(bool dishesSelected) {
+    setState(() {
+      isDishesSelected = dishesSelected;
+      page = 1;
+      hasMoreData = true;
 
-    // Clear the appropriate list based on the selected tab
-    if (isDishesSelected) {
-      dishItems.clear();
-      
-    } else {
-      restaurantItems.clear();
-    }
-  });
+      // Clear the appropriate list based on the selected tab
+      if (isDishesSelected) {
+        dishItems.clear();
+      } else {
+        restaurantItems.clear();
+      }
+    });
 
-  // Change the page in the PageView
-  _pageController.jumpToPage(dishesSelected ? 0 : 1);
+    // Change the page in the PageView
+    _pageController.jumpToPage(dishesSelected ? 0 : 1);
 
-  // Fetch data for the newly selected tab
-  _fetchData();
-}
-
+    // Fetch data for the newly selected tab
+    _fetchData();
+  }
 
   @override
   void dispose() {
@@ -264,9 +262,8 @@ Future<void> _fetchData() async {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: darkMode
-          ? Color(0xff313030)
-          : Colors.white, // Full background color
+      color:
+          darkMode ? Color(0xff313030) : Colors.white, // Full background color
       child: Column(
         children: [
           Container(
@@ -306,10 +303,12 @@ Future<void> _fetchData() async {
                       if (location != null && location.length == 2) {
                         double latitude = double.parse(location[0]);
                         double longitude = double.parse(location[1]);
-
-                        await Provider.of<Auth>(context, listen: false)
-                            .updateCustomerLocation(
-                                latitude, longitude, currentAddress);
+                        if (Provider.of<Auth>(context, listen: false)
+                                .userData?['user_type'] !=
+                            'Vendor')
+                          await Provider.of<Auth>(context, listen: false)
+                              .updateCustomerLocation(
+                                  latitude, longitude, currentAddress);
 
                         setState(() {
                           page = 1;
@@ -538,7 +537,9 @@ Future<void> _fetchData() async {
                     Text(
                       'No products in   ',
                       style: TextStyle(
-                        color:darkMode?Colors.white: Color(0xff9E749E).withOpacity(0.4),
+                        color: darkMode
+                            ? Colors.white
+                            : Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
                         fontSize: 35,
                         fontFamily: 'Product Sans',
@@ -547,7 +548,9 @@ Future<void> _fetchData() async {
                     Text(
                       'this region  ',
                       style: TextStyle(
-                        color:darkMode?Colors.white: Color(0xff9E749E).withOpacity(0.4),
+                        color: darkMode
+                            ? Colors.white
+                            : Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
                         fontSize: 35,
                         fontFamily: 'Product Sans',
@@ -563,7 +566,7 @@ Future<void> _fetchData() async {
                     if (index == dishItems.length) {
                       return Center(child: CircularProgressIndicator());
                     }
-                    return DishCard(dish: dishItems[index],darkMode:darkMode);
+                    return DishCard(dish: dishItems[index], darkMode: darkMode);
                   },
                 ),
               ),
@@ -598,7 +601,9 @@ Future<void> _fetchData() async {
                     Text(
                       'No Vendors in   ',
                       style: TextStyle(
-                        color:darkMode?Colors.white: Color(0xff9E749E).withOpacity(0.4),
+                        color: darkMode
+                            ? Colors.white
+                            : Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
                         fontSize: 35,
                         fontFamily: 'Product Sans',
@@ -607,7 +612,9 @@ Future<void> _fetchData() async {
                     Text(
                       'this region  ',
                       style: TextStyle(
-                        color:darkMode?Colors.white: Color(0xff9E749E).withOpacity(0.4),
+                        color: darkMode
+                            ? Colors.white
+                            : Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
                         fontSize: 35,
                         fontFamily: 'Product Sans',
@@ -622,7 +629,8 @@ Future<void> _fetchData() async {
                   if (index == restaurantItems.length) {
                     return Center(child: CircularProgressIndicator());
                   }
-                  return RestaurantCard(restaurant: restaurantItems[index],darkMode:darkMode);
+                  return VendorsCard(
+                      restaurant: restaurantItems[index], darkMode: darkMode);
                 },
               ),
       ),
@@ -631,6 +639,15 @@ Future<void> _fetchData() async {
 }
 
 class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
+  final List<Map<String, String>> locations = [
+    {'description': 'Current Location', 'location': ''},
+    {'description': 'Jamshedpur, Jharkhand', 'location': '22.8046, 86.2029'},
+    {'description': 'Siliguri, West Bengal', 'location': '26.7271, 88.3953'},
+    {'description': 'Kolkata, West Bengal', 'location': '22.5726, 88.3639'},
+    {'description': 'Mumbai, Maharashtra', 'location': '19.0760, 72.8777'},
+    {"description": "Bangalore, Karnataka", "location": "12.9716, 77.5946"},
+    {"description": "Sikkim, India", "location": "27.5330, 88.5122"}
+  ];
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -638,7 +655,7 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
       IconButton(
         icon: Icon(Icons.clear),
         onPressed: () {
-          query = '';
+          Navigator.of(context).pop();
         },
       )
     ];
@@ -646,100 +663,122 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, {}); // Close without selecting a location
-      },
+    return const SizedBox(
+      width: 0,
+    ); // Ensure this line is present
+  }
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context).copyWith(
+      appBarTheme: AppBarTheme(
+        color: Color(0xff1D1D1D), // Your app bar color1D1D1D
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
+        toolbarTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+        ),
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+        ),
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        hintStyle: TextStyle(
+          color: Colors.white, // Adjust as needed
+          fontSize: 18,
+        ),
+      ),
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(
+          color: Colors.white, // Adjust as needed
+          fontSize: 18,
+        ),
+      ),
     );
   }
 
   @override
   Widget buildResults(BuildContext context) {
-    return FutureBuilder(
-      future: _searchLocation(query),
-      builder: (context, AsyncSnapshot<List<Location>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No results found'));
-        }
-        final locations = snapshot.data!;
-        return _buildLocationList(context, locations);
-      },
-    );
-  }
+    final results = locations
+        .where((loc) =>
+            loc['description']!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
 
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return FutureBuilder(
-      future: _searchLocation(query),
-      builder: (context, AsyncSnapshot<List<Location>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No results found'));
-        }
-        final locations = snapshot.data!;
-        return _buildLocationList(context, locations);
-      },
-    );
-  }
-
-  Widget _buildLocationList(BuildContext context, List<Location> locations) {
     return ListView.builder(
-      itemCount: locations.length,
+      itemCount: results.length,
       itemBuilder: (context, index) {
-        final location = locations[index];
         return ListTile(
-          title: Text(
-              'Lat: ${location.latitude}, Lng: ${location.longitude}'), // You can also use a reverse geocoding method to get a more user-friendly address
+          title: Text(results[index]['description']!),
           onTap: () {
-            close(context, {
-              'description': 'Lat: ${location.latitude}, Lng: ${location.longitude}',
-              'location': '${location.latitude},${location.longitude}'
-            });
+            if (results[index]['description'] == 'Current Location') {
+              // Handle current location selection
+              _getCurrentLocation(context);
+            } else {
+              Navigator.of(context).pop();
+              // close(context, results[index]);
+            }
           },
         );
       },
     );
   }
 
-  Future<List<Location>> _searchLocation(String query) async {
-    if (query.isEmpty) {
-      return [];
-    }
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = locations
+        .where((loc) =>
+            loc['description']!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
 
-    try {
-      // Search for the query using the Geocoding API
-      List<Location> locations = await locationFromAddress(query);
-      return locations;
-    } catch (e) {
-      print("Error occurred while searching for location: $e");
-      return [];
-    }
+    return Container(
+      color: Color(0xff313030),
+      child: ListView.builder(
+        itemCount: suggestions.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(
+              suggestions[index]['description']!,
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              if (suggestions[index]['description'] == 'Current Location') {
+                // Handle current location selection
+                _getCurrentLocation(context);
+              } else {
+                close(context, suggestions[index]);
+              }
+            },
+          );
+        },
+      ),
+    );
   }
 
-  Future<void> _getCurrentLocation(BuildContext context) async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
-      if (placemarks.isNotEmpty) {
-        Placemark placemark = placemarks.first;
-        String area = '${placemark.administrativeArea}, ${placemark.country}';
-        close(context, {
-          'description': area,
-          'location': '${position.latitude},${position.longitude}',
-        });
-      }
-    } catch (e) {
-      print('Error fetching current location: $e');
+  void _getCurrentLocation(BuildContext context) async {
+    var _currentPosition;
+    var area;
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    _currentPosition = position;
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    if (placemarks.isNotEmpty) {
+      Placemark placemark = placemarks.first;
+      area = '${placemark.administrativeArea}';
+      close(context, {
+        'description': '$area',
+        'location': '${position.latitude},${position.longitude}',
+      });
+    } else {
       close(context, {'description': 'Location not found', 'location': ''});
     }
+
+
+    await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
+        _currentPosition?.latitude, _currentPosition?.longitude, area);
+    print("locLogsearchView.dart $_currentPosition  $area");
   }
 }
-
