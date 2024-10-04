@@ -146,7 +146,7 @@ class _ProfileViewState extends State<ProfileView> {
       'working_hours',
       'instagram_user_id'
     ]);
-    print("ressssss $res");
+    
     if (res != {}) {
       locationDet = res['current_location'] ?? {};
       working_hours = res['working_hours'] ?? {};

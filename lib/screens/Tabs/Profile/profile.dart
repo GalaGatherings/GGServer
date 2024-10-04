@@ -206,7 +206,7 @@ class _ProfileState extends State<Profile> {
         'instagram_user_id'
       ]);
 
-      print(" resssp ${json.encode(res)}");
+      
 
       // Set state only if the widget is mounted
       if (mounted) {
@@ -219,13 +219,13 @@ class _ProfileState extends State<Profile> {
       if (userData != null) {
         userData['store_availability'] = _switchValue;
         userData['user_type'] = res['user_type'];
-        userData['description'] = res['description'];
-        userData['current_location'] = res['current_location'];
-        userData['working_hours'] = res['working_hours'];
-        userData['category'] = res['category'];
-        userData['sub_category'] = res['sub_category'];
+        userData['description'] = res['description'] ?? '';
+        userData['current_location'] = res['current_location'] ?? {};
+        userData['working_hours'] = res['working_hours'] ?? {};
+        userData['category'] = res['category'] ?? '';
+        userData['sub_category'] = res['sub_category'] ?? '';
         userData['store_name'] = res['store_name'];
-        userData['instagram_user_id'] = res['instagram_user_id'];
+        userData['instagram_user_id'] = res['instagram_user_id'] ?? '';
         await UserPreferences.setUser(userData);
 
         // Check if the widget is still mounted before updating state
@@ -237,6 +237,7 @@ class _ProfileState extends State<Profile> {
                 res['followings'] ?? [];
             Provider.of<Auth>(context, listen: false).userData?['category'] =
                 res['category'] ?? '';
+            
             Provider.of<Auth>(context, listen: false)
                     .userData?['instagram_user_id'] =
                 res['instagram_user_id'] ?? '';
