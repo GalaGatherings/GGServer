@@ -23,6 +23,14 @@ class ProfileShareBottomSheet {
   Future<dynamic> AddAddressSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
+      backgroundColor: Color(0xff1D1D1D),
+      shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.only(
+                          topLeft: SmoothRadius(
+                              cornerRadius: 40, cornerSmoothing: 1),
+                          topRight: SmoothRadius(
+                              cornerRadius: 40, cornerSmoothing: 1)),
+                    ),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return PopScope(
@@ -34,14 +42,14 @@ class ProfileShareBottomSheet {
             builder: (BuildContext context, StateSetter setState) {
               return SingleChildScrollView(
                 child: Container(
-                  decoration: const ShapeDecoration(
-                    color: Colors.white,
+                  decoration:  ShapeDecoration(
+                    color: Color(0xff1D1D1D),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius.only(
                           topLeft: SmoothRadius(
-                              cornerRadius: 35, cornerSmoothing: 1),
+                              cornerRadius: 40, cornerSmoothing: 1),
                           topRight: SmoothRadius(
-                              cornerRadius: 35, cornerSmoothing: 1)),
+                              cornerRadius: 40, cornerSmoothing: 1)),
                     ),
                   ),
                   width: double.infinity,
@@ -107,8 +115,7 @@ class _QrViewState extends State<QrView> {
   Widget build(BuildContext context) {
     final String userId =
         Provider.of<Auth>(context, listen: false).userData?['user_id'] ?? '';
-    print(
-        "prof ${Provider.of<Auth>(context, listen: false).userData?['profile_photo']}");
+   
     final String profileUrl =
         "https://galagatherings.com/profile?profileId=$userId";
     print("profileUrl  $profileUrl");
@@ -210,7 +217,7 @@ class _QrViewState extends State<QrView> {
     return Screenshot(
       controller: _screenshotController,
       child: Container(
-        color: Colors.white,
+        color: Color(0x1D1D1D),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -220,6 +227,7 @@ class _QrViewState extends State<QrView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
+                  
                   margin: EdgeInsets.only(top: 4),
                   width: 100,
                   height: 100,
@@ -241,7 +249,8 @@ class _QrViewState extends State<QrView> {
                           shadows: [
                             BoxShadow(
                               color: showButtons
-                                  ? boxShadowColor.withOpacity(0.3)
+                                  ? Color(0xff030303)
+                                                      .withOpacity(0.77)
                                   : Colors
                                       .transparent, // Color with 35% opacity
                               blurRadius: 15, // Blur amount
@@ -279,8 +288,8 @@ class _QrViewState extends State<QrView> {
                       ),
                       shadows: [
                         BoxShadow(
-                          color: boxShadowColor
-                              .withOpacity(0.3), // Color with 35% opacity
+                          color: Color(0xff030303)
+                                                      .withOpacity(0.77), // Color with 35% opacity
                           blurRadius: 15, // Blur amount
                           offset: Offset(0, 4), // X and Y offset
                         ),
@@ -314,7 +323,8 @@ class _QrViewState extends State<QrView> {
                           shadows: [
                             BoxShadow(
                               color: showButtons
-                                  ? boxShadowColor.withOpacity(0.3)
+                                  ? Color(0xff030303)
+                                                      .withOpacity(0.77)
                                   : Colors
                                       .transparent, // Color with 35% opacity
                               blurRadius: 15, // Blur amount
@@ -347,13 +357,13 @@ class _QrViewState extends State<QrView> {
                 Provider.of<Auth>(context, listen: false)
                         .userData?['store_name'] ??
                     '',
-                style: TextStyle(
-                  color: boxShadowColor,
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 226, 226, 226),
                   fontSize: 26,
-                  fontFamily: 'Product Sans',
+                  fontFamily: 'Ubuntu',
                   fontWeight: FontWeight.w800,
                   height: 1.2,
-                  letterSpacing: 0.35,
+                  letterSpacing: 1,
                 ),
               ),
             ),
@@ -363,7 +373,7 @@ class _QrViewState extends State<QrView> {
               child: Container(
                 padding: EdgeInsets.all(8), // Optional for some spacing
                 decoration: BoxDecoration(
-                  color: Colors.white, // Background color of the container
+                  color: Color(0xff1D1D1D), // Background color of the container
                   borderRadius: BorderRadius.circular(
                       20), // Rounded corners of the container
                 ),
@@ -371,7 +381,7 @@ class _QrViewState extends State<QrView> {
                   data: profileUrl, // Your data variable
                   size: 200, // Size of the QR code
                   roundEdges: true, // Rounded corners for the QR code elements
-                  elementColor: boxShadowColor, // Color of the QR code elements
+                  elementColor: Color.fromARGB(255, 154, 205, 215), // Color of the QR code elements
                   // image: NetworkImage(profilePhoto),
                   // Your profile photo URL
                 ),

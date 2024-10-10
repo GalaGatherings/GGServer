@@ -2606,6 +2606,9 @@ class _GlobalJobSelectionState extends State<GlobalJobSelection> {
       'Fashion Photographer',
       'Travel Photographer',
       'Documentary Photographer'
+    ],
+    'Seller':[
+      'Owner: Clothing Stores'
     ]
   };
 
